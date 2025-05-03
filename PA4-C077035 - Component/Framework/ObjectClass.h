@@ -25,7 +25,7 @@
 #include "Collision.h"
 #include "ColliderType.h"
 
-#include "BaseCamera.h"
+#include "CameraManager.h"
 #include "Player.h"
 
 class ObjectClass
@@ -72,7 +72,7 @@ public:
 private:
 	void RegistGameObject(GameObject*);
 private:
-	CameraObject* m_mainCamera;
+	CameraManager* m_cameraManager;
 	LightManager* m_lightManager;
 };
 

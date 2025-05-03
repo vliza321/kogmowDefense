@@ -185,7 +185,6 @@ void LightManager::InsertionSort(vector<LightClass*> lights) {
 
 bool LightManager::Shutdown()
 {
-	
 	if (m_directionalLight)
 	{
 		delete m_directionalLight;
@@ -207,7 +206,7 @@ LightClass& LightManager::GetLights(int i)
 	return *m_lights[i];
 }
 
-XMFLOAT4* LightManager::GetDiffusers()
+XMFLOAT4& LightManager::GetDiffusers()
 {
 	XMFLOAT4 DiffuserColor[8];
 	int i = 0;
@@ -215,10 +214,10 @@ XMFLOAT4* LightManager::GetDiffusers()
 	{
 		DiffuserColor[i] = light->diffuseColor;
 	}
-	return DiffuserColor;
+	return *DiffuserColor;
 }
 
-XMFLOAT4* LightManager::GetPositions()
+XMFLOAT4& LightManager::GetPositions()
 {
 	XMFLOAT4 Position[8];
 	int i = 0;
@@ -226,5 +225,5 @@ XMFLOAT4* LightManager::GetPositions()
 	{
 		Position[i] = light->position;
 	}
-	return Position;
+	return *Position;
 }

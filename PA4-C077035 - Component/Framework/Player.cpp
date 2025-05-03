@@ -115,6 +115,13 @@ void Player::Execute()
 		tf->eulerRotation.y += input.GetCurrMouseState().lX * 0.001f;
 		tf->eulerRotation.x = max(-XM_PI * 0.4999f, min(XM_PI * 0.2999f, tf->eulerRotation.x));
 	}
+
+	if (InputClass::GetInstance().IsKey(DIK_B))
+	{
+		auto cm = cameraManager.lock();
+		auto tf = transform.lock();
+		cm->SetCamera(ShootType::Debug, *tf);
+	}
 }
 
 void Player::LateExecute()

@@ -1,14 +1,54 @@
-﻿  CameraManager.cpp
-D:\vs22\VC\Tools\MSVC\14.41.34120\include\memory(3597,35): warning C4316: 'BaseCamera': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
-  (소스 파일 'CameraManager.cpp'을(를) 컴파일하는 중)
-      D:\vs22\VC\Tools\MSVC\14.41.34120\include\memory(3597,35):
+﻿  BaseCamera.cpp
+D:\vs22\VC\Tools\MSVC\14.41.34120\include\memory(2906,46): warning C4316: 'std::_Ref_count_obj2<Transform>': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+  (소스 파일 'BaseCamera.cpp'을(를) 컴파일하는 중)
+      D:\vs22\VC\Tools\MSVC\14.41.34120\include\memory(2906,46):
       템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
-          D:\바탕화면 백업\대학\그래픽스\리팩토링\PA4-C077035 - Component\Framework\CameraManager.cpp(23,37):
-          컴파일되는 함수 템플릿 인스턴스화 'std::unique_ptr<BaseCamera,std::default_delete<BaseCamera>> std::make_unique<BaseCamera,,0>(void)'에 대한 참조를 확인하세요.
+          D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\BaseCamera.cpp(21,28):
+          컴파일되는 함수 템플릿 인스턴스화 'std::shared_ptr<_Ty> std::make_shared<Transform,DirectX::XMFLOAT3,DirectX::XMFLOAT3,DirectX::XMFLOAT3,DirectX::XMFLOAT3>(DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Ty=Transform
+          ]
   
+  CameraManager.cpp
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\CameraManager.cpp(23,51): warning C4316: 'BaseCamera': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+  GameObject.cpp
+  MoveEvent.h
+  ObjectClass.cpp
+D:\vs22\VC\Tools\MSVC\14.41.34120\include\memory(2906,46): warning C4316: 'std::_Ref_count_obj2<Transform>': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+  (소스 파일 'ObjectClass.cpp'을(를) 컴파일하는 중)
+      D:\vs22\VC\Tools\MSVC\14.41.34120\include\memory(2906,46):
+      템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
+          D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\ObjectClass.cpp(17,14):
+          컴파일되는 함수 템플릿 인스턴스화 'void GameObject::AddComponent<Transform,DirectX::XMFLOAT3,DirectX::XMFLOAT3,DirectX::XMFLOAT3,DirectX::XMFLOAT3>(DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&)'에 대한 참조를 확인하세요.
+          D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\GameObject.h(138,32):
+          컴파일되는 함수 템플릿 인스턴스화 'std::shared_ptr<_Ty> std::make_shared<Transform,DirectX::XMFLOAT3,DirectX::XMFLOAT3,DirectX::XMFLOAT3,DirectX::XMFLOAT3>(DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Ty=Transform
+          ]
+  
+  Player.cpp
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Player.cpp(74,17): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Player.cpp(78,17): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\vs22\VC\Tools\MSVC\14.41.34120\include\memory(2906,46): warning C4316: 'std::_Ref_count_obj2<Transform>': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+  (소스 파일 'Player.cpp'을(를) 컴파일하는 중)
+      D:\vs22\VC\Tools\MSVC\14.41.34120\include\memory(2906,46):
+      템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
+          D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Player.cpp(36,28):
+          컴파일되는 함수 템플릿 인스턴스화 'std::shared_ptr<_Ty> std::make_shared<Transform,DirectX::XMFLOAT3,DirectX::XMFLOAT3,DirectX::XMFLOAT3,DirectX::XMFLOAT3>(DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&,DirectX::XMFLOAT3 &&)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Ty=Transform
+          ]
+  
+  graphicsclass.cpp
+  main.cpp
+  systemclass.cpp
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\systemclass.cpp(37,17): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   코드를 생성하고 있습니다.
-  210 of 2173 functions ( 9.7%) were compiled, the rest were copied from previous compilation.
-    119 functions were new in current compilation
-    230 functions had inline decision re-evaluated but remain unchanged
+  34 of 2187 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
+    7 functions were new in current compilation
+    41 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  Framework.vcxproj -> D:\바탕화면 백업\대학\그래픽스\리팩토링\PA4-C077035 - Component\Release\Framework.exe
+  Framework.vcxproj -> D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Release\Framework.exe

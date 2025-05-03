@@ -24,7 +24,7 @@ void RenderManager::UnregisterRenderer(Renderer* renderer)
     renderers.erase(std::remove(renderers.begin(), renderers.end(), renderer), renderers.end());
 }
 
-bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, CameraObject* mainCamera, LightManager* lightManager)
+bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, CameraObject* mainCamera, LightManager* lightManager, XMFLOAT4* lightDeffuserColor, XMFLOAT4* lightPosition)
 {
     bool result = true;
     XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
@@ -36,11 +36,11 @@ bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, Came
             auto RenderTransform = renderer->gameObject->GetComponent<Transform>().get();
             if (!RenderTransform) break;
 
-            worldMatrix = XMMatrixScaling(RenderTransform->scale.x, RenderTransform->scale.y, RenderTransform->scale.z)
-                * XMMatrixRotationX(RenderTransform->rotation.x)
+            worldMatrix = XMMatrixRotationX(RenderTransform->rotation.x)
                 * XMMatrixRotationY(RenderTransform->rotation.y)
                 * XMMatrixRotationZ(RenderTransform->rotation.z)
                 * XMMatrixRotationRollPitchYaw(RenderTransform->eulerRotation.x, RenderTransform->eulerRotation.y, 0)
+                * XMMatrixScaling(RenderTransform->scale.x, RenderTransform->scale.y, RenderTransform->scale.z)
                 * XMMatrixTranslation(RenderTransform->position.x, RenderTransform->position.y, RenderTransform->position.z);
 
             renderer->Render(D3D->GetDeviceContext());
@@ -49,9 +49,9 @@ bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, Came
                 worldMatrix, viewMatrix, projectionMatrix,
                 renderer->GetModelTexture(),
                 lightManager->GetDirectionalLight()->direction, lightManager->GetDirectionalLight()->ambientColor, lightManager->GetDirectionalLight()->diffuseColor,
-                mainCamera->gameObject->GetComponent<Transform>()->position,
+                mainCamera->gameObject->GetComponent<Transform>().get()->position,
                 lightManager->GetDirectionalLight()->specularColor, lightManager->GetDirectionalLight()->specularPower,
-                lightManager->GetDiffusers(), lightManager->GetPositions());
+                lightDeffuserColor,lightPosition);
 
             if (!result) return result;
         }

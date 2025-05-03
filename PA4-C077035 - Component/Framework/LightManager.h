@@ -16,8 +16,8 @@ public:
 	LightClass** GetLights();
 	LightClass& GetLights(int);
 	LightClass* GetDirectionalLight();
-	XMFLOAT4* GetDiffusers();
-	XMFLOAT4* GetPositions();
+	XMFLOAT4& GetDiffusers();
+	XMFLOAT4& GetPositions();
 private:
 	void InsertionSort(vector<LightClass*>);
 private:

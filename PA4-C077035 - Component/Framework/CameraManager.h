@@ -31,8 +31,8 @@ public:
 
 	virtual bool Shutdown() override;
 
-	void SetCameraInfo(Transform);
-	void SetCamera(ShootType, Transform);
+	void SetCameraInfo(Transform&);
+	void SetCamera(ShootType, const Transform&);
 
 	XMMATRIX GetViewMatrix();
 	XMVECTOR GetLookAt();
@@ -41,5 +41,5 @@ public:
 
 private:
 	ShootType m_CurrentCameraType;
-	map<ShootType, unique_ptr<CameraObject>>m_CameraMapSet;
+	map<ShootType, CameraObject*>m_CameraMapSet;
 };

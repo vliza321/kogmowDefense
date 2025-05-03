@@ -2,7 +2,7 @@
 
 ObjectClass::ObjectClass()
 {
-	m_mainCamera = 0;
+	m_cameraManager = 0;
 	m_lightManager = 0;
 }
 
@@ -15,8 +15,8 @@ void ObjectClass::CreateBaseObject()
 {
 	GameObject* MainCamera = new GameObject(true, Tag::Camera, "MainCamera");
 	MainCamera->AddComponent<Transform>(XMFLOAT3(0,10,-10),XMFLOAT3(0,0,0), XMFLOAT3(0,0,0),XMFLOAT3(0,180 * 0.0174533f,0));
-	MainCamera->AddComponent<BaseCamera>();
-	m_mainCamera = MainCamera->GetComponent<BaseCamera>().get();
+	MainCamera->AddComponent<CameraManager>();
+	m_cameraManager = MainCamera->GetComponent<CameraManager>().get();
 	RegistGameObject(MainCamera);
 
 	GameObject* LightSet = new GameObject(true, Tag::Default, "LightManager");
@@ -29,12 +29,10 @@ void ObjectClass::CreateBaseObject()
 	SkyDome->AddComponent<Renderer>(L"./data/spacesphere.obj", L"./data/spacesphere.dds", 0);
 	RegistGameObject(SkyDome);
 
-
 	GameObject* Terrain0 = new GameObject(true, Tag::Default, "Terrain0");
 	Terrain0->AddComponent<Renderer>(L"./data/1.obj", L"./data/1.dds", 0);
 	Terrain0->AddComponent<Transform>(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.2f, 0.2f, 0.2f), XMFLOAT3(0, 0, 0));
 	RegistGameObject(Terrain0);
-
 
 	GameObject* Terrain1 = new GameObject(true, Tag::Default, "Terrain1");
 	Terrain1->AddComponent<Renderer>(L"./data/1-1.obj", L"./data/1.dds", 0);
@@ -368,17 +366,25 @@ void ObjectClass::PostExecute()
 
 bool ObjectClass::GUIRender(TextureShaderClass* textureShader, D3DClass* d3d, int sceneCounter)
 {
-	return GUIRenderManager::GetInstance().RenderAll(textureShader, d3d, m_mainCamera->GetViewMatrix());
+	return GUIRenderManager::GetInstance().RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix());
 }
 
 bool ObjectClass::Render(LightShaderClass* lightShader, D3DClass* d3d, int)
 {
-	return RenderManager::GetInstance().RenderAll(lightShader, d3d, m_mainCamera, m_lightManager);
+	XMFLOAT4 diffuseColor[8];
+	XMFLOAT4 lightPosition[8];
+
+	for (int i = 0; i < 8; ++i) {
+		diffuseColor[i] = GetLights(i).diffuseColor;
+		lightPosition[i] = GetLights(i).position;
+	}
+
+	return RenderManager::GetInstance().RenderAll(lightShader, d3d, m_cameraManager->GetCamera(), m_lightManager, diffuseColor, lightPosition);
 }
 
 bool ObjectClass::UIRender(TextureShaderClass* textureShader, D3DClass* d3d, int)
 {
-	return CanvasRenderManager::GetInstance().RenderAll(textureShader, d3d, m_mainCamera->GetViewMatrix());
+	return CanvasRenderManager::GetInstance().RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix());
 }
 
 void ObjectClass::Shutdown()

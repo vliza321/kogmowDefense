@@ -6,6 +6,7 @@
 #include "Component.h"
 #include "inputclass.h"
 #include "Transform.h"
+#include "CameraManager.h"
 
 using namespace std;
 using namespace DirectX;
@@ -32,6 +33,7 @@ private:
 	int m_moveLeftRight;
 	int m_moveBackForward;
 	float speed;
+	std::weak_ptr<CameraManager> cameraManager;
 	/*
 	virtual void SetRollPitchYaw(float, float, float);
 	

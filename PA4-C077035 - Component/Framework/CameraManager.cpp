@@ -20,41 +20,45 @@ bool CameraManager::InitializeSet()
 	m_CameraMapSet[ShootType::Scope] = make_unique<ScopeCamera>();
 	m_CameraMapSet[ShootType::Artillery] = make_unique<ArtilleryCamera>();
 	*/
-	m_CameraMapSet[ShootType::Debug] = make_unique<BaseCamera>();
+	m_CameraMapSet[ShootType::Debug] = new BaseCamera();
 	return true;
 }
 
 bool CameraManager::Initialize()
 {
 	/*
-	if (!m_CameraMapSet[ShootType::Title].get()->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::FPC].get()->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::TPC].get()->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::Scope].get()->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::Artillery].get()->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::Title]->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::FPC]->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::TPC]->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::Scope]->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::Artillery]->Initialize()) return false;
 	*/
-	if (!m_CameraMapSet[ShootType::Debug].get()->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::Debug]->Initialize()) return false;
 	return true;
 }
 
 bool CameraManager::InitializeRef()
 {
-	return false;
+	this->gameObject->AddComponent(m_CameraMapSet[ShootType::Debug]);
+
+	if (!m_CameraMapSet[ShootType::Debug]->InitializeRef()) return false;
+
+	return true;
 }
 
 bool CameraManager::InitializeSynchronization()
 {
-	return false;
+	return true;
 }
 
 bool CameraManager::PostInitialize()
 {
-	return false;
+	return true;
 }
 
 void CameraManager::Execute()
 {
-	m_CameraMapSet[m_CurrentCameraType].get()->Execute();
+	m_CameraMapSet[m_CurrentCameraType]->Execute();
 }
 
 bool CameraManager::Shutdown()
@@ -70,31 +74,31 @@ bool CameraManager::Shutdown()
 	return true;
 }
 
-void CameraManager::SetCameraInfo(Transform PlayerPos)
+void CameraManager::SetCameraInfo(Transform& PlayerPos)
 {
-	m_CameraMapSet[m_CurrentCameraType].get()->SetCameraInfo(PlayerPos);
+	m_CameraMapSet[m_CurrentCameraType]->SetCameraInfo(PlayerPos);
 }
 
-void CameraManager::SetCamera(ShootType type, Transform transform)
+void CameraManager::SetCamera(ShootType type, const Transform& transform)
 {
 	if (m_CurrentCameraType == type) return;
 
-	m_CameraMapSet[m_CurrentCameraType].get()->CameraEnd();
+	m_CameraMapSet[m_CurrentCameraType]->CameraEnd();
 	m_CurrentCameraType = type;
-	m_CameraMapSet[m_CurrentCameraType].get()->CameraStart(transform);
+	m_CameraMapSet[m_CurrentCameraType]->CameraStart(transform);
 }
 
 XMMATRIX CameraManager::GetViewMatrix()
 {
-	return  m_CameraMapSet[m_CurrentCameraType].get()->GetViewMatrix();
+	return  m_CameraMapSet[m_CurrentCameraType]->GetViewMatrix();
 }
 
 XMVECTOR CameraManager::GetLookAt()
 {
-	return m_CameraMapSet[m_CurrentCameraType].get()->GetLookAt();
+	return m_CameraMapSet[m_CurrentCameraType]->GetLookAt();
 }
 
 CameraObject* CameraManager::GetCamera()
 {
-	return m_CameraMapSet[m_CurrentCameraType].get();
+	return m_CameraMapSet[m_CurrentCameraType];
 }

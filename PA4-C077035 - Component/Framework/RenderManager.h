@@ -31,7 +31,7 @@ public:
 
     void UnregisterRenderer(Renderer* renderer);
 
-    bool RenderAll(LightShaderClass* LightShader, D3DClass* D3D, CameraObject* mainCamera, LightManager* lightManager);
+    bool RenderAll(LightShaderClass* LightShader, D3DClass* D3D, CameraObject* mainCamera, LightManager* lightManager, XMFLOAT4*, XMFLOAT4*);
 };
 
 #endif

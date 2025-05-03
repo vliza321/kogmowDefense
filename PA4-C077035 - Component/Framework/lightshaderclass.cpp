@@ -56,7 +56,7 @@ bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 	ID3D11ShaderResourceView* texture, 
 	XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower,
-	XMFLOAT4 diffuseColors[], XMFLOAT4 lightPosition[])
+	XMFLOAT4* diffuseColors, XMFLOAT4* lightPosition)
 {
 	bool result;
 
@@ -409,7 +409,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
 	ID3D11ShaderResourceView* texture, 
 	XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower,
-	XMFLOAT4 diffuseColors[], XMFLOAT4 lightPositions[])
+	XMFLOAT4* diffuseColors, XMFLOAT4* lightPositions)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
