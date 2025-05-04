@@ -18,10 +18,9 @@ public:
 	virtual bool PostInitialize() override;
 
 public:
-	virtual void SetScene(int, Transform) = 0;
-	virtual void SetCameraInfo(Transform) = 0;
+	virtual void SetCameraInfo() = 0;
 
-	virtual void CameraStart(Transform) = 0;
+	virtual void CameraStart() = 0;
 	virtual void CameraEnd() = 0;
 
 	XMMATRIX GetViewMatrix();

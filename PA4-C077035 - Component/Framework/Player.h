@@ -34,6 +34,8 @@ private:
 	int m_moveBackForward;
 	float speed;
 	std::weak_ptr<CameraManager> cameraManager;
+
+	ShootType m_currentShootType;
 	/*
 	virtual void SetRollPitchYaw(float, float, float);
 	
@@ -47,18 +49,20 @@ private:
 	bool GetCanFire();
 	*/
 private:
-	/*
-	void ReboundCul();
 	void ChangePovCul();
-	void AutomaticFeeding();*/
+	void SetPov(ShootType,Transform&);
+	void SetArtilleryMod(Transform&);
+	//void AutomaticFeeding();
 private:
-	/*
-	ShootType m_CurrentShootType;
-	float ArtilleryTemt;
-
+	float const POVMAXTIMER = 300.0f;
+	float const ARTILLERYTIMER = 5000.0f;
+private:
 	float PoVTimer;
 	bool canChangePov;
 
+	float ArtilleryTemt;
+
+	/*
 	float ReboundTimer;
 	bool isRebound;
 	int ReBoundConst;

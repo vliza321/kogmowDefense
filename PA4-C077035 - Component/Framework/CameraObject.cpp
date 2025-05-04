@@ -49,7 +49,7 @@ bool CameraObject::PostInitialize()
 	return false;
 }
 
-void CameraObject::SetCameraInfo(Transform transform)
+void CameraObject::SetCameraInfo()
 {
 
 }

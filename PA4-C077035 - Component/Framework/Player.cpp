@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "algorithm"
-
+#include "ObjectClass.h"
 
 Player::Player()
 	: Component()
@@ -18,6 +18,9 @@ bool Player::InitializeSet()
 	m_moveLeftRight = 0;
 	m_moveBackForward = 0;
 	speed = 0.0033f;
+	PoVTimer = POVMAXTIMER;
+	canChangePov = true;
+	m_currentShootType = ShootType::TPC;
 	return true;
 }
 
@@ -37,6 +40,7 @@ bool Player::InitializeRef()
 		this->gameObject->AddComponent(newTransform);
 		transform = newTransform;
 	}
+	cameraManager = gameObject->Root().Find("CameraManager")->GetComponent<CameraManager>();
 	return true;
 }
 
@@ -50,11 +54,11 @@ bool Player::PostInitialize()
 	return true;
 }
 
-
-
 void Player::FixedExecute()
 {
-	if (!m_moveBackForward && !m_moveLeftRight) return;
+	ChangePovCul();
+
+	if (!m_moveBackForward && !m_moveLeftRight || (m_currentShootType == ShootType::Artillery)) return;
 
 	auto tf = transform.lock();
 
@@ -115,12 +119,49 @@ void Player::Execute()
 		tf->eulerRotation.y += input.GetCurrMouseState().lX * 0.001f;
 		tf->eulerRotation.x = max(-XM_PI * 0.4999f, min(XM_PI * 0.2999f, tf->eulerRotation.x));
 	}
-
-	if (InputClass::GetInstance().IsKey(DIK_B))
+	
+	if (canChangePov)
 	{
-		auto cm = cameraManager.lock();
-		auto tf = transform.lock();
-		cm->SetCamera(ShootType::Debug, *tf);
+		if (InputClass::GetInstance().IsKeyDown(DIK_B))
+		{
+			SetPov(ShootType::Debug, *tf);
+		}
+		if (InputClass::GetInstance().IsKeyDown(DIK_V))
+		{
+			if (m_currentShootType != ShootType::TPC)
+			{
+				SetPov(ShootType::TPC, *tf);
+			}
+			else
+			{
+				SetPov(ShootType::FPC, *tf);
+			}
+		}
+
+		if (InputClass::GetInstance().GetCurrMouseState().rgbButtons[1])//마우스 우클릭
+		{
+			if (m_currentShootType != ShootType::Scope)
+			{
+				SetPov(ShootType::Scope, *tf);
+			}
+			else
+			{
+				SetPov(ShootType::TPC, *tf);
+			}
+		}
+		if (InputClass::GetInstance().IsKey(DIK_Q))
+		{
+			if (m_currentShootType != ShootType::Artillery)
+			{
+				SetPov(ShootType::Artillery, *tf);
+				SetArtilleryMod(*tf);
+			}
+			else
+			{
+				SetPov(ShootType::TPC, *tf);
+				SetArtilleryMod(*tf);
+			}
+		}
 	}
 }
 
@@ -135,5 +176,33 @@ void Player::PostExecute()
 bool Player::Shutdown()
 {
 	return true;
+}
+
+void Player::ChangePovCul()
+{
+	if (!canChangePov) PoVTimer -= GetDeltaTime();
+	(PoVTimer < 0) ? canChangePov = true : canChangePov = false;
+}
+
+void Player::SetPov(ShootType shootType, Transform& transform)
+{
+	auto cm = cameraManager.lock();
+	cm->SetCamera(shootType, transform);
+	m_currentShootType = shootType;
+	this->canChangePov = false;
+	this->PoVTimer = POVMAXTIMER;
+}
+
+void Player::SetArtilleryMod(Transform& transform)
+{
+	if (m_currentShootType == ShootType::Artillery)
+	{
+		ArtilleryTemt = transform.eulerRotation.x;
+		transform.eulerRotation.x = -XM_PI * 0.299f;
+	}
+	else
+	{
+		transform.eulerRotation.x = ArtilleryTemt;
+	}
 }
 

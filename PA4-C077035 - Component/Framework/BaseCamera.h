@@ -16,10 +16,9 @@ public:
 	virtual void Execute() override;
 
 public:
-	virtual void SetScene(int, Transform) override;
-	virtual void SetCameraInfo(Transform) override;
+	virtual void SetCameraInfo() override;
 
-	virtual void CameraStart(Transform) override;
+	virtual void CameraStart() override;
 	virtual void CameraEnd() override;
 };
 

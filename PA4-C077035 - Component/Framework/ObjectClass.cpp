@@ -13,11 +13,11 @@ ObjectClass::~ObjectClass()
 
 void ObjectClass::CreateBaseObject()
 {
-	GameObject* MainCamera = new GameObject(true, Tag::Camera, "MainCamera");
-	MainCamera->AddComponent<Transform>(XMFLOAT3(0,10,-10),XMFLOAT3(0,0,0), XMFLOAT3(0,0,0),XMFLOAT3(0,180 * 0.0174533f,0));
-	MainCamera->AddComponent<CameraManager>();
-	m_cameraManager = MainCamera->GetComponent<CameraManager>().get();
-	RegistGameObject(MainCamera);
+	GameObject* CameraManagerObject = new GameObject(true, Tag::Camera, "CameraManager");
+	CameraManagerObject->AddComponent<Transform>(XMFLOAT3(0,10,-10),XMFLOAT3(0,0,0), XMFLOAT3(0,0,0),XMFLOAT3(0,180 * 0.0174533f,0));
+	CameraManagerObject->AddComponent<CameraManager>();
+	m_cameraManager = CameraManagerObject->GetComponent<CameraManager>().get();
+	RegistGameObject(CameraManagerObject);
 
 	GameObject* LightSet = new GameObject(true, Tag::Default, "LightManager");
 	LightSet->AddComponent<LightManager>();

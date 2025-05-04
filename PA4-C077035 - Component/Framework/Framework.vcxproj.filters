@@ -146,6 +146,18 @@
     <ClCompile Include="CameraManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ThirdPersonCamera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FirstPersonCamera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ScopeCamera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ArtilleryCamera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="textureshaderclass.h">
@@ -284,6 +296,10 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="ThirdPersonCamera.h" />
+    <ClInclude Include="FirstPersonCamera.h" />
+    <ClInclude Include="ScopeCamera.h" />
+    <ClInclude Include="ArtilleryCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\Cannon.dds">

@@ -10,15 +10,13 @@ public:
 	FirstPersonCamera();
 	~FirstPersonCamera();
 
-	void SetScene(int, Transform) override;
-	void SetCameraInfo(Transform) override;
+	virtual bool InitializeRef() override;
+	virtual bool PostInitialize() override;
+	virtual void Execute() override;
 
-	bool Initialize() override;
-	void Execute() override;
-	bool Shutdown() override;
+public:
+	virtual void SetCameraInfo() override;
 
-	void CameraStart(Transform) override;
-	void CameraEnd() override;
-
-private:
+	virtual void CameraStart() override;
+	virtual void CameraEnd() override;
 };

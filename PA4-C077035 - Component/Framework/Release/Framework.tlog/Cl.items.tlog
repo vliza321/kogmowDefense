@@ -1,3 +1,4 @@
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\ArtilleryCamera.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\ArtilleryCamera.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\BaseCamera.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\BaseCamera.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\BoxCollider.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\BoxCollider.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\CameraManager.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\CameraManager.obj
@@ -9,6 +10,7 @@ D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Collider.cpp
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\ColliderType.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\ColliderType.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Collision.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\Collision.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Component.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\Component.obj
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\FirstPersonCamera.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\FirstPersonCamera.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\GUIRenderer.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\GUIRenderer.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\GUIRenderManager.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\GUIRenderManager.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\ImageUI.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\ImageUI.obj
@@ -34,10 +36,12 @@ D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\RectTransfor
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\RenderComponent.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\RenderComponent.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Renderer.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\Renderer.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\RenderManager.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\RenderManager.obj
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\ScopeCamera.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\ScopeCamera.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\SphereCollider.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\SphereCollider.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\systemclass.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\systemclass.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\textureclass.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\textureclass.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\textureshaderclass.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\textureshaderclass.obj
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\ThirdPersonCamera.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\ThirdPersonCamera.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\timerclass.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\timerclass.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Transform.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\Transform.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\MoveEvent.h;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\MoveEvent.obj

@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArtilleryCamera.cpp" />
     <ClCompile Include="BaseCamera.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="CameraManager.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="ColliderType.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="FirstPersonCamera.cpp" />
     <ClCompile Include="GUIRenderer.cpp" />
     <ClCompile Include="GUIRenderManager.cpp" />
     <ClCompile Include="ImageUI.cpp" />
@@ -181,16 +183,19 @@
     <ClCompile Include="RenderComponent.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderManager.cpp" />
+    <ClCompile Include="ScopeCamera.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textureclass.cpp" />
     <ClCompile Include="textureshaderclass.cpp" />
+    <ClCompile Include="ThirdPersonCamera.cpp" />
     <ClCompile Include="timerclass.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="MoveEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlignedAllocationPolicy.h" />
+    <ClInclude Include="ArtilleryCamera.h" />
     <ClInclude Include="BaseCamera.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="CameraManager.h" />
@@ -201,6 +206,7 @@
     <ClInclude Include="ColliderType.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="FirstPersonCamera.h" />
     <ClInclude Include="GUIRenderer.h" />
     <ClInclude Include="GUIRenderManager.h" />
     <ClInclude Include="Player.h" />
@@ -209,6 +215,7 @@
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderManager.h" />
+    <ClInclude Include="ScopeCamera.h" />
     <ClInclude Include="ShootType.h" />
     <ClInclude Include="Canvas.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -236,6 +243,7 @@
     <ClInclude Include="textclass.h" />
     <ClInclude Include="textureclass.h" />
     <ClInclude Include="textureshaderclass.h" />
+    <ClInclude Include="ThirdPersonCamera.h" />
     <ClInclude Include="timerclass.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>

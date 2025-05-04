@@ -87,6 +87,10 @@ public:
 		}
 		return false;
 	}
+	ObjectClass& Root() const
+	{
+		return *root;
+	}
 	void Destroy();
 	void Destory(shared_ptr<Component>);
 	void SetActive(bool active);

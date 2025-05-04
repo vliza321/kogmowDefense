@@ -16,11 +16,19 @@ bool CameraManager::InitializeSet()
 	/*
 	m_CameraMapSet[ShootType::Title] = make_unique<TitleCamera>();
 	m_CameraMapSet[ShootType::FPC] = make_unique<FirstPersonCamera>();
-	m_CameraMapSet[ShootType::TPC] = make_unique<ThirdPersonCamera>();
-	m_CameraMapSet[ShootType::Scope] = make_unique<ScopeCamera>();
 	m_CameraMapSet[ShootType::Artillery] = make_unique<ArtilleryCamera>();
 	*/
 	m_CameraMapSet[ShootType::Debug] = new BaseCamera();
+	m_CameraMapSet[ShootType::TPC] = new ThirdPersonCamera();
+	m_CameraMapSet[ShootType::FPC] = new FirstPersonCamera();
+	m_CameraMapSet[ShootType::Scope] = new ScopeCamera();
+	m_CameraMapSet[ShootType::Artillery] = new ArtilleryCamera();
+
+	m_CameraMapSet[ShootType::Debug]->gameObject = this->gameObject;
+	m_CameraMapSet[ShootType::TPC]->gameObject = this->gameObject;
+	m_CameraMapSet[ShootType::FPC]->gameObject = this->gameObject;
+	m_CameraMapSet[ShootType::Scope]->gameObject = this->gameObject;
+	m_CameraMapSet[ShootType::Artillery]->gameObject = this->gameObject;
 	return true;
 }
 
@@ -28,20 +36,24 @@ bool CameraManager::Initialize()
 {
 	/*
 	if (!m_CameraMapSet[ShootType::Title]->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::FPC]->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::TPC]->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::Scope]->Initialize()) return false;
 	if (!m_CameraMapSet[ShootType::Artillery]->Initialize()) return false;
 	*/
 	if (!m_CameraMapSet[ShootType::Debug]->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::TPC]->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::FPC]->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::Scope]->Initialize()) return false;
+	if (!m_CameraMapSet[ShootType::Artillery]->Initialize()) return false;
 	return true;
 }
 
 bool CameraManager::InitializeRef()
 {
-	this->gameObject->AddComponent(m_CameraMapSet[ShootType::Debug]);
-
 	if (!m_CameraMapSet[ShootType::Debug]->InitializeRef()) return false;
+	if (!m_CameraMapSet[ShootType::TPC]->InitializeRef()) return false;
+	if (!m_CameraMapSet[ShootType::FPC]->InitializeRef()) return false;
+	if (!m_CameraMapSet[ShootType::Scope]->InitializeRef()) return false;
+	if (!m_CameraMapSet[ShootType::Artillery]->InitializeRef()) return false;
+	if (!m_CameraMapSet[ShootType::Artillery]->InitializeRef()) return false;
 
 	return true;
 }
@@ -65,18 +77,19 @@ bool CameraManager::Shutdown()
 {
 	/*
 	m_CameraMapSet[ShootType::Title]->Shutdown();
-	m_CameraMapSet[ShootType::FPC]->Shutdown();
 	m_CameraMapSet[ShootType::TPC]->Shutdown();
+	*/
+	m_CameraMapSet[ShootType::TPC]->Shutdown();
+	m_CameraMapSet[ShootType::FPC]->Shutdown();
 	m_CameraMapSet[ShootType::Scope]->Shutdown();
 	m_CameraMapSet[ShootType::Artillery]->Shutdown();
-	*/
 	m_CameraMapSet[ShootType::Debug]->Shutdown();
 	return true;
 }
 
 void CameraManager::SetCameraInfo(Transform& PlayerPos)
 {
-	m_CameraMapSet[m_CurrentCameraType]->SetCameraInfo(PlayerPos);
+	m_CameraMapSet[m_CurrentCameraType]->SetCameraInfo();
 }
 
 void CameraManager::SetCamera(ShootType type, const Transform& transform)
@@ -85,7 +98,7 @@ void CameraManager::SetCamera(ShootType type, const Transform& transform)
 
 	m_CameraMapSet[m_CurrentCameraType]->CameraEnd();
 	m_CurrentCameraType = type;
-	m_CameraMapSet[m_CurrentCameraType]->CameraStart(transform);
+	m_CameraMapSet[m_CurrentCameraType]->CameraStart();
 }
 
 XMMATRIX CameraManager::GetViewMatrix()

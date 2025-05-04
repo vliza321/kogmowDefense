@@ -45,7 +45,6 @@ bool BaseCamera::PostInitialize()
 void BaseCamera::Execute()
 {
 	auto l_transform = transform.lock();
-	//l_transform->ApplyTranslate(XMFLOAT3(0, 0.1f, 0));
 	if (!l_transform) {
 		return ;
 	}
@@ -54,15 +53,11 @@ void BaseCamera::Execute()
 	m_viewMatrix = XMMatrixLookAtLH(position, lookAt, DefaultUp);
 }
 
-void BaseCamera::SetScene(int, Transform)
+void BaseCamera::SetCameraInfo()
 {
 }
 
-void BaseCamera::SetCameraInfo(Transform)
-{
-}
-
-void BaseCamera::CameraStart(Transform)
+void BaseCamera::CameraStart()
 {
 }
 
