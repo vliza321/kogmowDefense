@@ -51,7 +51,7 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 			XMVECTOR dirNorm = XMVector3Normalize(dir);
 
 			// 최종 이동 벡터
-			XMVECTOR moveVec = dirNorm * moveDist;
+			XMVECTOR moveVec = -1 * dirNorm *  moveDist;
 			XMStoreFloat3(&moveEvent->MoveVector, moveVec);
 			return other;
 		}
@@ -100,11 +100,12 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 		//가장 가까운 점과 구의 중점 과의 벡터
 		XMVECTOR v = XMVectorSubtract(sphereCenter, closest);
 		//위의 벡터의 크기의 제곱 값
-		dist = XMVectorGetX(XMVector3LengthSq(v));
+		dist = XMVectorGetX(XMVector3Length(v));
 
-		if (dist <= (moveEventCollider->radius * moveEventCollider->radius))
+		if (dist <= (moveEventCollider->radius))
 		{
-			XMStoreFloat3(&moveEvent->MoveVector, v);
+			XMVECTOR vNor = XMVector3Normalize(v);
+			XMStoreFloat3(&moveEvent->MoveVector, vNor * (moveEventCollider->radius - dist));
 			return other;
 		}
 	}
@@ -309,63 +310,54 @@ void Collision::ProcessCollision()
 	while (!m_eventQueue.empty())
 	{
 		//이벤트를 뽑아옴
-		MoveEvent& event = *m_eventQueue.front();
+		MoveEvent* event = m_eventQueue.front();
 		m_eventQueue.pop();
 
 		//이벤트가 꺼져있는 오브젝트라면 패스
-		if (!event.transform->gameObject->active) continue;
+		if (!event->transform->gameObject->active) continue;
 
 		//이벤트가 발생한 대상의 콜라이더를 검사: RayCollider가 있는지 검사
-		if (const auto& Ray = event.transform->gameObject->GetComponent<RayCollider>())
+		if (const auto& Ray = event->transform->gameObject->GetComponent<RayCollider>())
 		{
 			//RayCollider가 있다면
 			if (Ray)
 			{
 				//RayCollision의 검사를 진행
-				auto other = CheckCollision(Ray.get(), &event);
-				//충돌한 대상이 없다면
-				if (other == nullptr)
-				{
-					event.transform->ApplyTranslate(event.MoveVector);
-				}
+				auto other = CheckCollision(Ray.get(), event);
 				//충돌한 대상이 있다면
-				else
+				if (other != nullptr)
 				{
-					//충돌한 대상과 충돌당한 대상을 CollidedCollider에 추가
 					Ray->trackingCollider = other;
 					other->trackingCollider = &(*Ray);
 					CollidedPair.emplace_back(&(*Ray), &(*other));
 				}
+				event->transform->ApplyTranslate(event->MoveVector);
+				continue;
 			}
-			continue;
 		}
 		//이벤트가 발생한 대상의 콜라이더를 검사: SphereCollider가 있는지 검사
-		if (const auto& Sphere = event.transform->gameObject->GetComponent<SphereCollider>())
+		if (const auto& Sphere = event->transform->gameObject->GetComponent<SphereCollider>())
 		{
 			//SphereCollider가 있다면
 			if (Sphere)
 			{
 				//SphereCollison의 검사를 진행
-				auto other = CheckCollision(Sphere.get(), &event);
-				//충돌한 대상이 없다면
-				if (other == nullptr)
-				{
-					event.transform->ApplyTranslate(event.MoveVector);
-				}
+				auto other = CheckCollision(Sphere.get(), event);
 				//충돌한 대상이 있다면
-				else
+				if (other != nullptr)
 				{
 					//충돌한 대상과 충돌당한 대상을 CollidedCollider에 추가
 					Sphere->trackingCollider = other;
 					other->trackingCollider = &(*Sphere);
 					CollidedPair.emplace_back(&(*Sphere), &(*other));
 				}
+				event->transform->ApplyTranslate(event->MoveVector);
+				continue;
 			}
-			continue;
 		}
 
 		//콜라이더가 없는 이벤트는 이동 허용
-		event.transform->ApplyTranslate(event.MoveVector);
+		event->transform->ApplyTranslate(event->MoveVector);
 	}
 
 	//콜라이더의 오브젝트의 이동 이벤트를 허용하는 과정

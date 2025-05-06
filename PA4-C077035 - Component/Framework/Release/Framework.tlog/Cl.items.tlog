@@ -1,6 +1,8 @@
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\ArtilleryCamera.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\ArtilleryCamera.obj
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\BaseBullet.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\BaseBullet.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\BaseCamera.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\BaseCamera.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\BoxCollider.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\BoxCollider.obj
+D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\BulletManager.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\BulletManager.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\CameraManager.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\CameraManager.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\CameraObject.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\CameraObject.obj
 D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\CanvasObject.cpp;D:\_1\KogmowDefense\kogmowDefense\PA4-C077035 - Component\Framework\Release\CanvasObject.obj

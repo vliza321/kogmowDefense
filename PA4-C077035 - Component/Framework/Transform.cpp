@@ -31,9 +31,9 @@ Transform::~Transform()
 void Transform::Translate(XMFLOAT3 t)
 {
 	moveVector = t;
-	MoveEvent moveEvent;
-	moveEvent.transform = this;
-	moveEvent.MoveVector = t;
+	MoveEvent* moveEvent = new MoveEvent;
+	moveEvent->transform = this;
+	moveEvent->MoveVector = t;
 	Collision::GetInstance().AddEvent(moveEvent);
 }
 

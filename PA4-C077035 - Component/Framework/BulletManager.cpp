@@ -41,6 +41,7 @@ bool BulletManager::Initialize()
 	m_ReloadTimer = 0;
 	m_DoReload = false;
 
+	/*
 	//normal Bullet »ý¼º
 	m_BulletMapSet[ShootType::FPC].get()->push_back(
 		new Bullet(
@@ -124,7 +125,8 @@ bool BulletManager::Initialize()
 	for (auto& ab : *(m_BulletMapSet[ShootType::Artillery].get()))
 	{
 		ab->Initialize();
-	}
+	}*/
+
 	return result;
 }
 

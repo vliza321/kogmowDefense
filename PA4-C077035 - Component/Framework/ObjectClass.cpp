@@ -182,14 +182,14 @@ void ObjectClass::CreateGameObject()
 	player->AddComponent<Transform>(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.04f, 0.04f, 0.04f), XMFLOAT3(0, 0, 0));
 	player->AddComponent<SphereCollider>(0.3f, true);
 	player->AddComponent<Player>();
-	player->AddComponent<BulletManager>();
+	//player->AddComponent<BulletManager>();
 	RegistGameObject(player);
 
 	GameObject* test = new GameObject(true, Tag::Default, "Cube");
 	test->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
 	test->AddComponent<Transform>(XMFLOAT3(3, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-	//test->AddComponent<SphereCollider>(0.5f, true);
-	test->AddComponent<BoxCollider>(true,XMFLOAT3(3,0,0),XMFLOAT3(0,0,0), XMFLOAT3(0.5f,0.5f,0.5f));
+	test->AddComponent<SphereCollider>(0.5f, true);
+	//test->AddComponent<BoxCollider>(true,XMFLOAT3(3,0,0),XMFLOAT3(0,0,0), XMFLOAT3(0.5f,0.5f,0.5f));
 	RegistGameObject(test);
 
 }
