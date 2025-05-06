@@ -26,7 +26,7 @@ public:
 	virtual void OnCollisionExit(Collider* other);
 	virtual void OnTriggerEnter(Collider* other);
 	virtual void OnTriggerStay(Collider* other);
-	virtual void OnTriggerExit(Collider* other); 
+	virtual void OnTriggerExit(Collider* other);
 	
 	virtual void FixedExecute();
 	virtual void Execute();
@@ -49,5 +49,4 @@ protected:
 		return InputClass::GetInstance();
 	}
 };
-
 #endif

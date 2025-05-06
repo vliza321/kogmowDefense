@@ -18,29 +18,37 @@ public:
 	BulletManager();
 	~BulletManager();
 
-	bool Initialize(ID3D11Device*);
-	void FixedExecute(XMFLOAT3);
-	void Execute(XMFLOAT3);
-	void LateExecute(XMFLOAT3);
+	virtual bool InitializeSet() override;
+	virtual bool Initialize() override;
+	virtual bool InitializeRef() override;
+	virtual bool InitializeSynchronization() override;
+	virtual bool PostInitialize() override;
 
-	bool Shutdown();
+	virtual void FixedExecute() override;
+	virtual void Execute() override;
+	virtual void LateExecute() override;
+
+	virtual bool Shutdown() override;
+
+public:
 	bool ShootBullet(XMVECTOR, XMFLOAT3, XMFLOAT3, XMFLOAT3 );
 
-	vector<BaseBullet*>& GetAllActivatedBullets();
-	void SetShootType(ShootType);
-	void StartReload();
+private:
+	ShootType* m_CurrentShootType;
 private:
 	map<ShootType, shared_ptr<vector<BaseBullet*>>>m_BulletMapSet;
 	map<ShootType, shared_ptr<vector<BaseBullet*>>>m_ReleaseBullet;
 
 	vector<BaseBullet*> m_AllActivatedBullets;
 
-	bool InitializeBulletMap();
-	bool InitializeAllBullet(ID3D11Device*);
 	void ReloadBullet();
 	void ReleaseBullet(BaseBullet*);
+	
+	vector<BaseBullet*>& GetAllActivatedBullets();
+	void SetShootType(ShootType);
+	void StartReload();
 
-	ShootType m_CurrentShootType;
+private:
 	bool m_DoReload;
 	float m_ReloadTimer;
 };

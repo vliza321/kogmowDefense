@@ -13,8 +13,8 @@ public:
 	BaseBullet(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale, const WCHAR*, const WCHAR*, int);
 	~BaseBullet();
 
-	virtual bool Initialize(ID3D11Device*) = 0;
-	virtual void Execute(XMFLOAT3);
+	virtual bool Initialize() = 0;
+	virtual void Execute();
 	virtual bool Shutdown() = 0;
 
 	virtual void BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 PlayerPosition, XMFLOAT3 PlayerEulerRotation) = 0;

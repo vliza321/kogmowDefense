@@ -143,8 +143,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArtilleryCamera.cpp" />
+    <ClCompile Include="BaseBullet.cpp" />
     <ClCompile Include="BaseCamera.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="BulletManager.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="CameraObject.cpp" />
     <ClCompile Include="Canvas.cpp">
@@ -196,8 +198,10 @@
   <ItemGroup>
     <ClInclude Include="AlignedAllocationPolicy.h" />
     <ClInclude Include="ArtilleryCamera.h" />
+    <ClInclude Include="BaseBullet.h" />
     <ClInclude Include="BaseCamera.h" />
     <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="BulletManager.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="CameraObject.h" />
     <ClInclude Include="CanvasRenderer.h" />

@@ -28,6 +28,8 @@
 #include "CameraManager.h"
 #include "Player.h"
 
+#include "BulletManager.h"
+
 class ObjectClass
 {
 public:

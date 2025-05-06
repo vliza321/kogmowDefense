@@ -16,9 +16,9 @@ Collision::~Collision()
 	m_boxCollider.clear();
 }
 
-Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent moveEvent)
+Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent* moveEvent)
 {	
-	auto MoveEventTransform = moveEvent.transform;
+	auto MoveEventTransform = moveEvent->transform;
 	if (!MoveEventTransform) return nullptr;
 
 	for (auto& other : m_sphereCollider)
@@ -28,16 +28,32 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
 		if (!targetTransform) continue;
 
-		if (other->type == ColliderType::Sphere)
+		float distance =
+			(targetTransform->position.x - MoveEventTransform->position.x - moveEvent->MoveVector.x) * (targetTransform->position.x - MoveEventTransform->position.x - moveEvent->MoveVector.x)
+			+ (targetTransform->position.y - MoveEventTransform->position.y - moveEvent->MoveVector.y) * (targetTransform->position.y - MoveEventTransform->position.y - moveEvent->MoveVector.y)
+			+ (targetTransform->position.z - MoveEventTransform->position.z - moveEvent->MoveVector.z) * (targetTransform->position.z - MoveEventTransform->position.z - moveEvent->MoveVector.z);
+
+		if (distance < moveEventCollider->radius * moveEventCollider->radius + other->radius * other->radius)
 		{
-			float distance =
-				(targetTransform->position.x - MoveEventTransform->position.x - moveEvent.MoveVector.x) * (targetTransform->position.x - MoveEventTransform->position.x - moveEvent.MoveVector.x)
-				+ (targetTransform->position.y - MoveEventTransform->position.y - moveEvent.MoveVector.y) * (targetTransform->position.y - MoveEventTransform->position.y - moveEvent.MoveVector.y)
-				+ (targetTransform->position.z - MoveEventTransform->position.z - moveEvent.MoveVector.z) * (targetTransform->position.z - MoveEventTransform->position.z - moveEvent.MoveVector.z);
-			if (distance < moveEventCollider->radius * moveEventCollider->radius + other->radius * other->radius)
-			{
-				return other;
-			}
+			XMVECTOR posA = XMLoadFloat3(&MoveEventTransform->position);
+			XMVECTOR posB = XMLoadFloat3(&targetTransform->position);
+
+			// 방향 벡터
+			XMVECTOR dir = posB - posA;
+
+			// 실제 거리
+			float dist = XMVectorGetX(XMVector3Length(dir));
+
+			// 이동해야 할 거리 (충돌 직전까지)
+			float moveDist = max(0.0f, dist - other->radius);
+
+			// 방향 정규화
+			XMVECTOR dirNorm = XMVector3Normalize(dir);
+
+			// 최종 이동 벡터
+			XMVECTOR moveVec = dirNorm * moveDist;
+			XMStoreFloat3(&moveEvent->MoveVector, moveVec);
+			return other;
 		}
 	}
 	for (auto& other : m_boxCollider)
@@ -46,7 +62,7 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 		if (!targetTransform) continue;
 
 		//이벤트가 발생한 오브젝트의 transform 중 position 정보 받아오기
-		XMVECTOR sphereCenter = XMLoadFloat3(&MoveEventTransform->position) + XMLoadFloat3(&moveEvent.MoveVector);
+		XMVECTOR sphereCenter = XMLoadFloat3(&MoveEventTransform->position) + XMLoadFloat3(&moveEvent->MoveVector);
 		//박스 콜라이더의 transform 중 position 정보 받아오기
 		XMVECTOR boxCenter = XMLoadFloat3(&other->Box.pos);
 		//두 중점을 잇는 벡터
@@ -86,14 +102,18 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 		//위의 벡터의 크기의 제곱 값
 		dist = XMVectorGetX(XMVector3LengthSq(v));
 
-		if(dist <= (moveEventCollider->radius * moveEventCollider->radius)) return other;
+		if (dist <= (moveEventCollider->radius * moveEventCollider->radius))
+		{
+			XMStoreFloat3(&moveEvent->MoveVector, v);
+			return other;
+		}
 	}
 	return nullptr;
 }
 
-Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent moveEvent)
+Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* moveEvent)
 {
-	auto MoveEventTransform = moveEvent.transform;
+	auto MoveEventTransform = moveEvent->transform;
 	if (!MoveEventTransform) return nullptr;
 
 	for (auto& other : m_sphereCollider)
@@ -102,9 +122,9 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent mo
 		if (!targetTransform) continue;
 
 		// DirectXMath 벡터 변환
-		XMVECTOR origin = XMLoadFloat3(&MoveEventTransform->position);  // Ray 시작점
-		XMVECTOR dir = XMLoadFloat3(&MoveEventTransform->moveVector);  // Ray 방향 (정규화)
-		XMVECTOR sphereCenter = XMLoadFloat3(&targetTransform->position);  // Sphere 중심
+		XMVECTOR origin = XMLoadFloat3(&MoveEventTransform->position);// Ray 시작점
+		XMVECTOR dir = XMVector3Normalize(XMLoadFloat3(&MoveEventTransform->moveVector));// Ray 방향 (정규화)
+		XMVECTOR sphereCenter = XMLoadFloat3(&targetTransform->position);// Sphere 중심
 
 		// Ray 시작점에서 Sphere 중심까지의 벡터
 		XMVECTOR length = XMVectorSubtract(sphereCenter, origin);
@@ -117,10 +137,17 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent mo
 
 		// 중심에서 Ray까지의 거리 d^2 = |L|^2 - t_ca^2
 		float d2 = XMVectorGetX(XMVector3Dot(length, length)) - (t_ca * t_ca);
+		// Sphere의 반지금 제곱
 		float r2 = other->radius * other->radius;
 
 		// 최근접 거리가 반지름보다 크면 충돌 없음
 		if (d2 > r2) continue;
+		
+		float thc = sqrtf(r2 - d2);      // 접점까지의 거리
+		float t = t_ca - thc;            // 충돌 지점까지 거리
+
+		XMVECTOR moveVec = dir * t;
+		XMStoreFloat3(&moveEvent->MoveVector, moveVec);
 
 		return other;
 	}
@@ -218,6 +245,8 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent mo
 
 		if (!hit) continue;
 
+		XMStoreFloat3(&moveEvent->MoveVector, dir * tMin);
+
 		return other;
 	}
 	return nullptr;
@@ -268,7 +297,7 @@ bool Collision::RemoveCollider(Collider* colliderObject)
 	return true;
 }
 
-void Collision::AddEvent(MoveEvent event)
+void Collision::AddEvent(MoveEvent* event)
 {
 	m_eventQueue.push(event);
 }
@@ -280,7 +309,7 @@ void Collision::ProcessCollision()
 	while (!m_eventQueue.empty())
 	{
 		//이벤트를 뽑아옴
-		MoveEvent event = m_eventQueue.front();
+		MoveEvent& event = *m_eventQueue.front();
 		m_eventQueue.pop();
 
 		//이벤트가 꺼져있는 오브젝트라면 패스
@@ -293,7 +322,7 @@ void Collision::ProcessCollision()
 			if (Ray)
 			{
 				//RayCollision의 검사를 진행
-				auto other = CheckCollision(Ray.get(), event);
+				auto other = CheckCollision(Ray.get(), &event);
 				//충돌한 대상이 없다면
 				if (other == nullptr)
 				{
@@ -317,7 +346,7 @@ void Collision::ProcessCollision()
 			if (Sphere)
 			{
 				//SphereCollison의 검사를 진행
-				auto other = CheckCollision(Sphere.get(), event);
+				auto other = CheckCollision(Sphere.get(), &event);
 				//충돌한 대상이 없다면
 				if (other == nullptr)
 				{

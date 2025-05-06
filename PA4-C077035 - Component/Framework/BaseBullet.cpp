@@ -1,16 +1,16 @@
 #include "BaseBullet.h"
 
 BaseBullet::BaseBullet()
-	:GameObject()
+	:Component()
 {
 
 }
 
 BaseBullet::BaseBullet(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale,
 	const WCHAR* modelFilename, const WCHAR* textureFilename, int instanceCounter)
-	: GameObject(position, rotation, scale, modelFilename, textureFilename, instanceCounter)
-
+	: Component()
 {
+
 }
 
 BaseBullet::~BaseBullet()
@@ -18,7 +18,7 @@ BaseBullet::~BaseBullet()
 
 }
 
-void BaseBullet::Execute(XMFLOAT3 PlayerPos)
+void BaseBullet::Execute()
 {
 
 }

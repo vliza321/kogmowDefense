@@ -206,3 +206,8 @@ void Player::SetArtilleryMod(Transform& transform)
 	}
 }
 
+ShootType& Player::GetShootType()
+{
+	return m_currentShootType;
+}
+

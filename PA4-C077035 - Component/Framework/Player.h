@@ -69,6 +69,9 @@ private:
 
 	float FeedingTimer;
 	bool canFire;*/
+
+public:
+	ShootType& GetShootType();
 };
 
 

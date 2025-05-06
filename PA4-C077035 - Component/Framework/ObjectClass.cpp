@@ -182,6 +182,7 @@ void ObjectClass::CreateGameObject()
 	player->AddComponent<Transform>(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.04f, 0.04f, 0.04f), XMFLOAT3(0, 0, 0));
 	player->AddComponent<SphereCollider>(0.3f, true);
 	player->AddComponent<Player>();
+	player->AddComponent<BulletManager>();
 	RegistGameObject(player);
 
 	GameObject* test = new GameObject(true, Tag::Default, "Cube");
