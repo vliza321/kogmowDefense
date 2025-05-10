@@ -1,6 +1,7 @@
 #include "Collision.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include <DirectXMath.h>
 
 Collision::Collision()
 {
@@ -28,30 +29,34 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
 		if (!targetTransform) continue;
 
-		float distance =
-			(targetTransform->position.x - MoveEventTransform->position.x - moveEvent->MoveVector.x) * (targetTransform->position.x - MoveEventTransform->position.x - moveEvent->MoveVector.x)
-			+ (targetTransform->position.y - MoveEventTransform->position.y - moveEvent->MoveVector.y) * (targetTransform->position.y - MoveEventTransform->position.y - moveEvent->MoveVector.y)
-			+ (targetTransform->position.z - MoveEventTransform->position.z - moveEvent->MoveVector.z) * (targetTransform->position.z - MoveEventTransform->position.z - moveEvent->MoveVector.z);
+		XMVECTOR posA = XMLoadFloat3(&MoveEventTransform->position);
+		XMVECTOR posB = XMLoadFloat3(&targetTransform->position);
 
-		if (distance < moveEventCollider->radius * moveEventCollider->radius + other->radius * other->radius)
+		// 방향 벡터
+		XMVECTOR dir = posB - posA;
+
+		// 실제 거리
+		float dist = XMVectorGetX(XMVector3Length(dir));
+
+		if (dist < moveEventCollider->radius + other->radius)
 		{
-			XMVECTOR posA = XMLoadFloat3(&MoveEventTransform->position);
-			XMVECTOR posB = XMLoadFloat3(&targetTransform->position);
+			XMVECTOR v = XMLoadFloat3(&moveEvent->MoveVector);
+			float A = XMVectorGetX(XMVector3LengthSq(v));
+			float B = XMVectorGetX(XMVector3Dot(v, dir));
+			float C = dist * dist - other->radius * other->radius;
 
-			// 방향 벡터
-			XMVECTOR dir = posB - posA;
+			float D = B * B - 4 * A * C;
+			if (D < 0) return other;
 
-			// 실제 거리
-			float dist = XMVectorGetX(XMVector3Length(dir));
+			float sqrtD = sqrtf(D);
 
-			// 이동해야 할 거리 (충돌 직전까지)
-			float moveDist = max(0.0f, dist - other->radius);
+			float t1 = (-B - sqrtD) / (2 * A);
+			float t2 = (-B + sqrtD) / (2 * A);
 
-			// 방향 정규화
-			XMVECTOR dirNorm = XMVector3Normalize(dir);
+			float t = (t1 >= 0 && t2 >= 0) ? min(t1, t2) : max(t1, t2);
 
 			// 최종 이동 벡터
-			XMVECTOR moveVec = -1 * dirNorm *  moveDist;
+			XMVECTOR moveVec = v * t;
 			XMStoreFloat3(&moveEvent->MoveVector, moveVec);
 			return other;
 		}

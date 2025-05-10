@@ -65,7 +65,7 @@ public:
 	LightClass& GetLights(int i);
 
 private:
-	map<Tag, vector<GameObject*>> m_gameOjbects;
+	unordered_map<Tag, vector<GameObject*>> m_gameOjbects;
 
 public:
 	GameObject* Find(string);
