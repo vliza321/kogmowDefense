@@ -629,9 +629,69 @@ bool ModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount, int 
 		m_model[i * 3 + 2].nz = normals[nIndex].z;
 	}
 
+	XMFLOAT4 PanelRect = XMFLOAT4(800, 450, -800, -450);
 
+	if (filename == L"./data/panel.obj")
+	{
+
+int i = 0;
+m_model[i].x = PanelRect.x;
+m_model[i].y = PanelRect.y;
+m_model[i].z = 0;
+m_model[i].tu = 0;
+m_model[i].tv = 1;
+m_model[i].nx = -0;
+m_model[i].ny = -0;
+m_model[i].nz = -1;
+i++;
+m_model[i].x = PanelRect.x;
+m_model[i].y = PanelRect.w;
+m_model[i].z = -0;
+m_model[i].tu = 0;
+m_model[i].tv = 0;
+m_model[i].nx = -0;
+m_model[i].ny = -0;
+m_model[i].nz = -1;
+i++;
+m_model[i].x = PanelRect.z;
+m_model[i].y = PanelRect.y;
+m_model[i].z = 0;
+m_model[i].tu = 1;
+m_model[i].tv = 1;
+m_model[i].nx = -0;
+m_model[i].ny = -0;
+m_model[i].nz = -1;
+i++;
+m_model[i].x = PanelRect.x;
+m_model[i].y = PanelRect.w;
+m_model[i].z = -0;
+m_model[i].tu = 0;
+m_model[i].tv = 0;
+m_model[i].nx = -0;
+m_model[i].ny = -0;
+m_model[i].nz = -1;
+i++;
+m_model[i].x = PanelRect.z;
+m_model[i].y = PanelRect.w;
+m_model[i].z = -0;
+m_model[i].tu = 1;
+m_model[i].tv = 0;
+m_model[i].nx = -0;
+m_model[i].ny = -0;
+m_model[i].nz = -1;
+i++;
+m_model[i].x = PanelRect.z;
+m_model[i].y = PanelRect.y;
+m_model[i].z = -0;
+m_model[i].tu = 1;
+m_model[i].tv = 1;
+m_model[i].nx = -0;
+m_model[i].ny = -0;
+m_model[i].nz = -1;
+i++;
+	}
 	//// Close the output file.
-	//fout.close();
+	fout.close();
 
 	// Release the four data structures.
 	if (vertices)

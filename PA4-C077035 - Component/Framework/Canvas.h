@@ -1,39 +1,44 @@
-#pragma once
-#include <vector>
-#include <map>
+#ifndef Canvas_H
+#define Canvas_H
+
+#include <unordered_map>
 #include <memory>
 #include <algorithm>
 #include <d3d11.h>
 #include <directxmath.h>
-#include "CanvasObject.h"
-#include "ImageUI.h"
-#include "textureshaderclass.h"
+
+#include "Component.h"
+
 #include "d3dclass.h"
 #include "ShootType.h"
 
+class CanvasRenderer;
+
 using namespace std;
 
-class Canvas
+class Canvas : public Component
 {
 public:
 	
 	Canvas();
 	~Canvas();
 
-	bool Initialize(HWND, ID3D11Device*);
-	bool UIRender(TextureShaderClass*, D3DClass*, ID3D11DeviceContext*, XMFLOAT3, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, int, ShootType);
-	void Shutdown();
-	void SetScene(int);
+	virtual bool InitializeSet() override;
+	virtual bool InitializeRef() override;
+	virtual bool Shutdown() override;
 
-	void Execute(XMFLOAT3, int);
-	void LateExecute();
+	virtual void FixedExecute() override;
+	virtual void Execute() override;
+	virtual void LateExecute() override;
+	virtual void PostExecute() override;
+public:
+	void SetType(ShootType);
 private:
-	vector<CanvasObject*> m_UI;
-	ImageUI* m_Title;
-	ImageUI* m_NormalSightUI;
-	ImageUI* m_ScopeSightUI;
-	ImageUI* m_ArtillerySightUI;
+	CanvasRenderer* m_title;
+	CanvasRenderer* m_baseScope;
+	ShootType m_currentUIType;
 
-	map<ShootType, unique_ptr<ImageUI*>>m_ShootUISet;
+	unordered_map<ShootType, CanvasRenderer*>m_shootUIMap;
 };
 
+#endif

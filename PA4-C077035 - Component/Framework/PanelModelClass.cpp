@@ -30,7 +30,7 @@ PanelModelClass::~PanelModelClass()
 
 bool PanelModelClass::InitializeRender(ID3D11Device* device,  const WCHAR* textureFilename, int instanceCount, XMFLOAT4 PanelRect)
 {
-	const WCHAR* modelFilename = L"./data/panel.dds";
+	const WCHAR* modelFilename = L"./data/panel.obj";
 	bool result = false;
 	m_instanceCount = instanceCount;
 
@@ -614,9 +614,7 @@ bool PanelModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount,
 		m_model[i * 3 + 2].ny = normals[nIndex].y;
 		m_model[i * 3 + 2].nz = normals[nIndex].z;
 	}
-
-
-
+	/*
 	int i = 0;
 	m_model[i].x = PanelRect.x;
 	m_model[i].y = PanelRect.y;
@@ -671,10 +669,9 @@ bool PanelModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount,
 	m_model[i].nx = -0;
 	m_model[i].ny = -0;
 	m_model[i].nz = -1;
-	i++;
+	i++;*/
 	//// Close the output file.
-	//fout.close();
-
+	fout.close();
 	// Release the four data structures.
 	if (vertices)
 	{

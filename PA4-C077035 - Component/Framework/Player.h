@@ -11,6 +11,8 @@
 using namespace std;
 using namespace DirectX;
 
+class Canvas;
+
 class Player : public Component
 {
 public:
@@ -33,8 +35,9 @@ private:
 	int m_moveLeftRight;
 	int m_moveBackForward;
 	float speed;
+private:
 	std::weak_ptr<CameraManager> cameraManager;
-
+	std::weak_ptr<Canvas> UICanvas;
 	ShootType m_currentShootType;
 	/*
 	virtual void SetRollPitchYaw(float, float, float);
@@ -50,7 +53,7 @@ private:
 	*/
 private:
 	void ChangePovCul();
-	void SetPov(ShootType,Transform&);
+	void SetPov(ShootType);
 	void SetArtilleryMod(Transform&);
 	//void AutomaticFeeding();
 private:

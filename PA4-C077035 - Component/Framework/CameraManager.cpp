@@ -87,12 +87,12 @@ bool CameraManager::Shutdown()
 	return true;
 }
 
-void CameraManager::SetCameraInfo(Transform& PlayerPos)
+void CameraManager::SetCameraInfo()
 {
 	m_CameraMapSet[m_CurrentCameraType]->SetCameraInfo();
 }
 
-void CameraManager::SetCamera(ShootType type, const Transform& transform)
+void CameraManager::SetCamera(ShootType type)
 {
 	if (m_CurrentCameraType == type) return;
 

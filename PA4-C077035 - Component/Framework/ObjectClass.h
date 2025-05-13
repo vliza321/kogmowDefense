@@ -21,7 +21,6 @@
 #include "LightManager.h"
 #include "lightclass.h"
 
-#include "ImageUI.h"
 #include "Collision.h"
 #include "ColliderType.h"
 
@@ -29,6 +28,9 @@
 #include "Player.h"
 
 #include "BulletManager.h"
+
+#include "Canvas.h"
+#include "CanvasRenderer.h"
 
 class ObjectClass
 {
@@ -58,6 +60,7 @@ public:
 
 	bool GUIRender(TextureShaderClass*, D3DClass*, int);
 	bool Render(LightShaderClass*, D3DClass*, int);
+	bool Render(TextureShaderClass* textureShader, D3DClass* d3d, int);
 	bool UIRender(TextureShaderClass*, D3DClass*, int);
 	
 	void Shutdown();

@@ -7,6 +7,7 @@
 #include <memory>
 #include <direct.h>
 
+#include "textureshaderclass.h"
 #include "lightshaderclass.h"
 #include "d3dclass.h"
 #include "Renderer.h"
@@ -32,6 +33,7 @@ public:
     void UnregisterRenderer(Renderer* renderer);
 
     bool RenderAll(LightShaderClass* LightShader, D3DClass* D3D, CameraObject* mainCamera, LightManager* lightManager, XMFLOAT4*, XMFLOAT4*);
+    bool RenderAll(TextureShaderClass* TextureShader, D3DClass* D3D, XMMATRIX vMatrix);
 };
 
 #endif

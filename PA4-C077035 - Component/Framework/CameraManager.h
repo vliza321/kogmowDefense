@@ -31,8 +31,8 @@ public:
 
 	virtual bool Shutdown() override;
 
-	void SetCameraInfo(Transform&);
-	void SetCamera(ShootType, const Transform&);
+	void SetCameraInfo();
+	void SetCamera(ShootType);
 
 	XMMATRIX GetViewMatrix();
 	XMVECTOR GetLookAt();

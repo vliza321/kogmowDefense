@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "algorithm"
 #include "ObjectClass.h"
+#include "Canvas.h"
 
 Player::Player()
 	: Component()
@@ -41,11 +42,13 @@ bool Player::InitializeRef()
 		transform = newTransform;
 	}
 	cameraManager = gameObject->Root().Find("CameraManager")->GetComponent<CameraManager>();
+	UICanvas = gameObject->Root().Find("Canvas")->GetComponent<Canvas>();
 	return true;
 }
 
 bool Player::InitializeSynchronization()
 {
+	SetPov(ShootType::TPC);
 	return true;
 }
 
@@ -124,17 +127,17 @@ void Player::Execute()
 	{
 		if (InputClass::GetInstance().IsKeyDown(DIK_B))
 		{
-			SetPov(ShootType::Debug, *tf);
+			SetPov(ShootType::Debug);
 		}
 		if (InputClass::GetInstance().IsKeyDown(DIK_V))
 		{
 			if (m_currentShootType != ShootType::TPC)
 			{
-				SetPov(ShootType::TPC, *tf);
+				SetPov(ShootType::TPC);
 			}
 			else
 			{
-				SetPov(ShootType::FPC, *tf);
+				SetPov(ShootType::FPC);
 			}
 		}
 
@@ -142,23 +145,23 @@ void Player::Execute()
 		{
 			if (m_currentShootType != ShootType::Scope)
 			{
-				SetPov(ShootType::Scope, *tf);
+				SetPov(ShootType::Scope);
 			}
 			else
 			{
-				SetPov(ShootType::TPC, *tf);
+				SetPov(ShootType::TPC);
 			}
 		}
 		if (InputClass::GetInstance().IsKey(DIK_Q))
 		{
 			if (m_currentShootType != ShootType::Artillery)
 			{
-				SetPov(ShootType::Artillery, *tf);
+				SetPov(ShootType::Artillery);
 				SetArtilleryMod(*tf);
 			}
 			else
 			{
-				SetPov(ShootType::TPC, *tf);
+				SetPov(ShootType::TPC);
 				SetArtilleryMod(*tf);
 			}
 		}
@@ -184,13 +187,18 @@ void Player::ChangePovCul()
 	(PoVTimer < 0) ? canChangePov = true : canChangePov = false;
 }
 
-void Player::SetPov(ShootType shootType, Transform& transform)
+void Player::SetPov(ShootType shootType)
 {
 	auto cm = cameraManager.lock();
-	cm->SetCamera(shootType, transform);
+	cm->SetCamera(shootType);
 	m_currentShootType = shootType;
 	this->canChangePov = false;
 	this->PoVTimer = POVMAXTIMER;
+	auto UIC = UICanvas.lock();
+	if (UIC != nullptr)
+	{
+		UIC->SetType(shootType);
+	}
 }
 
 void Player::SetArtilleryMod(Transform& transform)

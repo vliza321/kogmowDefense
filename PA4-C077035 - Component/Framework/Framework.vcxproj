@@ -150,7 +150,7 @@
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="CameraObject.cpp" />
     <ClCompile Include="Canvas.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="CanvasObject.cpp" />
     <ClCompile Include="CanvasRenderer.cpp" />
@@ -162,7 +162,6 @@
     <ClCompile Include="FirstPersonCamera.cpp" />
     <ClCompile Include="GUIRenderer.cpp" />
     <ClCompile Include="GUIRenderManager.cpp" />
-    <ClCompile Include="ImageUI.cpp" />
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
@@ -222,10 +221,9 @@
     <ClInclude Include="ScopeCamera.h" />
     <ClInclude Include="ShootType.h" />
     <ClInclude Include="Canvas.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="CanvasObject.h" />
-    <ClInclude Include="ImageUI.h" />
     <ClInclude Include="cpuclass.h" />
     <ClInclude Include="d3dclass.h" />
     <ClInclude Include="DDSTextureLoader.h" />
@@ -281,9 +279,15 @@
     <Image Include="data\rock-blue.dds" />
     <Image Include="data\rock-red.dds" />
     <Image Include="data\spacesphere.dds" />
-    <Image Include="data\TempArtilleryLineOfSight.dds" />
-    <Image Include="data\TempNormalLineOfSight.dds" />
-    <Image Include="data\TempScopeLineOfSight.dds" />
+    <Image Include="data\TempArtilleryLineOfSight.dds">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="data\TempNormalLineOfSight.dds">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="data\TempScopeLineOfSight.dds">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="data\title.dds" />
     <Image Include="data\Wolf.dds" />
   </ItemGroup>

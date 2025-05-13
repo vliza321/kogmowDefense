@@ -185,13 +185,24 @@ void ObjectClass::CreateGameObject()
 	//player->AddComponent<BulletManager>();
 	RegistGameObject(player);
 
+	
 	GameObject* test = new GameObject(true, Tag::Default, "Cube");
-	test->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
+	//test->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
 	test->AddComponent<Transform>(XMFLOAT3(3, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 	test->AddComponent<SphereCollider>(0.5f, true);
 	//test->AddComponent<BoxCollider>(true,XMFLOAT3(3,0,0),XMFLOAT3(0,0,0), XMFLOAT3(0.5f,0.5f,0.5f));
 	RegistGameObject(test);
 
+	
+	GameObject* Canvas1 = new GameObject(true, Tag::Canvas, "Canvas");
+	Canvas1->AddComponent<Canvas>();
+	RegistGameObject(Canvas1);
+	
+	
+	GameObject* test2 = new GameObject(true, Tag::Default, "test2");
+	//test2->AddComponent<CanvasRenderer>(L"./data/TempNormalLineOfSight.dds", XMFLOAT4(800, -450, -800, 450));
+	test2->AddComponent<Transform>(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+	RegistGameObject(test2);
 }
 
 bool ObjectClass::InitializeSet(HWND hwnd, ID3D11Device* device)
@@ -249,14 +260,14 @@ bool ObjectClass::InitializeRender(HWND hwnd, ID3D11Device* device)
 		MessageBox(hwnd, L"Could not GUI InitializeRender GameObjects.", L"Error", MB_OK);
 		return false;
 	}
-	if (!(RenderManager::GetInstance().InitializeRender(device)))
-	{
-		MessageBox(hwnd, L"Could not Render InitializeRender GameObjects.", L"Error", MB_OK);
-		return false;
-	}
 	if (!(CanvasRenderManager::GetInstance().InitializeRender(device)))
 	{
 		MessageBox(hwnd, L"Could not Canvas InitializeRender GameObjects.", L"Error", MB_OK);
+		return false;
+	}
+	if (!(RenderManager::GetInstance().InitializeRender(device)))
+	{
+		MessageBox(hwnd, L"Could not Render InitializeRender GameObjects.", L"Error", MB_OK);
 		return false;
 	}
 	return true;
@@ -381,6 +392,19 @@ bool ObjectClass::Render(LightShaderClass* lightShader, D3DClass* d3d, int)
 	}
 
 	return RenderManager::GetInstance().RenderAll(lightShader, d3d, m_cameraManager->GetCamera(), m_lightManager, diffuseColor, lightPosition);
+}
+
+bool ObjectClass::Render(TextureShaderClass* textureShader, D3DClass* d3d, int)
+{
+	XMFLOAT4 diffuseColor[8];
+	XMFLOAT4 lightPosition[8];
+
+	for (int i = 0; i < 8; ++i) {
+		diffuseColor[i] = GetLights(i).diffuseColor;
+		lightPosition[i] = GetLights(i).position;
+	}
+
+	return RenderManager::GetInstance().RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix());
 }
 
 bool ObjectClass::UIRender(TextureShaderClass* textureShader, D3DClass* d3d, int)

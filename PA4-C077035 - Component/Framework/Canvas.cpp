@@ -1,13 +1,12 @@
 #include "Canvas.h"
+#include "CanvasRenderer.h"
+
 
 Canvas::Canvas()
 {
-	m_UI.clear();
+	m_shootUIMap.clear();
 
-	m_Title = 0;
-	m_NormalSightUI = 0;
-	m_ScopeSightUI = 0;
-	m_ArtillerySightUI = 0;
+	m_title = 0;
 }
 
 Canvas::~Canvas()
@@ -15,128 +14,94 @@ Canvas::~Canvas()
 
 }
 
-bool Canvas::Initialize(HWND hwnd, ID3D11Device* device)
+bool Canvas::InitializeSet()
 {
-	bool result = false;
-	m_Title = new ImageUI(XMFLOAT4(800, -450, -800, 450), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), L"./data/Panel.obj", L"./data/title.dds", 0);
+	m_title = new CanvasRenderer(L"./data/title.dds", XMFLOAT4(800, -450, -800, 450));
 
-	m_NormalSightUI = new ImageUI(XMFLOAT4(800, -450, -800, 450),
-		XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0),
-		L"./data/Panel.obj", L"./data/TempNormalLineOfSight.dds", 0);
-	m_ScopeSightUI = new ImageUI(XMFLOAT4(800, -450, -800, 450),
-		XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0),
-		L"./data/Panel.obj", L"./data/TempScopeLineOfSight.dds", 0);
-	m_ArtillerySightUI = new ImageUI(XMFLOAT4(800, -450, -800, 450),
-		XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0),
-		L"./data/Panel.obj", L"./data/TempArtilleryLineOfSight.dds", 0);
+	m_baseScope = new CanvasRenderer(L"./data/TempNormalLineOfSight.dds", XMFLOAT4(800, -450, -800, 450));
 
-	m_UI.push_back(m_Title);
-	m_UI.push_back(m_NormalSightUI);
-	m_UI.push_back(m_ScopeSightUI);
-	m_UI.push_back(m_ArtillerySightUI);
+	m_shootUIMap[ShootType::Debug] = nullptr;
 
-	for (auto ui = m_UI.begin(); ui != m_UI.end(); ui++)
+	m_shootUIMap[ShootType::TPC] = nullptr;
+	m_shootUIMap[ShootType::FPC] = nullptr;
+	m_shootUIMap[ShootType::Scope] = new CanvasRenderer(L"./data/TempScopeLineOfSight.dds", XMFLOAT4(800, -450, -800, 450));
+	m_shootUIMap[ShootType::Artillery] = new CanvasRenderer(L"./data/TempArtilleryLineOfSight.dds", XMFLOAT4(800, -450, -800, 450));
+
+	m_title->active = false;
+	m_baseScope->active = true;
+
+	m_title->gameObject = this->gameObject;
+	m_baseScope->gameObject = this->gameObject;
+
+	m_title->InitializeSet();
+	m_baseScope->InitializeSet();
+
+	for (auto& ui : m_shootUIMap)
 	{
-		result = (*ui)->Initialize(device);
-		if (!result)
+		if (ui.second != nullptr)
 		{
-			MessageBox(hwnd, L"Could not initialize UI.", L"Error", MB_OK);
-			return false;
+			ui.second->active = false;
+			ui.second->gameObject = this->gameObject;
+			ui.second->InitializeSet();
 		}
 	}
 
-	m_UI.clear();
-
-	return result;
+	return true;
 }
 
-bool Canvas::UIRender(TextureShaderClass* shader, D3DClass* d3d, ID3D11DeviceContext* deviceContext, XMFLOAT3 camerapos,
-	XMMATRIX rMatrix, XMMATRIX wMatrix, XMMATRIX vMatrix, XMMATRIX pMatrix, int SceneCount, ShootType shootType)
+bool Canvas::InitializeRef()
 {
-	XMMATRIX rotationMatrix = rMatrix, worldMatrix = wMatrix, viewMatrix = vMatrix, projectionMatrix = pMatrix;
-	bool result = true;
-
-	XMVECTOR position = XMVectorSet(0.0f, 0.0f, 10.0f, 0.0f);
-	XMVECTOR lookAt = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	XMVECTOR up = XMVectorSet(0.0f, 01.0f, 0.0f, 0.0f);
-
-	//viewMatrix »ý¼º
-	viewMatrix = XMMatrixLookAtLH(position, lookAt, up);
-
-	d3d->GetWorldMatrix(worldMatrix);
-	// Turn off the Z buffer to begin all 2D rendering.
-	d3d->TurnZBufferOff();
-	for (auto ui = m_UI.begin(); ui != m_UI.end(); ui++)
+	for (auto& ui : m_shootUIMap)
 	{
-		if ((*ui)->GetActive())
-		{
-			(*ui)->Render(deviceContext);
-			result = shader->Render(deviceContext, (*ui)->GetModelIndexCount(), (*ui)->GetModelInstanceCount(), rotationMatrix, worldMatrix, viewMatrix, projectionMatrix, (*ui)->GetModelTexture());
-		}
-	}
-	switch (shootType)
-	{
-	case ShootType::Title:
-		m_Title->Render(deviceContext);
-		result = shader->Render(deviceContext, m_Title->GetModelIndexCount(), m_Title->GetModelInstanceCount(), rotationMatrix, worldMatrix, viewMatrix, projectionMatrix, m_Title->GetModelTexture());
-		break;
-	case ShootType::FPC:
-		m_NormalSightUI->Render(deviceContext);
-		result = shader->Render(deviceContext, m_NormalSightUI->GetModelIndexCount(), m_NormalSightUI->GetModelInstanceCount(), rotationMatrix, worldMatrix, viewMatrix, projectionMatrix, m_NormalSightUI->GetModelTexture());
-		break;
-	case ShootType::TPC:
-		m_NormalSightUI->Render(deviceContext);
-		result = shader->Render(deviceContext, m_NormalSightUI->GetModelIndexCount(), m_NormalSightUI->GetModelInstanceCount(), rotationMatrix, worldMatrix, viewMatrix, projectionMatrix, m_NormalSightUI->GetModelTexture()); break;
-	case ShootType::Scope:
-		m_NormalSightUI->Render(deviceContext);
-		result = shader->Render(deviceContext, m_NormalSightUI->GetModelIndexCount(), m_NormalSightUI->GetModelInstanceCount(), rotationMatrix, worldMatrix, viewMatrix, projectionMatrix, m_NormalSightUI->GetModelTexture()); 
-		m_ScopeSightUI->Render(deviceContext);
-		result = shader->Render(deviceContext, m_ScopeSightUI->GetModelIndexCount(), m_ScopeSightUI->GetModelInstanceCount(), rotationMatrix, worldMatrix, viewMatrix, projectionMatrix, m_ScopeSightUI->GetModelTexture());
-		break;
-	case ShootType::Artillery:
-		m_NormalSightUI->Render(deviceContext);
-		result = shader->Render(deviceContext, m_NormalSightUI->GetModelIndexCount(), m_NormalSightUI->GetModelInstanceCount(), rotationMatrix, worldMatrix, viewMatrix, projectionMatrix, m_NormalSightUI->GetModelTexture());
-		m_ArtillerySightUI->Render(deviceContext);
-		result = shader->Render(deviceContext, m_ArtillerySightUI->GetModelIndexCount(), m_ArtillerySightUI->GetModelInstanceCount(), rotationMatrix, worldMatrix, viewMatrix, projectionMatrix, m_ArtillerySightUI->GetModelTexture());
-		break;
-	case ShootType::Num:
-		break;
-	default:
-		break;
+		if (ui.second != nullptr) ui.second->InitializeRef();
 	}
 
-	d3d->TurnZBufferOn();
-	return result;
+	m_title->InitializeRef();
+	m_baseScope->InitializeRef();
+	return true;
 }
 
-void Canvas::Shutdown()
+bool Canvas::Shutdown()
 {
-	if (m_Title)
+	if (m_title)
 	{
-		delete m_Title;
-		m_Title = 0;
+		delete m_title;
+		m_title = 0;
 	}
-
-	m_UI.clear();
+	if (m_baseScope)
+	{
+		delete m_baseScope;
+		m_baseScope = 0;
+	}
+	m_shootUIMap.clear();
+	return true;
 }
 
-void Canvas::SetScene(int SceneCounter)
+void Canvas::FixedExecute()
 {
-	switch (SceneCounter)
-	{
-	case 0:
-		m_Title->SetActive(true);
-		break;
-	case 1:
-		m_Title->SetActive(false);
-		break;
-	}
 }
 
-void Canvas::Execute(XMFLOAT3, int)
+void Canvas::Execute()
 {
 }
 
 void Canvas::LateExecute()
 {
+}
+
+void Canvas::PostExecute()
+{
+}
+
+void Canvas::SetType(ShootType ChangeType)
+{
+	if (m_shootUIMap[m_currentUIType] != nullptr)
+	{
+		m_shootUIMap[m_currentUIType]->active = false;
+	}
+	m_currentUIType = ChangeType;
+	if (m_shootUIMap[m_currentUIType] != nullptr)
+	{
+		m_shootUIMap[m_currentUIType]->active = true;
+	}
 }
