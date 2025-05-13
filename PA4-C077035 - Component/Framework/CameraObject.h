@@ -25,6 +25,7 @@ public:
 
 	XMMATRIX GetViewMatrix();
 	XMVECTOR GetLookAt();
+	XMFLOAT3 GetPosition();
 
 protected:
 	std::weak_ptr<Transform> transform;

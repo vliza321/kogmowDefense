@@ -32,7 +32,7 @@ bool CameraObject::InitializeRef()
 {
 	bool result = true;
 
-	transform = this->gameObject->GetComponent<Transform>();
+	transform = this->gameObject->GetComponentIncludingBase<Transform>();
 	auto tf = transform.lock();
 	if (tf == nullptr)
 	{
@@ -62,4 +62,9 @@ XMMATRIX CameraObject::GetViewMatrix()
 XMVECTOR CameraObject::GetLookAt()
 {
 	return lookAt;
+}
+
+XMFLOAT3 CameraObject::GetPosition()
+{
+	return transform.lock()->position;
 }

@@ -7,7 +7,7 @@ BulletManager::BulletManager()
 	m_AllActivatedBullets.clear();
 	m_ReloadTimer = 0;
 	m_DoReload = false;
-	*m_CurrentShootType = ShootType::FPC;
+	m_CurrentShootType = ShootType::FPC;
 }
 
 BulletManager::~BulletManager()
@@ -42,34 +42,6 @@ bool BulletManager::Initialize()
 	m_DoReload = false;
 
 	/*
-	//normal Bullet 생성
-	m_BulletMapSet[ShootType::FPC].get()->push_back(
-		new Bullet(
-			XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f),
-			L"./data/Bullet.obj", L"./data/1911.dds", 0)
-	);
-	m_BulletMapSet[ShootType::FPC].get()->push_back(
-		new Bullet(
-			XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f),
-			L"./data/Bullet.obj", L"./data/1911.dds", 0)
-	);
-	m_BulletMapSet[ShootType::FPC].get()->push_back(
-		new Bullet(
-			XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f),
-			L"./data/Bullet.obj", L"./data/1911.dds", 0)
-	);
-	m_BulletMapSet[ShootType::FPC].get()->push_back(
-		new Bullet(
-			XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f),
-			L"./data/Bullet.obj", L"./data/1911.dds", 0)
-	);
-	m_BulletMapSet[ShootType::FPC].get()->push_back(
-		new Bullet(
-			XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f),
-			L"./data/Bullet.obj", L"./data/1911.dds", 0)
-	);
-
-
 	//scope Bullet 생성
 	m_BulletMapSet[ShootType::Scope].get()->push_back(
 		new ScopeBullet(
@@ -133,34 +105,36 @@ bool BulletManager::Initialize()
 bool BulletManager::InitializeRef()
 {
 	bool result = true;
-	m_CurrentShootType = &(this->gameObject->GetComponent<Player>()->GetShootType());
+	m_CurrentShootType = (this->gameObject->GetComponentIncludingBase<Player>()->GetShootType());
+	auto bullets = this->gameObject->Root().FindObjectsWithTag(Tag::Bullet);
+	for (auto& b : bullets)
+	{
+		auto bb = b->GetComponentIncludingBase<BaseBullet>().get();
+		if (bb != nullptr)
+		{
+			m_BulletMapSet[bb->GetBulletType()]->push_back(bb);
+			continue;
+		}
+	}
 	return true;
 }
 
 bool BulletManager::InitializeSynchronization()
 {
-	return false;
+	return true;
 }
 
 bool BulletManager::PostInitialize()
 {
-	return false;
+	return true;
 }
 
 void BulletManager::FixedExecute()
 {
-	for (auto& nb : m_AllActivatedBullets)
-	{
-		nb->FixedExecute();
-	}
 }
 
 void BulletManager::Execute()
 {
-	for (auto& nb : m_AllActivatedBullets)
-	{
-		nb->Execute();
-	}
 	
 	if (m_DoReload)
 	{
@@ -177,16 +151,16 @@ void BulletManager::Execute()
 bool BulletManager::ShootBullet(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 PlayerPosition, XMFLOAT3 PlayerEulerRotation  )
 {
 	// 마지막 총알이면 재장전 시작
-	if (m_BulletMapSet[*m_CurrentShootType].get()->size() < 1)
+	if (m_BulletMapSet[m_CurrentShootType].get()->size() < 1)
 	{
 		StartReload();
 		return false;
 	}
-	m_BulletMapSet[*m_CurrentShootType].get()->back()->BulletAwake(CameraLookAt, CameraPosition, PlayerPosition, PlayerEulerRotation);
-	m_AllActivatedBullets.push_back((m_BulletMapSet[*m_CurrentShootType].get()->back()));
-	m_BulletMapSet[*m_CurrentShootType].get()->pop_back();
+	m_BulletMapSet[m_CurrentShootType].get()->back()->BulletAwake(CameraLookAt, CameraPosition, PlayerPosition, PlayerEulerRotation);
+	m_AllActivatedBullets.push_back((m_BulletMapSet[m_CurrentShootType].get()->back()));
+	m_BulletMapSet[m_CurrentShootType].get()->pop_back();
 	// 마지막 총알이면 재장전 시작
-	if (m_BulletMapSet[*m_CurrentShootType].get()->size() < 1)
+	if (m_BulletMapSet[m_CurrentShootType].get()->size() < 1)
 	{
 		StartReload();
 	}
@@ -195,11 +169,11 @@ bool BulletManager::ShootBullet(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, 
 
 void BulletManager::ReloadBullet( )
 {
-	for (auto bullet = m_ReleaseBullet[*m_CurrentShootType].get()->begin(); bullet != m_ReleaseBullet[*m_CurrentShootType].get()->end(); bullet++)
+	for (auto bullet = m_ReleaseBullet[m_CurrentShootType].get()->begin(); bullet != m_ReleaseBullet[m_CurrentShootType].get()->end(); bullet++)
 	{
-		m_BulletMapSet[*m_CurrentShootType].get()->push_back((*bullet));
+		m_BulletMapSet[m_CurrentShootType].get()->push_back((*bullet));
 	}
-	m_ReleaseBullet[*m_CurrentShootType].get()->clear();
+	m_ReleaseBullet[m_CurrentShootType].get()->clear();
 }
 
 vector<BaseBullet*>& BulletManager::GetAllActivatedBullets()
@@ -220,7 +194,7 @@ void BulletManager::LateExecute()
 	auto newEnd = std::remove_if(m_AllActivatedBullets.begin(), m_AllActivatedBullets.end(),
 		[this](BaseBullet* bullet)
 		{
-			if (!bullet->active)
+			if (!bullet->gameObject->active)
 			{
 				this->ReleaseBullet(bullet);  // releaseVector에 추가
 				return true;  // 제거할 요소로 표시
@@ -234,28 +208,28 @@ void BulletManager::LateExecute()
 
 void BulletManager::SetShootType(ShootType ShootType)
 {
-	if (*m_CurrentShootType == ShootType || (*m_CurrentShootType == ShootType::FPC && ShootType == ShootType::TPC) || (*m_CurrentShootType == ShootType::TPC && ShootType == ShootType::FPC)) return;
-	*m_CurrentShootType = ShootType;
+	if (m_CurrentShootType == ShootType || (m_CurrentShootType == ShootType::FPC && ShootType == ShootType::TPC) || (m_CurrentShootType == ShootType::TPC && ShootType == ShootType::FPC)) return;
+	m_CurrentShootType = ShootType;
 	m_ReloadTimer = 0;
 	m_DoReload = false;
 }
 
 void BulletManager::StartReload()
 {
-	if (m_ReleaseBullet[*m_CurrentShootType].get()->size() > 0)
+	if (m_ReleaseBullet[m_CurrentShootType].get()->size() > 0)
 	{
 		if (m_DoReload) return;
 		m_DoReload = true;
 
-		switch (*m_CurrentShootType)
+		switch (m_CurrentShootType)
 		{
 		case ShootType::Title:
 			break;
 		case ShootType::FPC:
-			m_ReloadTimer = 2000.0f;
+			m_ReloadTimer = 500.0f;
 			break;
 		case ShootType::TPC:
-			m_ReloadTimer = 2000.0f;
+			m_ReloadTimer = 500.0f;
 			break;
 		case ShootType::Scope:
 			m_ReloadTimer = 2000.0f;

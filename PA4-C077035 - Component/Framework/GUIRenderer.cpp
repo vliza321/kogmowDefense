@@ -18,7 +18,7 @@ GUIRenderer::~GUIRenderer()
 bool GUIRenderer::InitializeSet()
 {
 	m_model = new PanelModelClass();
-	m_rectTransform = this->gameObject->GetComponent<RectTransform>();
+	m_rectTransform = this->gameObject->GetComponentIncludingBase<RectTransform>();
 	auto rect = m_rectTransform.lock();
 	if (!rect)
 	{

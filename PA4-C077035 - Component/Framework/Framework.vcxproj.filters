@@ -161,6 +161,9 @@
     <ClCompile Include="BaseBullet.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="textureshaderclass.h">
@@ -302,6 +305,7 @@
     <ClInclude Include="ArtilleryCamera.h" />
     <ClInclude Include="BulletManager.h" />
     <ClInclude Include="BaseBullet.h" />
+    <ClInclude Include="Bullet.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\Cannon.dds">

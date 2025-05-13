@@ -16,19 +16,19 @@ void ObjectClass::CreateBaseObject()
 	GameObject* CameraManagerObject = new GameObject(true, Tag::Camera, "CameraManager");
 	CameraManagerObject->AddComponent<Transform>(XMFLOAT3(0,10,-10),XMFLOAT3(0,0,0), XMFLOAT3(0,0,0),XMFLOAT3(0,180 * 0.0174533f,0));
 	CameraManagerObject->AddComponent<CameraManager>();
-	m_cameraManager = CameraManagerObject->GetComponent<CameraManager>().get();
+	m_cameraManager = CameraManagerObject->GetComponentIncludingBase<CameraManager>().get();
 	RegistGameObject(CameraManagerObject);
 
 	GameObject* LightSet = new GameObject(true, Tag::Default, "LightManager");
 	LightSet->AddComponent<LightManager>();
-	m_lightManager = LightSet->GetComponent<LightManager>().get();
+	m_lightManager = LightSet->GetComponentIncludingBase<LightManager>().get();
 	RegistGameObject(LightSet);
 
 	GameObject* SkyDome = new GameObject(true, Tag::Default, "SkyDome");
 	SkyDome->AddComponent<Transform>(XMFLOAT3(0, -10, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 	SkyDome->AddComponent<Renderer>(L"./data/spacesphere.obj", L"./data/spacesphere.dds", 0);
 	RegistGameObject(SkyDome);
-
+	
 	GameObject* Terrain0 = new GameObject(true, Tag::Default, "Terrain0");
 	Terrain0->AddComponent<Renderer>(L"./data/1.obj", L"./data/1.dds", 0);
 	Terrain0->AddComponent<Transform>(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.2f, 0.2f, 0.2f), XMFLOAT3(0, 0, 0));
@@ -182,27 +182,54 @@ void ObjectClass::CreateGameObject()
 	player->AddComponent<Transform>(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.04f, 0.04f, 0.04f), XMFLOAT3(0, 0, 0));
 	player->AddComponent<SphereCollider>(0.3f, true);
 	player->AddComponent<Player>();
-	//player->AddComponent<BulletManager>();
+	player->AddComponent<BulletManager>();
 	RegistGameObject(player);
-
 	
 	GameObject* test = new GameObject(true, Tag::Default, "Cube");
-	//test->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
-	test->AddComponent<Transform>(XMFLOAT3(3, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-	test->AddComponent<SphereCollider>(0.5f, true);
-	//test->AddComponent<BoxCollider>(true,XMFLOAT3(3,0,0),XMFLOAT3(0,0,0), XMFLOAT3(0.5f,0.5f,0.5f));
+	test->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
+	test->AddComponent<Transform>(XMFLOAT3(3, 2, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+	//test->AddComponent<SphereCollider>(0.5f, true);
+	test->AddComponent<BoxCollider>(true,XMFLOAT3(3,2,0),XMFLOAT3(0,0,0), XMFLOAT3(0.5f,0.5f,0.5f));
 	RegistGameObject(test);
-
 	
+	GameObject* nBullet1 = new GameObject(false, Tag::Bullet, "normalBullet1");
+	nBullet1->AddComponent<Bullet>();
+	nBullet1->AddComponent<Transform>(XMFLOAT3(0, 3, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f), XMFLOAT3(0, 0, 0));
+	nBullet1->AddComponent<RayCollider>(true);
+	nBullet1->AddComponent<Renderer>(L"./data/bullet.obj", L"./data/1911.dds", 0);
+	RegistGameObject(nBullet1);
+
+	GameObject* nBullet2 = new GameObject(false, Tag::Default, "normalBullet2");
+	nBullet2->AddComponent<Bullet>();
+	nBullet2->AddComponent<Transform>(XMFLOAT3(0, 3, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f), XMFLOAT3(0, 0, 0));
+	nBullet2->AddComponent<RayCollider>(false);
+	nBullet2->AddComponent<Renderer>(L"./data/bullet.obj", L"./data/1911.dds", 0);
+	RegistGameObject(nBullet2);
+
+	GameObject* nBullet3 = new GameObject(false, Tag::Default, "normalBullet3");
+	nBullet3->AddComponent<Bullet>();
+	nBullet3->AddComponent<Transform>(XMFLOAT3(0, 3, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f), XMFLOAT3(0, 0, 0));
+	nBullet3->AddComponent<RayCollider>(false);
+	nBullet3->AddComponent<Renderer>(L"./data/bullet.obj", L"./data/1911.dds", 0);
+	RegistGameObject(nBullet3);
+
+	GameObject* nBullet4 = new GameObject(false, Tag::Default, "normalBullet4");
+	nBullet4->AddComponent<Bullet>();
+	nBullet4->AddComponent<Transform>(XMFLOAT3(0, 3, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f), XMFLOAT3(0, 0, 0));
+	nBullet4->AddComponent<RayCollider>(false);
+	nBullet4->AddComponent<Renderer>(L"./data/bullet.obj", L"./data/1911.dds", 0);
+	RegistGameObject(nBullet4);
+
+	GameObject* nBullet5 = new GameObject(false, Tag::Default, "normalBullet5");
+	nBullet5->AddComponent<Bullet>();
+	nBullet5->AddComponent<Transform>(XMFLOAT3(0, 3, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f), XMFLOAT3(0, 0, 0));
+	nBullet5->AddComponent<RayCollider>(false);
+	nBullet5->AddComponent<Renderer>(L"./data/bullet.obj", L"./data/1911.dds", 0);
+	RegistGameObject(nBullet5);
+
 	GameObject* Canvas1 = new GameObject(true, Tag::Canvas, "Canvas");
 	Canvas1->AddComponent<Canvas>();
 	RegistGameObject(Canvas1);
-	
-	
-	GameObject* test2 = new GameObject(true, Tag::Default, "test2");
-	//test2->AddComponent<CanvasRenderer>(L"./data/TempNormalLineOfSight.dds", XMFLOAT4(800, -450, -800, 450));
-	test2->AddComponent<Transform>(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-	RegistGameObject(test2);
 }
 
 bool ObjectClass::InitializeSet(HWND hwnd, ID3D11Device* device)
@@ -281,7 +308,7 @@ bool ObjectClass::InitializeSynchronization(HWND hwnd, ID3D11Device* device)
 		{
 			if (!gameObject->InitializeSynchronization())
 			{
-				MessageBox(hwnd, L"Could not InitializeSet GameObjects.", L"Error", MB_OK);
+				MessageBox(hwnd, L"Could not InitializeSynchronization GameObjects.", L"Error", MB_OK);
 				return false;
 			}
 		}
@@ -297,7 +324,7 @@ bool ObjectClass::PostInitialize(HWND hwnd, ID3D11Device* device)
 		{
 			if (!gameObject->PostInitialize())
 			{
-				MessageBox(hwnd, L"Could not InitializeSet GameObjects.", L"Error", MB_OK);
+				MessageBox(hwnd, L"Could not PostInitialize GameObjects.", L"Error", MB_OK);
 				return false;
 			}
 		}

@@ -8,7 +8,7 @@ bool GUIRenderManager::RenderAll(TextureShaderClass* TextureShader, D3DClass* D3
     for (auto& renderer : renderers) {
         if (renderer->gameObject->active)
         {
-            auto RenderTransform = renderer->gameObject->GetComponent<Transform>().get();
+            auto RenderTransform = renderer->gameObject->GetComponentIncludingBase<Transform>().get();
             if (!RenderTransform) continue;
             rotationMatrix = XMMatrixRotationX(RenderTransform->rotation.x)
                 * XMMatrixRotationY(RenderTransform->rotation.y)

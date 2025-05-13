@@ -14,7 +14,7 @@ BaseCamera::~BaseCamera()
 
 bool BaseCamera::InitializeRef()
 {
-	transform = this->gameObject->GetComponent<Transform>();
+	transform = this->gameObject->GetComponentIncludingBase<Transform>();
 	auto tf = transform.lock();
 	if (tf == nullptr)
 	{
@@ -24,7 +24,7 @@ bool BaseCamera::InitializeRef()
 	}
 
 	auto player = this->gameObject->root->FindObjectWithTag(Tag::Player);
-	targetTransform = player->GetComponent<Transform>();
+	targetTransform = player->GetComponentIncludingBase<Transform>();
 
 	return true;
 }

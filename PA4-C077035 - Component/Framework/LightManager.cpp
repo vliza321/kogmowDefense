@@ -1,4 +1,6 @@
 #include "LightManager.h"
+#include "GameObject.h"
+#include "ObjectClass.h"
 
 LightManager::LightManager()
 {
@@ -100,14 +102,27 @@ bool LightManager::InitializeSet()
 			XMFLOAT4(273.10f * 0.2f, 0.50f, -296.750f * 0.2f, 1.0f),
 			128.0f)
 	);
+	return result;
+}
+
+bool LightManager::InitializeRef()
+{
+	bool result = true;
+	m_cameraManager = this->gameObject->Root().Find("CameraManager")->GetComponentIncludingBase<CameraManager>();
+	return result;
+}
+
+bool LightManager::InitializeSynchronization()
+{
+	auto cm = m_cameraManager.lock();
+	XMFLOAT3 targetPos = cm->GetCamera()->GetPosition();
+
 	for (auto l = m_allLights.begin(); l != m_allLights.end(); l++)
 	{
-		float distnace = 0;
-		distnace += ((*l)->position.x - PlayerPos.x) * ((*l)->position.x - PlayerPos.x);
-		distnace += ((*l)->position.y - PlayerPos.y) * ((*l)->position.y - PlayerPos.y);
-		distnace += ((*l)->position.z - PlayerPos.z) * ((*l)->position.z - PlayerPos.z);
+		XMVECTOR tpv = XMLoadFloat3(&targetPos) - XMLoadFloat4(&((*l)->position));
+		float distnace = XMVectorGetX(XMVector3Dot(tpv, tpv));
 		(*l)->distance = distnace;
-	}		
+	}
 	sort(m_allLights.begin(), m_allLights.end(), [](LightClass* a, LightClass* b) {
 		return (*a).distance > (*b).distance; }
 	);
@@ -117,49 +132,46 @@ bool LightManager::InitializeSet()
 		m_lights[i] = (*l);
 		i++;
 	}
-	return result;
+	return true;
 }
 
 void LightManager::Execute()
 {
-	XMFLOAT3 PlayerPos = XMFLOAT3(0, 0, 0);
-	for (auto l = m_allLights.begin(); l != m_allLights.end(); l++)
+	// CameraManager의 현재 카메라 포지션을 가져옴
+	auto cm = m_cameraManager.lock();
+	XMFLOAT3 targetPos = cm->GetCamera()->GetPosition();
+
+	// 모든 라이트의 거리(distance) 값을 업데이트
+	for (auto& light : m_allLights)
 	{
-		float distnace = 0;
-		distnace += ((*l)->position.x - PlayerPos.x) * ((*l)->position.x - PlayerPos.x);
-		distnace += ((*l)->position.y - PlayerPos.y) * ((*l)->position.y - PlayerPos.y);
-		distnace += ((*l)->position.z - PlayerPos.z) * ((*l)->position.z - PlayerPos.z);
-		(*l)->distance = distnace;
+		XMVECTOR targetToLight = XMLoadFloat3(&targetPos) - XMLoadFloat4(&light->position);
+		light->distance = XMVectorGetX(XMVector3LengthSq(targetToLight));
 	}
-	
+
+	// 60프레임마다 전체 라이트를 정렬
 	if (m_frameTimer > 60)
 	{
 		m_frameTimer = 0;
+
+		// 전체 라이트를 distance 값 기준으로 내림차순 정렬
 		sort(m_allLights.begin(), m_allLights.end(), [](LightClass* a, LightClass* b) {
-			return (*a).distance > (*b).distance; }
-		);
+			return a->distance > b->distance;
+			});
 	}
-	
 	else
 	{
-		vector<LightClass*> last16Lights;
+		size_t numLights = m_allLights.size();
+		size_t sortStart = (numLights < 16) ? 0 : numLights - 16;
 
-		size_t numLightsToCopy = min(m_allLights.size(), size_t(16));
-
-		for (auto l = m_allLights.end() - numLightsToCopy; l != m_allLights.end(); l++)
-		{
-			last16Lights.push_back(*l);
-		}
-
-		InsertionSort(last16Lights);
-		copy(last16Lights.begin(), last16Lights.end(), m_allLights.end() - numLightsToCopy);
+		// 마지막 16개만 삽입 정렬
+		InsertionSortInPlace(m_allLights, sortStart, numLights);
 		m_frameTimer++;
 	}
+
+	// 상위 8개의 라이트를 m_lights 배열에 저장
 	int i = 0;
-	for (auto l = m_allLights.end() - 8; l != m_allLights.end(); l++)
-	{
-		m_lights[i] = (*l);
-		i++;
+	for (auto it = m_allLights.end() - 8; it != m_allLights.end(); ++it) {
+		m_lights[i++] = *it;
 	}
 }
 
@@ -169,7 +181,8 @@ LightClass** LightManager::GetLights()
 }
 
 
-void LightManager::InsertionSort(vector<LightClass*> lights) {
+void LightManager::InsertionSort(vector<LightClass*> lights) 
+{
 	for (size_t i = 1; i < lights.size(); ++i) {
 		LightClass* key = lights[i];
 		int j = i - 1;
@@ -180,6 +193,23 @@ void LightManager::InsertionSort(vector<LightClass*> lights) {
 		}
 		(*lights[j + 1]) = *key;
 		key = 0;
+	}
+}
+
+void LightManager::InsertionSortInPlace(vector<LightClass*>& lights, size_t start, size_t end)
+{
+	auto beginIt = lights.begin() + start;
+	auto endIt = lights.begin() + end;
+	
+	for (auto it = beginIt + 1; it != endIt; ++it) {
+		LightClass* key = *it;
+		auto j = it;
+
+		while (j != beginIt && (*(j - 1))->distance < key->distance) {
+			*j = *(j - 1);
+			j--;
+		}
+		*j = key;
 	}
 }
 

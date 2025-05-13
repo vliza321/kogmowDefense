@@ -7,6 +7,7 @@
 #include "inputclass.h"
 #include "Transform.h"
 #include "CameraManager.h"
+#include "BulletManager.h"
 
 using namespace std;
 using namespace DirectX;
@@ -36,8 +37,9 @@ private:
 	int m_moveBackForward;
 	float speed;
 private:
-	std::weak_ptr<CameraManager> cameraManager;
-	std::weak_ptr<Canvas> UICanvas;
+	std::weak_ptr<CameraManager> m_cameraManager;
+	std::weak_ptr<Canvas> m_uiCanvas;
+	std::weak_ptr<BulletManager> m_bulletManager;
 	ShootType m_currentShootType;
 	/*
 	virtual void SetRollPitchYaw(float, float, float);

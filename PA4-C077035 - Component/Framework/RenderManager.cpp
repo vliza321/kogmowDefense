@@ -31,19 +31,19 @@ bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, Came
     viewMatrix = mainCamera->GetViewMatrix();
     D3D->GetProjectionMatrix(projectionMatrix);
 
-    auto ct = mainCamera->gameObject->GetComponent<Transform>().get();
+    auto ct = mainCamera->gameObject->GetComponentIncludingBase<Transform>().get();
 
     for (auto& renderer : renderers) {
         if (renderer->gameObject->active)
         {
-            auto RenderTransform = renderer->gameObject->GetComponent<Transform>().get();
+            auto RenderTransform = renderer->gameObject->GetComponentIncludingBase<Transform>().get();
             if (!RenderTransform) break;
 
-            worldMatrix = XMMatrixRotationX(RenderTransform->rotation.x)
+            worldMatrix = XMMatrixScaling(RenderTransform->scale.x, RenderTransform->scale.y, RenderTransform->scale.z)
+                * XMMatrixRotationX(RenderTransform->rotation.x)
                 * XMMatrixRotationY(RenderTransform->rotation.y)
                 * XMMatrixRotationZ(RenderTransform->rotation.z)
                 * XMMatrixRotationRollPitchYaw(RenderTransform->eulerRotation.x, RenderTransform->eulerRotation.y, 0)
-                * XMMatrixScaling(RenderTransform->scale.x, RenderTransform->scale.y, RenderTransform->scale.z)
                 * XMMatrixTranslation(RenderTransform->position.x, RenderTransform->position.y, RenderTransform->position.z);
 
             renderer->Render(D3D->GetDeviceContext());
@@ -79,7 +79,7 @@ bool RenderManager::RenderAll(TextureShaderClass* TextureShader, D3DClass* D3D, 
     for (auto& renderer : renderers) {
         if (renderer->gameObject->active)
         {
-            auto RenderTransform = renderer->gameObject->GetComponent<Transform>().get();
+            auto RenderTransform = renderer->gameObject->GetComponentIncludingBase<Transform>().get();
             if (!RenderTransform) break;
 
             renderer->Render(D3D->GetDeviceContext());

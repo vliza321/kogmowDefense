@@ -75,6 +75,9 @@ public:
 	std::shared_ptr<T> GetComponent();
 
 	template<typename T>
+	std::shared_ptr<T> GetComponentIncludingBase();
+
+	template<typename T>
 	std::vector<std::shared_ptr<T>> GetComponents();
 
 
@@ -157,6 +160,30 @@ std::shared_ptr<T> GameObject::GetComponent()
 	if (it != components.end() && !it->second.empty())
 	{
 		return static_pointer_cast<T>(it->second.front());
+	}
+
+	return nullptr;
+}
+
+template<typename T>
+std::shared_ptr<T> GameObject::GetComponentIncludingBase()
+{
+	auto it = components.find(typeid(T));
+
+	if (it != components.end() && !it->second.empty())
+	{
+		return static_pointer_cast<T>(it->second.front());
+	}
+
+	for (auto it = components.begin(); it != components.end(); ++it)
+	{
+		auto& componentDeque = it->second;
+
+		for (const auto& component : componentDeque)
+		{
+			auto casted = std::dynamic_pointer_cast<T>(component);
+			if (casted) return casted;
+		}
 	}
 	return nullptr;
 }

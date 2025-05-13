@@ -33,7 +33,7 @@ bool Player::Initialize()
 
 bool Player::InitializeRef()
 {
-	transform = this->gameObject->GetComponent<Transform>();
+	transform = this->gameObject->GetComponentIncludingBase<Transform>();
 	auto tf = transform.lock();
 	if (tf == nullptr)
 	{
@@ -41,8 +41,9 @@ bool Player::InitializeRef()
 		this->gameObject->AddComponent(newTransform);
 		transform = newTransform;
 	}
-	cameraManager = gameObject->Root().Find("CameraManager")->GetComponent<CameraManager>();
-	UICanvas = gameObject->Root().Find("Canvas")->GetComponent<Canvas>();
+	m_cameraManager = gameObject->Root().Find("CameraManager")->GetComponentIncludingBase<CameraManager>();
+	m_uiCanvas = gameObject->Root().Find("Canvas")->GetComponentIncludingBase<Canvas>();
+	m_bulletManager = gameObject->GetComponentIncludingBase<BulletManager>();
 	return true;
 }
 
@@ -100,6 +101,9 @@ void Player::Execute()
 {
 	auto tf = transform.lock();
 	auto& input = InputClass::GetInstance();
+	auto bm = m_bulletManager.lock();
+	auto cm = m_cameraManager.lock();
+
 	if (InputClass::GetInstance().IsKey(DIK_W))
 	{
 		m_moveBackForward = 1;
@@ -122,14 +126,18 @@ void Player::Execute()
 		tf->eulerRotation.y += input.GetCurrMouseState().lX * 0.001f;
 		tf->eulerRotation.x = max(-XM_PI * 0.4999f, min(XM_PI * 0.2999f, tf->eulerRotation.x));
 	}
+	if (input.GetCurrMouseState().rgbButtons[0])
+	{
+		bm->ShootBullet(cm->GetLookAt(),cm->GetCamera()->GetPosition(), tf->position, tf->eulerRotation);
+	}
 	
 	if (canChangePov)
 	{
-		if (InputClass::GetInstance().IsKeyDown(DIK_B))
+		if (input.IsKeyDown(DIK_B))
 		{
 			SetPov(ShootType::Debug);
 		}
-		if (InputClass::GetInstance().IsKeyDown(DIK_V))
+		if (input.IsKeyDown(DIK_V))
 		{
 			if (m_currentShootType != ShootType::TPC)
 			{
@@ -141,7 +149,7 @@ void Player::Execute()
 			}
 		}
 
-		if (InputClass::GetInstance().GetCurrMouseState().rgbButtons[1])//마우스 우클릭
+		if (input.GetCurrMouseState().rgbButtons[1])//마우스 우클릭
 		{
 			if (m_currentShootType != ShootType::Scope)
 			{
@@ -152,7 +160,7 @@ void Player::Execute()
 				SetPov(ShootType::TPC);
 			}
 		}
-		if (InputClass::GetInstance().IsKey(DIK_Q))
+		if (input.IsKey(DIK_Q))
 		{
 			if (m_currentShootType != ShootType::Artillery)
 			{
@@ -189,12 +197,12 @@ void Player::ChangePovCul()
 
 void Player::SetPov(ShootType shootType)
 {
-	auto cm = cameraManager.lock();
+	auto cm = m_cameraManager.lock();
 	cm->SetCamera(shootType);
 	m_currentShootType = shootType;
 	this->canChangePov = false;
 	this->PoVTimer = POVMAXTIMER;
-	auto UIC = UICanvas.lock();
+	auto UIC = m_uiCanvas.lock();
 	if (UIC != nullptr)
 	{
 		UIC->SetType(shootType);
