@@ -13,11 +13,6 @@ CameraManager::~CameraManager()
 
 bool CameraManager::InitializeSet()
 {
-	/*
-	m_CameraMapSet[ShootType::Title] = make_unique<TitleCamera>();
-	m_CameraMapSet[ShootType::FPC] = make_unique<FirstPersonCamera>();
-	m_CameraMapSet[ShootType::Artillery] = make_unique<ArtilleryCamera>();
-	*/
 	m_CameraMapSet[ShootType::Debug] = new BaseCamera();
 	m_CameraMapSet[ShootType::TPC] = new ThirdPersonCamera();
 	m_CameraMapSet[ShootType::FPC] = new FirstPersonCamera();
@@ -34,10 +29,6 @@ bool CameraManager::InitializeSet()
 
 bool CameraManager::Initialize()
 {
-	/*
-	if (!m_CameraMapSet[ShootType::Title]->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::Artillery]->Initialize()) return false;
-	*/
 	if (!m_CameraMapSet[ShootType::Debug]->Initialize()) return false;
 	if (!m_CameraMapSet[ShootType::TPC]->Initialize()) return false;
 	if (!m_CameraMapSet[ShootType::FPC]->Initialize()) return false;
@@ -75,10 +66,6 @@ void CameraManager::Execute()
 
 bool CameraManager::Shutdown()
 {
-	/*
-	m_CameraMapSet[ShootType::Title]->Shutdown();
-	m_CameraMapSet[ShootType::TPC]->Shutdown();
-	*/
 	m_CameraMapSet[ShootType::TPC]->Shutdown();
 	m_CameraMapSet[ShootType::FPC]->Shutdown();
 	m_CameraMapSet[ShootType::Scope]->Shutdown();

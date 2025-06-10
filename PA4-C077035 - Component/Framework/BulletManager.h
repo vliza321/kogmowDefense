@@ -34,10 +34,10 @@ public:
 	bool ShootBullet(XMVECTOR, XMFLOAT3, XMFLOAT3, XMFLOAT3 );
 
 private:
-	ShootType m_CurrentShootType;
+	ShootType* m_CurrentShootType;
 private:
-	map<ShootType, shared_ptr<vector<BaseBullet*>>>m_BulletMapSet;
-	map<ShootType, shared_ptr<vector<BaseBullet*>>>m_ReleaseBullet;
+	unordered_map<ShootType, shared_ptr<vector<BaseBullet*>>>m_BulletMapSet;
+	unordered_map<ShootType, shared_ptr<vector<BaseBullet*>>>m_ReleaseBullet;
 
 	vector<BaseBullet*> m_AllActivatedBullets;
 

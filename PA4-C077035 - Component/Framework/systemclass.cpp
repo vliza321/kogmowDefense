@@ -82,7 +82,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the cpu object.
-	m_Cpu->Initialize();
+	//m_Cpu->Initialize();
 
 	return true;
 }
@@ -192,7 +192,7 @@ bool SystemClass::Frame()
 	m_Input->GetInstance().GetMouseLocation(mouseX, mouseY);
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage());
+	result = m_Graphics->Frame(m_Fps->GetFps(), 0);// m_Cpu->GetCpuPercentage());
 	if(!result)
 	{
 		return false;

@@ -9,7 +9,8 @@ enum class Tag
 	Player,
 	Monster,
 	Camera,
-	Bullet,
+	NormalBullet,
+	ScopeBullet,
 	Canvas,
 	NUM
 };

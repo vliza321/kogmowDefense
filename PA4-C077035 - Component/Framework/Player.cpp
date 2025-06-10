@@ -22,6 +22,12 @@ bool Player::InitializeSet()
 	PoVTimer = POVMAXTIMER;
 	canChangePov = true;
 	m_currentShootType = ShootType::TPC;
+
+
+	ReboundTimer = 0;
+	isRebound = false;
+	ReBoundConst = 0;
+	canFire = false;
 	return true;
 }
 
@@ -101,7 +107,6 @@ void Player::Execute()
 {
 	auto tf = transform.lock();
 	auto& input = InputClass::GetInstance();
-	auto bm = m_bulletManager.lock();
 	auto cm = m_cameraManager.lock();
 
 	if (InputClass::GetInstance().IsKey(DIK_W))
@@ -126,11 +131,21 @@ void Player::Execute()
 		tf->eulerRotation.y += input.GetCurrMouseState().lX * 0.001f;
 		tf->eulerRotation.x = max(-XM_PI * 0.4999f, min(XM_PI * 0.2999f, tf->eulerRotation.x));
 	}
-	if (input.GetCurrMouseState().rgbButtons[0])
+	if (input.GetCurrMouseState().rgbButtons[0] && canFire)
 	{
-		bm->ShootBullet(cm->GetLookAt(),cm->GetCamera()->GetPosition(), tf->position, tf->eulerRotation);
+		Shoot(cm->GetLookAt(), cm->GetCamera()->GetPosition(), tf->position, tf->eulerRotation);
 	}
 	
+	if (isRebound)
+	{
+		ReboundCul();
+	}
+
+	if (!canFire)
+	{
+		AutomaticFeeding();
+	}
+
 	if (canChangePov)
 	{
 		if (input.IsKeyDown(DIK_B))
@@ -198,11 +213,15 @@ void Player::ChangePovCul()
 void Player::SetPov(ShootType shootType)
 {
 	auto cm = m_cameraManager.lock();
+	auto UIC = m_uiCanvas.lock();
+
 	cm->SetCamera(shootType);
+
 	m_currentShootType = shootType;
+
 	this->canChangePov = false;
 	this->PoVTimer = POVMAXTIMER;
-	auto UIC = m_uiCanvas.lock();
+
 	if (UIC != nullptr)
 	{
 		UIC->SetType(shootType);
@@ -222,8 +241,83 @@ void Player::SetArtilleryMod(Transform& transform)
 	}
 }
 
-ShootType& Player::GetShootType()
+ShootType* Player::GetShootType()
 {
-	return m_currentShootType;
+	return &m_currentShootType;
 }
 
+void Player::AutomaticFeeding()
+{
+	FeedingTimer -= GetDeltaTime();
+
+	if (FeedingTimer < 0.0f)
+	{
+		canFire = true;
+	}
+}
+
+void Player::ReboundCul()
+{
+	auto tf = transform.lock();
+
+	ReboundTimer += GetDeltaTime();
+	switch (m_currentShootType)
+	{
+	case ShootType::Title:
+		break;
+	case ShootType::FPC:
+		tf->eulerRotation.y += (double)((ReBoundConst % 160) - 80) * 0.0000174533 * GetDeltaTime();
+		tf->eulerRotation.x -= (double)((ReBoundConst % 30) + 30) * 0.0000174533 * GetDeltaTime();
+		break;
+	case ShootType::TPC:
+		tf->eulerRotation.y += (double)((ReBoundConst % 160) - 80) * 0.0000174533 * GetDeltaTime();
+		tf->eulerRotation.x -= (double)((ReBoundConst % 30) + 30) * 0.0000174533 * GetDeltaTime();
+		break;
+	case ShootType::Scope:
+		tf->eulerRotation.y += (double)((ReBoundConst % 100) - 50) * 0.00000174533 * GetDeltaTime();
+		tf->eulerRotation.x -= (double)((ReBoundConst % 50) + 150) * 0.0000174533 * GetDeltaTime();
+		break;
+	case ShootType::Artillery:
+		break;
+	case ShootType::Num:
+		break;
+	}
+
+	if (ReboundTimer > 60.0f)
+	{
+		isRebound = false;
+		ReboundTimer = 0;
+		ReBoundConst = 0;
+	}
+}
+
+void Player::Shoot(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 PlayerPosition, XMFLOAT3 PlayerEulerRotation)
+{
+	auto bm = m_bulletManager.lock();
+	bm->ShootBullet(CameraLookAt, CameraPosition, PlayerPosition, PlayerEulerRotation);
+	isRebound = true;
+	ReboundTimer = 0;
+	ReBoundConst = rand();
+
+
+	canFire = false;
+	switch (m_currentShootType)
+	{
+	case ShootType::Title:
+		break;
+	case ShootType::FPC:
+		FeedingTimer = 280.0f;
+		break;
+	case ShootType::TPC:
+		FeedingTimer = 280.0f;
+		break;
+	case ShootType::Scope:
+		FeedingTimer = 1000.0f;
+		break;
+	case ShootType::Artillery:
+		FeedingTimer = 5600.0f;
+		break;
+	case ShootType::Num:
+		break;
+	}
+}

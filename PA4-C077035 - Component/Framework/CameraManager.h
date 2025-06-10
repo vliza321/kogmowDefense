@@ -41,5 +41,5 @@ public:
 
 private:
 	ShootType m_CurrentCameraType;
-	map<ShootType, CameraObject*>m_CameraMapSet;
+	unordered_map<ShootType, CameraObject*>m_CameraMapSet;
 };

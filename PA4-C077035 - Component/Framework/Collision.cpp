@@ -18,15 +18,16 @@ Collision::~Collision()
 }
 
 Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent* moveEvent)
-{	
+{
 	auto MoveEventTransform = moveEvent->transform;
 	if (!MoveEventTransform) return nullptr;
-
+	float dist;
+	float dist2;
 	for (auto& other : m_sphereCollider)
 	{
 		if (other == moveEventCollider) continue;
 
-		auto targetTransform = other->gameObject->GetComponentIncludingBase<Transform>().get();
+		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
 		if (!targetTransform) continue;
 
 		XMVECTOR posA = XMLoadFloat3(&MoveEventTransform->position);
@@ -36,9 +37,10 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 		XMVECTOR dir = posB - posA;
 
 		// 실제 거리
-		float dist = XMVectorGetX(XMVector3Length(dir));
-
-		if (dist < moveEventCollider->radius + other->radius)
+		dist = XMVectorGetX(posA - posB) * XMVectorGetX(posA - posB) + XMVectorGetY(posA - posB) * XMVectorGetY(posA - posB) + XMVectorGetZ(posA - posB) * XMVectorGetZ(posA - posB);
+		dist2 = moveEventCollider->radius + other->radius;
+		dist2 = dist2 * dist2;
+		if (dist < dist2)
 		{
 			XMVECTOR v = XMLoadFloat3(&moveEvent->MoveVector);
 			float A = XMVectorGetX(XMVector3LengthSq(v));
@@ -148,7 +150,7 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 
 		// 최근접 거리가 반지름보다 크면 충돌 없음
 		if (d2 > r2) continue;
-		
+
 		float thc = sqrtf(r2 - d2);      // 접점까지의 거리
 		float t = t_ca - thc;            // 충돌 지점까지 거리
 
@@ -163,10 +165,6 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 		auto targetTransform = other->gameObject->GetComponentIncludingBase<Transform>().get();
 		if (!targetTransform) continue;
 
-		///=======================================
-		// 박스 레이 충돌 처리 부분 작성
-		///=======================================
-
 		constexpr float EPSILON = 1e-6f;
 
 		//ray의 시작점
@@ -174,7 +172,7 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 		//ray의 방향벡터
 		XMVECTOR dir = XMVector3Normalize(XMLoadFloat3(&MoveEventTransform->moveVector));
 		//ray의 방향벡터의 크기
-		float length = XMVectorGetX(XMVector3Length(XMLoadFloat3(&MoveEventTransform->moveVector)));		
+		float length = XMVectorGetX(XMVector3Length(XMLoadFloat3(&MoveEventTransform->moveVector)));
 		//box 콜라이더의 중점
 		XMVECTOR boxCenter = XMLoadFloat3(&other->Box.pos);
 
@@ -213,7 +211,7 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 				float t1 = (e + halfLength[i]) / f;
 				float t2 = (e - halfLength[i]) / f;
 
-				//둘 중 작은 값을 짐입시 t로 
+				//둘 중 작은 값을 진입시 t로 
 				if (t1 > t2) std::swap(t1, t2);
 
 				//tMin과 tMax 최신화
@@ -263,20 +261,20 @@ void Collision::AddCollider(Collider* colliderObject)
 	switch (colliderObject->type)
 	{
 	case ColliderType::Box:
-		{
-			auto* boxCollider = dynamic_cast<BoxCollider*>(colliderObject);
-			m_boxCollider.push_back(boxCollider);
-		}break;
+	{
+		auto* boxCollider = dynamic_cast<BoxCollider*>(colliderObject);
+		m_boxCollider.push_back(boxCollider);
+	}break;
 	case ColliderType::Sphere:
-		{
-			auto* sphereCollider = dynamic_cast<SphereCollider*>(colliderObject);
-			m_sphereCollider.push_back(sphereCollider);
-		}break;
+	{
+		auto* sphereCollider = dynamic_cast<SphereCollider*>(colliderObject);
+		m_sphereCollider.push_back(sphereCollider);
+	}break;
 	case ColliderType::Ray:
-		{
+	{
 		auto* rayCollider = dynamic_cast<RayCollider*>(colliderObject);
 		m_rayCollider.push_back(rayCollider);
-		}break;
+	}break;
 	}
 }
 
@@ -285,20 +283,20 @@ bool Collision::RemoveCollider(Collider* colliderObject)
 	switch (colliderObject->type)
 	{
 	case ColliderType::Box:
-		{
-			auto boxCollider = dynamic_cast<BoxCollider*>(colliderObject);
-			m_boxCollider.erase(std::remove(m_boxCollider.begin(), m_boxCollider.end(), boxCollider), m_boxCollider.end());
-		}break;
+	{
+		auto boxCollider = dynamic_cast<BoxCollider*>(colliderObject);
+		m_boxCollider.erase(std::remove(m_boxCollider.begin(), m_boxCollider.end(), boxCollider), m_boxCollider.end());
+	}break;
 	case ColliderType::Sphere:
-		{
-			auto sphereCollider = dynamic_cast<SphereCollider*>(colliderObject);
-			m_sphereCollider.erase(std::remove(m_sphereCollider.begin(), m_sphereCollider.end(), sphereCollider), m_sphereCollider.end());
-		}break;
+	{
+		auto sphereCollider = dynamic_cast<SphereCollider*>(colliderObject);
+		m_sphereCollider.erase(std::remove(m_sphereCollider.begin(), m_sphereCollider.end(), sphereCollider), m_sphereCollider.end());
+	}break;
 	case ColliderType::Ray:
-		{
-			auto rayCollider = dynamic_cast<RayCollider*>(colliderObject);
-			m_rayCollider.erase(std::remove(m_rayCollider.begin(), m_rayCollider.end(), rayCollider), m_rayCollider.end());
-		}break;
+	{
+		auto rayCollider = dynamic_cast<RayCollider*>(colliderObject);
+		m_rayCollider.erase(std::remove(m_rayCollider.begin(), m_rayCollider.end(), rayCollider), m_rayCollider.end());
+	}break;
 	}
 	return true;
 }
@@ -333,7 +331,6 @@ void Collision::ProcessCollision()
 				if (other != nullptr)
 				{
 					Ray->trackingCollider = other;
-					other->trackingCollider = &(*Ray);
 					CollidedPair.emplace_back(&(*Ray), &(*other));
 				}
 				event->transform->ApplyTranslate(event->MoveVector);
@@ -353,7 +350,6 @@ void Collision::ProcessCollision()
 				{
 					//충돌한 대상과 충돌당한 대상을 CollidedCollider에 추가
 					Sphere->trackingCollider = other;
-					other->trackingCollider = &(*Sphere);
 					CollidedPair.emplace_back(&(*Sphere), &(*other));
 				}
 				event->transform->ApplyTranslate(event->MoveVector);
@@ -362,7 +358,7 @@ void Collision::ProcessCollision()
 		}
 
 		//콜라이더가 없는 이벤트는 이동 허용
-		event->transform->ApplyTranslate(event->MoveVector);
+		//event->transform->ApplyTranslate(event->MoveVector);
 	}
 
 	//콜라이더의 오브젝트의 이동 이벤트를 허용하는 과정
@@ -377,32 +373,37 @@ void Collision::ProcessCollision()
 	//충돌 검사를 통해 충돌이 되었다고 판단된 콜라이더
 	for (auto& cp : CollidedPair)
 	{
-		//충돌 검사한 대상이 추적 중인 대상이면
-		if (cp.first->trackingCollider != nullptr)
+		//충돌 검사한 대상과 충돌했던 대상이 있으면
+		if (cp.second != nullptr)
 		{
-			if (cp.first->isCollision) cp.first->gameObject->OnCollisionStay(cp.second);
-			else cp.first->gameObject->OnTriggerStay(cp.second);
-		}
-		//충돌 검사한 대상이 추적 중인 대상이 아니면
-		else
-		{
-			if (cp.first->isCollision) cp.first->gameObject->OnCollisionEnter(cp.second);
-			else cp.first->gameObject->OnTriggerEnter(cp.second);
+			//충돌 검사한 대상이 직전에 충돌 전적이 있으면
+			if (cp.first->trackingCollider != nullptr)
+			{
+				if (cp.first->isCollision) cp.first->gameObject->OnCollisionStay(cp.second);
+				else cp.first->gameObject->OnTriggerStay(cp.second);
+			}
+			else
+			{
+				if (cp.first->isCollision) cp.first->gameObject->OnCollisionEnter(cp.second);
+				else cp.first->gameObject->OnTriggerEnter(cp.second);
+			}
+			//충돌 당한 대상이 직전에 충돌 전적이 있으면
+			if (cp.second->trackingCollider != nullptr)
+			{
+				if (cp.second->isCollision) cp.second->gameObject->OnCollisionStay(cp.first);
+				else cp.second->gameObject->OnTriggerStay(cp.first);
+			}
+			else
+			{
+				if (cp.second->isCollision) cp.second->gameObject->OnCollisionEnter(cp.first);
+				else cp.second->gameObject->OnTriggerEnter(cp.first);
+			}
+			//충돌 하였기에 충돌하였다고 명시
+			cp.first->trackingCollider = cp.second;
+			cp.second->trackingCollider = cp.first;
 		}
 
-		//충돌 검사한 대상이 추적 중인 대상이 아니면
-		if (cp.second->trackingCollider != nullptr)
-		{
-			if (cp.second->isCollision) cp.second->gameObject->OnCollisionStay(cp.first);
-			else cp.second->gameObject->OnTriggerStay(cp.first);
-		}
-		//충돌 검사한 대상이 추적 중인 대상이면
-		else
-		{
-			if (cp.second->isCollision) cp.second->gameObject->OnCollisionEnter(cp.first);
-			else cp.second->gameObject->OnTriggerEnter(cp.first);
-		}
-
+		//추적중인 콜라이더에서 제외
 		m_trackingCollider.erase(cp.first);
 		m_trackingCollider.erase(cp.second);
 	}
@@ -416,16 +417,11 @@ void Collision::ProcessCollision()
 		}
 	}
 	m_trackingCollider.clear();
+	//이번에 충돌이 있었던 대상을 추적 대상으로 다시 추가
 	for (auto& cp : CollidedPair)
 	{
-		// 이미 추적 중인 대상이 아니라면 추가
-		if (m_trackingCollider.find(cp.first) == m_trackingCollider.end())
-		{
-			m_trackingCollider.insert(cp.first);
-		}
-		if (m_trackingCollider.find(cp.second) == m_trackingCollider.end())
-		{
-			m_trackingCollider.insert(cp.second);
-		}
+		if (cp.second == nullptr) continue;
+		m_trackingCollider.insert(cp.first);
+		m_trackingCollider.insert(cp.second);
 	}
 }

@@ -57,7 +57,9 @@ private:
 	void ChangePovCul();
 	void SetPov(ShootType);
 	void SetArtilleryMod(Transform&);
-	//void AutomaticFeeding();
+	void AutomaticFeeding();
+	void ReboundCul();
+	void Shoot(XMVECTOR, XMFLOAT3, XMFLOAT3, XMFLOAT3);
 private:
 	float const POVMAXTIMER = 300.0f;
 	float const ARTILLERYTIMER = 5000.0f;
@@ -67,16 +69,15 @@ private:
 
 	float ArtilleryTemt;
 
-	/*
 	float ReboundTimer;
 	bool isRebound;
 	int ReBoundConst;
-
+	
 	float FeedingTimer;
-	bool canFire;*/
+	bool canFire;
 
 public:
-	ShootType& GetShootType();
+	ShootType* GetShootType();
 };
 
 

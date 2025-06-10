@@ -32,6 +32,7 @@ public:
 	bool RemoveCollider(Collider*);
 	void AddEvent(MoveEvent*);
 	void ProcessCollision();
+
 private:
 	vector<SphereCollider*> m_sphereCollider;
 	vector<RayCollider*> m_rayCollider;
@@ -39,7 +40,6 @@ private:
 
 private:
 	queue<MoveEvent*> m_eventQueue;
-
 	set<Collider*> m_trackingCollider;
 
 	Collider* CheckCollision(SphereCollider*, MoveEvent*);

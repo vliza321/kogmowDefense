@@ -152,6 +152,7 @@ void GameObject::AddComponent(Args && ...args)
 	ptr->gameObject = this;
 }
 
+
 template<typename T>
 std::shared_ptr<T> GameObject::GetComponent()
 {

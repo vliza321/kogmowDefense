@@ -185,6 +185,7 @@
     <ClCompile Include="RenderComponent.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderManager.cpp" />
+    <ClCompile Include="ScopeBullet.cpp" />
     <ClCompile Include="ScopeCamera.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="systemclass.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderManager.h" />
+    <ClInclude Include="ScopeBullet.h" />
     <ClInclude Include="ScopeCamera.h" />
     <ClInclude Include="ShootType.h" />
     <ClInclude Include="Canvas.h">

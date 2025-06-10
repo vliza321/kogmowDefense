@@ -148,6 +148,8 @@ void LightManager::Execute()
 		light->distance = XMVectorGetX(XMVector3LengthSq(targetToLight));
 	}
 
+	if (m_allLights.size() < 8) return;
+
 	// 60프레임마다 전체 라이트를 정렬
 	if (m_frameTimer > 60)
 	{

@@ -51,7 +51,6 @@ void ThirdPersonCamera::SetCameraInfo()
 void ThirdPersonCamera::Execute()
 {
 	auto tf = transform.lock();
-	auto target = targetTransform.lock();
 	XMVECTOR CameraOffSet = XMVectorSet(0, 2.55f, -3.50f, 0);
 	
 	//바라볼 좌표 계산
@@ -67,8 +66,6 @@ void ThirdPersonCamera::Execute()
 	position = XMLoadFloat3(&tf->position);
 
 	position += XMVector3TransformCoord(CameraOffSet, camRotationMatrix);
-
-	//XMStoreFloat3(&tf->position, position);
 
 	//viewMatrix 생성
 	m_viewMatrix = XMMatrixLookAtLH(position, lookAt, up);

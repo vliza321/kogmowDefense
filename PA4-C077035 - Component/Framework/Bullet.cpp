@@ -131,7 +131,7 @@ void Bullet::BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT
 	tf->position.y += 0.70f;
 
 	tf->eulerRotation = PlayerEulerRotation;
-	tf->eulerRotation.x -= XM_PI * 0.10f;
+	tf->eulerRotation.x -= XM_PI * 0.1f;
 
 	temt.x = XMVectorGetX(CameraLookAt) - PlayerPosition.x;
 	temt.y = XMVectorGetY(CameraLookAt) - PlayerPosition.y;
