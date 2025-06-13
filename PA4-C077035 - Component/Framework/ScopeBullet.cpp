@@ -62,6 +62,8 @@ void ScopeBullet::FixedExecute()
 	XMVECTOR tg = { 0.0f, -0.0000498f * timer , 0, 0 };
 	auto tf = transform.lock();
 
+	temt = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
 	XMStoreFloat3(&temt, m_moveVector);
 
 	// 변위에 적용할 회전행렬 계산
@@ -79,12 +81,9 @@ void ScopeBullet::FixedExecute()
 	tf->Translate(temt);
 
 	// 회전 각도 계산
-	double pitchAngle = asinf(XMVectorGetY(m_moveVector));
+	double pitchAngle = asinf(temt.y);
 
-	pitchAngle = (pitchAngle > 0) ? pitchAngle : -pitchAngle;
-
-	// 라디안 값 변환 및 회전 계산
-	//tf->rotation.x += pitchAngle;
+	(temt.y < 0) ? tf->rotation.x = pitchAngle : tf->rotation.x = -pitchAngle;
 
 	if (tf->position.y < 0)
 	{

@@ -79,35 +79,26 @@ bool CanvasRenderer::Shutdown()
 
 ID3D11ShaderResourceView* CanvasRenderer::GetModelTexture()
 {
-	return m_model->GetTexture();
-	//return m_baseModel->GetTexture();
-}
-
-PanelModelClass* CanvasRenderer::GetModelData()
-{
-	return m_model;
-}
-
-ModelClass* CanvasRenderer::GetModelData1()
-{
-	return m_baseModel;
+	//return m_model->GetTexture();
+	return m_baseModel->GetTexture();
 }
 
 int CanvasRenderer::GetModelIndexCount()
 {
-	return m_model->GetIndexCount();
-	//return m_baseModel->GetIndexCount();
+	//return m_model->GetIndexCount();
+	return m_baseModel->GetIndexCount();
 }
 
 int CanvasRenderer::GetModelVertexCount()
 {
-	return m_model->GetIndexCount();
-	//return m_baseModel->GetIndexCount();
+	//return m_model->GetIndexCount();
+	return m_baseModel->GetIndexCount();
 }
 
 int CanvasRenderer::GetModelInstanceCount()
 {
-	return m_model->GetIndexCount();
+	//return m_model->GetIndexCount();
+	return m_baseModel->GetIndexCount();
 }
 
 RectTransform* CanvasRenderer::GetRectTransform()

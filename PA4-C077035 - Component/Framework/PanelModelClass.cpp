@@ -614,7 +614,7 @@ bool PanelModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount,
 		m_model[i * 3 + 2].ny = normals[nIndex].y;
 		m_model[i * 3 + 2].nz = normals[nIndex].z;
 	}
-	/*
+	
 	int i = 0;
 	m_model[i].x = PanelRect.x;
 	m_model[i].y = PanelRect.y;
@@ -669,7 +669,7 @@ bool PanelModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount,
 	m_model[i].nx = -0;
 	m_model[i].ny = -0;
 	m_model[i].nz = -1;
-	i++;*/
+	i++;
 	//// Close the output file.
 	fout.close();
 	// Release the four data structures.
