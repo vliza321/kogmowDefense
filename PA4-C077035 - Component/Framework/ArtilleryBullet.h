@@ -4,14 +4,27 @@ class ArtilleryBullet : public BaseBullet
 {
 public:
 	ArtilleryBullet();
-	ArtilleryBullet(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale, const WCHAR*, const WCHAR*, int);
 	~ArtilleryBullet();
 
-	virtual bool Initialize(ID3D11Device*);
-	virtual void Execute(XMFLOAT3);
-	virtual bool Shutdown();
+	virtual bool InitializeSet() override;
+	virtual bool Initialize() override;
+	virtual bool InitializeRef() override;
+	virtual bool InitializeSynchronization() override;
+	virtual bool PostInitialize() override;
 
-	virtual void BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 PlayerPosition, XMFLOAT3 PlayerEulerRotation);
+	virtual void FixedExecute() override;
+	virtual void Execute() override;
+	virtual void LateExecute() override;
+	virtual void PostExecute() override;
+
+	virtual void OnCollisionEnter(Collider* other) override;
+	virtual void OnCollisionStay(Collider* other) override;
+	virtual void OnCollisionExit(Collider* other) override;
+public:
+	virtual void BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 PlayerPosition, XMFLOAT3 PlayerEulerRotation) override;
+	virtual bool Shutdown() override;
+	virtual void OnEnable() override;
+	virtual void OnDisable() override;
 private:
-	bool m_MoveUp;
+	bool m_moveUp;
 };

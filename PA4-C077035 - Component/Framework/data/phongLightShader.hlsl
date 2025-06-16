@@ -124,8 +124,6 @@ PixelInputType LightVertexShader(VertexInputType input)
     output.lightPos6 = normalize(output.lightPos6);
     output.lightPos7 = normalize(output.lightPos7);
 
-
-
     return output;
 }
 

@@ -67,6 +67,16 @@ bool BulletManager::InitializeRef()
 			continue;
 		}
 	}
+	auto aBullets = this->gameObject->Root().FindObjectsWithTag(Tag::ArtilleryBullet);
+	for (auto& ab : aBullets)
+	{
+		auto abb = ab->GetComponentIncludingBase<BaseBullet>().get();
+		if (abb != nullptr)
+		{
+			m_BulletMapSet[abb->GetBulletType()]->push_back(abb);
+			continue;
+		}
+	}
 	return true;
 }
 

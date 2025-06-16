@@ -11,6 +11,7 @@ enum class Tag
 	Camera,
 	NormalBullet,
 	ScopeBullet,
+	ArtilleryBullet,
 	Canvas,
 	NUM
 };

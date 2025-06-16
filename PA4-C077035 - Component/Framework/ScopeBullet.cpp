@@ -1,7 +1,5 @@
 #include "ScopeBullet.h"
 #include "algorithm"
-
-#include "algorithm"
 #include "ObjectClass.h"
 #include "GameObject.h"
 
@@ -19,7 +17,7 @@ ScopeBullet::~ScopeBullet()
 bool ScopeBullet::InitializeSet()
 {
 	active = false;
-	speed = 0.1f;
+	speed = 0.02f;
 	return true;
 }
 
@@ -57,14 +55,14 @@ bool ScopeBullet::PostInitialize()
 void ScopeBullet::FixedExecute()
 {
 	// 장약으로 인한 변위
-	XMVECTOR tv = { 0.0f, 0, speed * GetDeltaTime() * 0.15f, 0 };
+	XMVECTOR tv = { 0.0f, 0, speed * GetDeltaTime(), 0 };
 	// 중력으로 인한 변위
-	XMVECTOR tg = { 0.0f, -0.0000498f * timer , 0, 0 };
+	XMVECTOR tg = { 0.0f, -0.000098f * timer, 0, 0 };
 	auto tf = transform.lock();
 
 	temt = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-	XMStoreFloat3(&temt, m_moveVector);
+	//XMStoreFloat3(&temt, m_moveVector);
 
 	// 변위에 적용할 회전행렬 계산
 	m_rotationMatrix = XMMatrixRotationRollPitchYaw(tf->eulerRotation.x, tf->eulerRotation.y, 0);
@@ -81,9 +79,9 @@ void ScopeBullet::FixedExecute()
 	tf->Translate(temt);
 
 	// 회전 각도 계산
-	double pitchAngle = asinf(temt.y);
+	double pitchAngle = asinf(XMVectorGetZ(m_moveVector)) * 0.01745328f;
 
-	(temt.y < 0) ? tf->rotation.x = pitchAngle : tf->rotation.x = -pitchAngle;
+	tf->rotation.x += pitchAngle;
 
 	if (tf->position.y < 0)
 	{

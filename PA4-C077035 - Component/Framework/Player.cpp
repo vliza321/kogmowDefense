@@ -109,23 +109,31 @@ void Player::Execute()
 	auto& input = InputClass::GetInstance();
 	auto cm = m_cameraManager.lock();
 
-	if (InputClass::GetInstance().IsKey(DIK_W))
+	if (input.IsKey(DIK_W))
 	{
 		m_moveBackForward = 1;
 	}
-	if (InputClass::GetInstance().IsKey(DIK_S))
+	if (input.IsKey(DIK_S))
 	{
 		m_moveBackForward = -1;
 	}
-	if (InputClass::GetInstance().IsKey(DIK_A))
+	if (input.IsKey(DIK_A))
 	{
 		m_moveLeftRight = -1;
 	}
-	if (InputClass::GetInstance().IsKey(DIK_D))
+	if (input.IsKey(DIK_D))
 	{
 		m_moveLeftRight = 1;
 	}
-	if ((input.GetCurrMouseState().lX != input.GetLastMouseState().lX) || (input.GetCurrMouseState().lY != input.GetLastMouseState().lY))
+	if (input.IsKeyDown(DIK_LSHIFT))
+	{
+		speed *= 4;
+	}
+	if (input.IsKeyUp(DIK_LSHIFT))
+	{
+		speed *= 0.25f;
+	}
+	if ((m_currentShootType != ShootType::Artillery) && ((input.GetCurrMouseState().lX != input.GetLastMouseState().lX) || (input.GetCurrMouseState().lY != input.GetLastMouseState().lY)))
 	{
 		tf->eulerRotation.x += input.GetCurrMouseState().lY * 0.001f;
 		tf->eulerRotation.y += input.GetCurrMouseState().lX * 0.001f;

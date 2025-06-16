@@ -1,20 +1,12 @@
 #include "ArtilleryBullet.h"
 #include "algorithm"
-
+#include "ObjectClass.h"
+#include "GameObject.h"
 
 ArtilleryBullet::ArtilleryBullet()
-	: BaseBullet()
+	: BaseBullet(ShootType::Artillery)
 {
-	m_BulletType = ShootType::Artillery;
-	m_MoveUp = true;
-}
-
-ArtilleryBullet::ArtilleryBullet(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale,
-	const WCHAR* modelFilename, const WCHAR* textureFilename, int instanceCounter)
-	: BaseBullet(position, rotation, scale, modelFilename, textureFilename, instanceCounter)
-{
-	m_BulletType = ShootType::Artillery;
-	m_MoveUp = true;
+	m_moveUp = true;
 }
 
 ArtilleryBullet::~ArtilleryBullet()
@@ -22,45 +14,147 @@ ArtilleryBullet::~ArtilleryBullet()
 
 }
 
-bool ArtilleryBullet::Initialize(ID3D11Device* device)
+bool ArtilleryBullet::InitializeSet()
 {
-	transform.eulerRotation.x = 0;
-	transform.eulerRotation.y = 0;
-	transform.eulerRotation.z = 0;
-
-	frontMoveDirection = XMVectorSet(1, 0, 0, 0);
-	sideMoveDirection = XMVectorSet(0, 0, 1, 0);
-
-	moveLeftRight = 0.0f;
-	moveBackForward = 0.0f;
-
-	m_MoveVector = XMVectorSet(0, 0, 0, 0);
-
-	DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	DefaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	Right = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	Forward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-
-	isActive = true;
-	timer = 0;
-
-	speed = 0.05f;
-
-	bool result;
-	m_Model = new ModelClass;
-	if (!m_Model)
-	{
-		return false;
-	}
-	result = m_Model->Initialize(device, m_ModelFileName, m_TextureFileName, m_InstanceCounter);
-	if (!result)
-	{
-		return false;
-	}
-
+	active = false;
+	speed = 0.01f;
 	return true;
 }
 
+bool ArtilleryBullet::Initialize()
+{
+	return true;
+}
+
+bool ArtilleryBullet::InitializeRef()
+{
+	transform = this->gameObject->GetComponentIncludingBase<Transform>();
+
+	auto tf = transform.lock();
+	if (tf == nullptr)
+	{
+		auto newTransform = std::make_shared<Transform>(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.04f, 0.04f, 0.04f), XMFLOAT3(0, 0, 0));
+		this->gameObject->AddComponent(newTransform);
+		transform = newTransform;
+	}
+
+	targetTransform = this->gameObject->root->FindObjectWithTag(Tag::Player)->GetComponentIncludingBase<Transform>();
+	return true;
+}
+
+bool ArtilleryBullet::InitializeSynchronization()
+{
+	return true;
+}
+
+bool ArtilleryBullet::PostInitialize()
+{
+	return true;
+}
+
+void ArtilleryBullet::FixedExecute()
+{
+	auto tf = transform.lock();
+	if (m_moveUp)
+	{
+		// 중력 + 장약으로 인한 변위
+		XMFLOAT3 tv = { 0.0f, speed * GetDeltaTime() * 4, 0 };
+
+		tf->Translate(tv);
+
+		if (tf->position.y > 20)
+		{
+			timer = 0;
+			m_moveUp = false;
+			tf->eulerRotation.x = XM_PI * 0.499f;
+
+			tf->position = temt;
+			tf->position.y = 20;
+		}
+	}
+	else
+	{
+		// 중력 + 장약으로 인한 변위
+		XMFLOAT3 tv = { 0.0f, -0.0000980f * timer - speed * GetDeltaTime(), 0 };
+
+		// 실질적 좌표 이동
+		tf->Translate(tv);
+
+		if (tf->position.y < -5)
+		{
+			active = false;
+			this->gameObject->active = false;
+		}
+	}
+
+	timer += GetDeltaTime();
+}
+
+void ArtilleryBullet::Execute()
+{
+	
+}
+
+void ArtilleryBullet::LateExecute()
+{
+}
+
+void ArtilleryBullet::PostExecute()
+{
+}
+
+void ArtilleryBullet::OnCollisionEnter(Collider* other)
+{
+	active = false;
+	this->gameObject->active = false;
+}
+
+void ArtilleryBullet::OnCollisionStay(Collider* other)
+{
+
+}
+
+void ArtilleryBullet::OnCollisionExit(Collider* other)
+{
+}
+
+
+void ArtilleryBullet::BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 PlayerPosition, XMFLOAT3 PlayerEulerRotation)
+{
+	auto tf = transform.lock();
+
+	temt = CameraPosition;
+
+	tf->position = PlayerPosition;
+	tf->position.y += 0.70f;
+	tf->eulerRotation.x = -XM_PI * 0.499f;
+
+	m_moveVector = XMLoadFloat3(&temt);
+	m_moveVector = XMVector3Normalize(m_moveVector);
+	
+	active = true;
+	this->gameObject->active = true;
+	
+	m_moveUp = true;
+	
+	timer = 0;
+}
+
+bool ArtilleryBullet::Shutdown()
+{
+	return true;
+}
+
+void ArtilleryBullet::OnEnable()
+{
+
+}
+
+void ArtilleryBullet::OnDisable()
+{
+}
+
+/*
 
 void ArtilleryBullet::BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 PlayerPosition, XMFLOAT3 PlayerEulerRotation)
 {
@@ -76,9 +170,9 @@ void ArtilleryBullet::BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition
 	m_MoveUp = true;
 	timer = 0;
 	//SetRotation(temt);
-}
+}*/
 
-
+/*
 void ArtilleryBullet::Execute(XMFLOAT3 pos)//bullet update
 {
 	if (m_MoveUp)
@@ -113,10 +207,4 @@ void ArtilleryBullet::Execute(XMFLOAT3 pos)//bullet update
 	}
 
 	timer += GetDeltaTime();
-}
-
-bool ArtilleryBullet::Shutdown()
-{
-	m_Model->Shutdown();
-	return true;
-}
+}*/

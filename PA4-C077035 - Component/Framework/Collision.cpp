@@ -131,7 +131,7 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 
 		// DirectXMath 벡터 변환
 		XMVECTOR origin = XMLoadFloat3(&MoveEventTransform->position);// Ray 시작점
-		XMVECTOR dir = XMVector3Normalize(XMLoadFloat3(&MoveEventTransform->moveVector));// Ray 방향 (정규화)
+		XMVECTOR dir = XMLoadFloat3(&MoveEventTransform->moveVector);// Ray 방향 (정규화)
 		XMVECTOR sphereCenter = XMLoadFloat3(&targetTransform->position);// Sphere 중심
 
 		// Ray 시작점에서 Sphere 중심까지의 벡터
@@ -143,18 +143,18 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 		// Ray가 반대 방향을 가리키면 충돌 없음
 		if (t_ca < 0) continue;
 
-		// 중심에서 Ray까지의 거리 d^2 = |L|^2 - t_ca^2
-		float d2 = XMVectorGetX(XMVector3Dot(length, length)) - (t_ca * t_ca);
-		// Sphere의 반지금 제곱
-		float r2 = other->radius * other->radius;
+		// 중심에서 Ray까지의 거리 d = |L| - t_ca
+		float d = XMVectorGetX(XMVector3Length(length)) - t_ca;
+		// Sphere의 반지름
+		float r = other->radius;
 
 		// 최근접 거리가 반지름보다 크면 충돌 없음
-		if (d2 > r2) continue;
+		if (d > r) continue;
 
-		float thc = sqrtf(r2 - d2);      // 접점까지의 거리
+		float thc = r - d;      // 접점까지의 거리
 		float t = t_ca - thc;            // 충돌 지점까지 거리
 
-		XMVECTOR moveVec = dir * t;
+		XMVECTOR moveVec = XMVector3Normalize(dir) * t;
 		XMStoreFloat3(&moveEvent->MoveVector, moveVec);
 
 		return other;

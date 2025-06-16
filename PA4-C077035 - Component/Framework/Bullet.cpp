@@ -55,12 +55,14 @@ bool Bullet::PostInitialize()
 void Bullet::FixedExecute()
 {
 	// 장약으로 인한 변위
-	XMVECTOR tv = { 0.0f, 0, speed * GetDeltaTime() * 0.05f, 0 };
+	XMVECTOR tv = { 0.0f, 0, speed * GetDeltaTime() * 0.075f, 0 };
 	// 중력으로 인한 변위
 	XMVECTOR tg = { 0.0f, -0.000098f * timer , 0, 0 };
 	auto tf = transform.lock();
 
-	XMStoreFloat3(&temt, m_moveVector);
+	temt = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	//XMStoreFloat3(&temt, m_moveVector);
 
 	// 변위에 적용할 회전행렬 계산
 	m_rotationMatrix = XMMatrixRotationRollPitchYaw(tf->eulerRotation.x, tf->eulerRotation.y, 0);
@@ -77,12 +79,18 @@ void Bullet::FixedExecute()
 	tf->Translate(temt);
 
 	// 회전 각도 계산
-	double pitchAngle = asinf(XMVectorGetY(m_moveVector));
+	double pitchAngle = asinf(XMVectorGetZ(m_moveVector)) *0.1745328f;
 
-	pitchAngle = (pitchAngle > 0) ? pitchAngle : -pitchAngle;
-
-	// 라디안 값 변환 및 회전 계산
 	tf->rotation.x += pitchAngle;
+	/*
+	if (XMVectorGetY(m_moveVector) > 0) 
+	{
+		tf->rotation.x += pitchAngle; 
+	}
+	else
+	{
+		tf->rotation.x += pitchAngle;
+	}*/
 
 	if (tf->position.y < 0)
 	{
