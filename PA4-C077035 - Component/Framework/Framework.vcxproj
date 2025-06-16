@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArtilleryBullet.cpp" />
     <ClCompile Include="ArtilleryCamera.cpp" />
     <ClCompile Include="BaseBullet.cpp" />
     <ClCompile Include="BaseCamera.cpp" />
@@ -198,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlignedAllocationPolicy.h" />
+    <ClInclude Include="ArtilleryBullet.h" />
     <ClInclude Include="ArtilleryCamera.h" />
     <ClInclude Include="BaseBullet.h" />
     <ClInclude Include="BaseCamera.h" />
