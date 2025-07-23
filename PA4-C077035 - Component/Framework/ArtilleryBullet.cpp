@@ -28,7 +28,7 @@ bool ArtilleryBullet::Initialize()
 
 bool ArtilleryBullet::InitializeRef()
 {
-	transform = this->gameObject->GetComponentIncludingBase<Transform>();
+	transform = this->gameObject->GetComponent<Transform>();
 
 	auto tf = transform.lock();
 	if (tf == nullptr)
@@ -38,7 +38,9 @@ bool ArtilleryBullet::InitializeRef()
 		transform = newTransform;
 	}
 
-	targetTransform = this->gameObject->root->FindObjectWithTag(Tag::Player)->GetComponentIncludingBase<Transform>();
+	targetTransform = this->gameObject->root->FindObjectWithTag(Tag::Player)->GetComponent<Transform>();
+
+	m_collider = this->gameObject->GetComponentIncludingBase<Collider>();
 	return true;
 }
 
@@ -70,6 +72,9 @@ void ArtilleryBullet::FixedExecute()
 
 			tf->position = temt;
 			tf->position.y = 20;
+
+			auto cl = m_collider.lock();
+			cl->active = true;
 		}
 	}
 	else
@@ -84,6 +89,8 @@ void ArtilleryBullet::FixedExecute()
 		{
 			active = false;
 			this->gameObject->active = false;
+			auto cl = m_collider.lock();
+			cl->active = false;
 		}
 	}
 
@@ -122,6 +129,7 @@ void ArtilleryBullet::OnCollisionExit(Collider* other)
 void ArtilleryBullet::BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 PlayerPosition, XMFLOAT3 PlayerEulerRotation)
 {
 	auto tf = transform.lock();
+	auto cl = m_collider.lock();
 
 	temt = CameraPosition;
 
@@ -138,6 +146,8 @@ void ArtilleryBullet::BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition
 	m_moveUp = true;
 	
 	timer = 0;
+
+	cl->active = false;
 }
 
 bool ArtilleryBullet::Shutdown()

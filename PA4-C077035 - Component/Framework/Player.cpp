@@ -39,7 +39,7 @@ bool Player::Initialize()
 
 bool Player::InitializeRef()
 {
-	transform = this->gameObject->GetComponentIncludingBase<Transform>();
+	transform = this->gameObject->GetComponent<Transform>();
 	auto tf = transform.lock();
 	if (tf == nullptr)
 	{
@@ -47,9 +47,9 @@ bool Player::InitializeRef()
 		this->gameObject->AddComponent(newTransform);
 		transform = newTransform;
 	}
-	m_cameraManager = gameObject->Root().Find("CameraManager")->GetComponentIncludingBase<CameraManager>();
-	m_uiCanvas = gameObject->Root().Find("Canvas")->GetComponentIncludingBase<Canvas>();
-	m_bulletManager = gameObject->GetComponentIncludingBase<BulletManager>();
+	m_cameraManager = gameObject->Root().Find("CameraManager")->GetComponent<CameraManager>();
+	m_uiCanvas = gameObject->Root().Find("Canvas")->GetComponent<Canvas>();
+	m_bulletManager = gameObject->GetComponent<BulletManager>();
 	return true;
 }
 
@@ -137,7 +137,7 @@ void Player::Execute()
 	{
 		tf->eulerRotation.x += input.GetCurrMouseState().lY * 0.001f;
 		tf->eulerRotation.y += input.GetCurrMouseState().lX * 0.001f;
-		tf->eulerRotation.x = max(-XM_PI * 0.4999f, min(XM_PI * 0.2999f, tf->eulerRotation.x));
+		tf->eulerRotation.x = max(-XM_PI * 0.2499f, min(XM_PI * 0.2999f, tf->eulerRotation.x));
 	}
 	if (input.GetCurrMouseState().rgbButtons[0] && canFire)
 	{
@@ -246,6 +246,7 @@ void Player::SetArtilleryMod(Transform& transform)
 	else
 	{
 		transform.eulerRotation.x = ArtilleryTemt;
+		transform.eulerRotation.x = max(-XM_PI * 0.2499f, min(XM_PI * 0.2999f, transform.eulerRotation.x));
 	}
 }
 
@@ -302,7 +303,12 @@ void Player::ReboundCul()
 void Player::Shoot(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 PlayerPosition, XMFLOAT3 PlayerEulerRotation)
 {
 	auto bm = m_bulletManager.lock();
-	bm->ShootBullet(CameraLookAt, CameraPosition, PlayerPosition, PlayerEulerRotation);
+	if (!bm->ShootBullet(CameraLookAt, CameraPosition, PlayerPosition, PlayerEulerRotation))
+	{
+		return;
+	}
+	
+	auto tf = transform.lock();
 	isRebound = true;
 	ReboundTimer = 0;
 	ReBoundConst = rand();
@@ -324,6 +330,8 @@ void Player::Shoot(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XMFLOAT3 Play
 		break;
 	case ShootType::Artillery:
 		FeedingTimer = 5600.0f;
+		SetPov(ShootType::TPC);
+		SetArtilleryMod(*tf);
 		break;
 	case ShootType::Num:
 		break;

@@ -53,6 +53,7 @@ bool BulletManager::InitializeRef()
 		auto bb = b->GetComponentIncludingBase<BaseBullet>().get();
 		if (bb != nullptr)
 		{
+			bb->gameObject->active = false;
 			m_BulletMapSet[bb->GetBulletType()]->push_back(bb);
 			continue;
 		}
@@ -63,6 +64,7 @@ bool BulletManager::InitializeRef()
 		auto sbb = sb->GetComponentIncludingBase<BaseBullet>().get();
 		if (sbb != nullptr)
 		{
+			sbb->gameObject->active = false;
 			m_BulletMapSet[sbb->GetBulletType()]->push_back(sbb);
 			continue;
 		}
@@ -73,6 +75,7 @@ bool BulletManager::InitializeRef()
 		auto abb = ab->GetComponentIncludingBase<BaseBullet>().get();
 		if (abb != nullptr)
 		{
+			abb->gameObject->active = false;
 			m_BulletMapSet[abb->GetBulletType()]->push_back(abb);
 			continue;
 		}
@@ -177,30 +180,27 @@ void BulletManager::SetShootType(ShootType ShootType)
 
 void BulletManager::StartReload()
 {
-	if (m_ReleaseBullet[*m_CurrentShootType].get()->size() > 0)
-	{
-		if (m_DoReload) return;
-		m_DoReload = true;
+	if (m_DoReload) return;
+	m_DoReload = true;
 
-		switch (*m_CurrentShootType)
-		{
-		case ShootType::Title:
-			break;
-		case ShootType::FPC:
-			m_ReloadTimer = 500.0f;
-			break;
-		case ShootType::TPC:
-			m_ReloadTimer = 500.0f;
-			break;
-		case ShootType::Scope:
-			m_ReloadTimer = 2000.0f;
-			break;
-		case ShootType::Artillery:
-			ReloadBullet();
-			break;
-		case ShootType::Num:
-			break;
-		}
+	switch (*m_CurrentShootType)
+	{
+	case ShootType::Title:
+		break;
+	case ShootType::FPC:
+		m_ReloadTimer = 1500.0f;
+		break;
+	case ShootType::TPC:
+		m_ReloadTimer = 1500.0f;
+		break;
+	case ShootType::Scope:
+		m_ReloadTimer = 3000.0f;
+		break;
+	case ShootType::Artillery:
+		ReloadBullet();
+		break;
+	case ShootType::Num:
+		break;
 	}
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseBullet.h"
+#include "Collider.h"
 class ArtilleryBullet : public BaseBullet
 {
 public:
@@ -27,4 +28,5 @@ public:
 	virtual void OnDisable() override;
 private:
 	bool m_moveUp;
+	std::weak_ptr<Collider> m_collider;
 };

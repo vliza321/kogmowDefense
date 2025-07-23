@@ -219,7 +219,7 @@ bool GraphicsClass::Render()
 	}
 	m_D3D->TurnZBufferOn();
 	//m_D3D->TurnOffAlphaBlending();
-	//m_D3D->TurnOnCullBackMode();
+	m_D3D->TurnOnCullBackMode();
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();

@@ -17,7 +17,7 @@ Bullet::~Bullet()
 bool Bullet::InitializeSet()
 {
 	active = false;
-	speed = 0.1f;
+	speed = 0.125f;
 	return true;
 }
 
@@ -55,9 +55,9 @@ bool Bullet::PostInitialize()
 void Bullet::FixedExecute()
 {
 	// 장약으로 인한 변위
-	XMVECTOR tv = { 0.0f, 0, speed * GetDeltaTime() * 0.075f, 0 };
+	XMVECTOR tv = { 0.0f, 0, speed * GetDeltaTime() * 0.07f, 0 };
 	// 중력으로 인한 변위
-	XMVECTOR tg = { 0.0f, -0.000098f * timer , 0, 0 };
+	XMVECTOR tg = { 0.0f, -0.0001f * timer , 0, 0 };
 	auto tf = transform.lock();
 
 	temt = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -79,18 +79,16 @@ void Bullet::FixedExecute()
 	tf->Translate(temt);
 
 	// 회전 각도 계산
-	double pitchAngle = asinf(XMVectorGetZ(m_moveVector)) *0.1745328f;
+	double pitchAngle = asinf(XMVectorGetY(m_moveVector)) * 0.1745328f;
 
-	tf->rotation.x += pitchAngle;
-	/*
 	if (XMVectorGetY(m_moveVector) > 0) 
 	{
 		tf->rotation.x += pitchAngle; 
 	}
 	else
 	{
-		tf->rotation.x += pitchAngle;
-	}*/
+		tf->rotation.x -= pitchAngle;
+	}
 
 	if (tf->position.y < 0)
 	{
@@ -122,8 +120,9 @@ void Bullet::OnCollisionEnter(Collider* other)
 
 void Bullet::OnCollisionStay(Collider* other)
 {
+	/*
 	active = false;
-	this->gameObject->active = false;
+	this->gameObject->active = false;*/
 }
 
 void Bullet::OnCollisionExit(Collider* other)

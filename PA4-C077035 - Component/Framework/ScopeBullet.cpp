@@ -17,7 +17,7 @@ ScopeBullet::~ScopeBullet()
 bool ScopeBullet::InitializeSet()
 {
 	active = false;
-	speed = 0.02f;
+	speed = 0.0235f;
 	return true;
 }
 
@@ -81,7 +81,14 @@ void ScopeBullet::FixedExecute()
 	// 회전 각도 계산
 	double pitchAngle = asinf(XMVectorGetZ(m_moveVector)) * 0.01745328f;
 
-	tf->rotation.x += pitchAngle;
+	if (XMVectorGetY(m_moveVector) > 0)
+	{
+		tf->rotation.x += pitchAngle;
+	}
+	else
+	{
+		tf->rotation.x -= pitchAngle;
+	}
 
 	if (tf->position.y < 0)
 	{
@@ -99,6 +106,7 @@ void ScopeBullet::Execute()
 
 void ScopeBullet::LateExecute()
 {
+
 }
 
 void ScopeBullet::PostExecute()
@@ -113,8 +121,7 @@ void ScopeBullet::OnCollisionEnter(Collider* other)
 
 void ScopeBullet::OnCollisionStay(Collider* other)
 {
-	active = false;
-	this->gameObject->active = false;
+
 }
 
 void ScopeBullet::OnCollisionExit(Collider* other)
@@ -127,10 +134,10 @@ void ScopeBullet::BulletAwake(XMVECTOR CameraLookAt, XMFLOAT3 CameraPosition, XM
 	auto tf = transform.lock();
 
 	tf->position = PlayerPosition;
-	tf->position.y += 0.70f;
+	tf->position.y += 0.50f;
 
 	tf->eulerRotation = PlayerEulerRotation;
-	tf->eulerRotation.x -= XM_PI * 0.010f;
+	tf->eulerRotation.x -= XM_PI * 0.005f;
 
 	temt.x = XMVectorGetX(CameraLookAt) - PlayerPosition.x;
 	temt.y = XMVectorGetY(CameraLookAt) - PlayerPosition.y;
