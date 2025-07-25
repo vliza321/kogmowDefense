@@ -20,6 +20,7 @@ public:
 	bool Shutdown() override;
 
 	ID3D11ShaderResourceView* GetModelTexture();
+	ID3D11ShaderResourceView** GetModelTextureArray();
 	ModelClass* GetModelData();
 
 	int GetModelIndexCount();

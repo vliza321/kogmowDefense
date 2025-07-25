@@ -17,8 +17,15 @@ bool LightManager::InitializeSet()
 {
 	XMFLOAT3 PlayerPos = XMFLOAT3(0, 0, 0);
 	bool result = true;
+	/// 순서대로
+	/// 방향
+	/// 앰비언트
+	/// 디퓨즈
+	/// 스페큘라
+	/// 포지션
+	/// 스페큘라 파워
 	m_directionalLight = new LightClass(
-		XMFLOAT3(1.0f, 01.0f, 1.0f),
+		XMFLOAT3(1.0f, 00.50f, 1.0f),
 		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
 		XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f),
 		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
@@ -27,61 +34,88 @@ bool LightManager::InitializeSet()
 	
 	m_allLights.push_back(
 		new LightClass(
-			XMFLOAT3(1.0f, 0.0f, 1.0f),
+			XMFLOAT3(1.0f, 0.50f, 1.0f),
 			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f), 
 			XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f), 
 			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			XMFLOAT4(12.50f * 0.2f, 0.50f, 5.0f * 0.2f, 1.0f),
+			XMFLOAT4(1.0f, 00.250f, 1.0f, 1.0f),
 			128.0f)
 	);
 	m_allLights.push_back(
 		new LightClass(
-			XMFLOAT3(1.0f, 0.0f, 1.0f),
+			XMFLOAT3(1.0f, 0.50f, 1.0f),
 			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
 			XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f),
 			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			XMFLOAT4(-48.3f * 0.2f, 0.50f, 52.325f * 0.2f, 1.0f),
+			XMFLOAT4(3.0f, 0.50f, 3.0f, 1.0f),
 			128.0f)
 	);
 	m_allLights.push_back(
 		new LightClass(
-			XMFLOAT3(1.0f, 0.0f, 1.0f),
+			XMFLOAT3(1.0f, 0.50f, 1.0f),
 			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
 			XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f),
 			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			XMFLOAT4(-99.0f * 0.2f, 0.50f, 114.50f * 0.2f, 1.0f),
+			XMFLOAT4(5.0f, 01.0f, 5.0f, 1.0f),
 			128.0f)
 	);
 	m_allLights.push_back(
 		new LightClass(
-			XMFLOAT3(1.0f, 0.0f, 1.0f),
+			XMFLOAT3(1.0f, 0.50f, 1.0f),
 			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
 			XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f),
 			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			XMFLOAT4(75.00f * 0.2f, 0.50f, -41.5f * 0.2f, 1.0f),
+			XMFLOAT4(7.00f, 1.50f, 7.0f, 1.0f),
 			128.0f)
 	);
 	m_allLights.push_back(
 		new LightClass(
-			XMFLOAT3(1.0f, 0.0f, 1.0f),
+			XMFLOAT3(1.0f, 0.50f, 1.0f),
 			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
 			XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f),
 			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			XMFLOAT4(123.10f * 0.2f, 0.50f, -106.750f * 0.2f, 1.0f),
+			XMFLOAT4(9.0f, 2.0f, 9.0f, 1.0f),
 			128.0f)
 	);
 	for (auto al = m_allLights.begin(); al != m_allLights.end(); al++)
 	{
-		(*al)->diffuseColor = XMFLOAT4(01.0f, 0.0f, 0.0f, 00.750f);
+		(*al)->diffuseColor = XMFLOAT4(001.0f, 0.0f, 0.0f, 01.0f);
 	}
 	
 	m_allLights.push_back(
 		new LightClass(
 			XMFLOAT3(1.0f, 0.0f, 1.0f),
 			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-			XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f),
+			XMFLOAT4(01.0f, 01.0f, 0.0f, 1.0f),
 			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			XMFLOAT4(173.10f * 0.2f, 0.50f, -166.750f * 0.2f, 1.0f),
+			XMFLOAT4(-2.0f , 01.0f, -2.0f, 1.0f),
+			128.0f)
+	);
+	m_allLights.push_back(
+		new LightClass(
+			XMFLOAT3(1.0f, 0.0f, 1.0f),
+			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
+			XMFLOAT4(0.0f, 01.0f, 0.0f, 1.0f),
+			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			XMFLOAT4(-4.0f, 01.0f, -4.0f , 1.0f),
+			128.0f)
+	);
+	m_allLights.push_back(
+		new LightClass(
+			XMFLOAT3(1.0f, 0.0f, 1.0f),
+			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
+			XMFLOAT4(0.0f, 0.0f, 01.0f, 1.0f),
+			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			XMFLOAT4(-6.0f, 01.0f, -6.0f, 1.0f),
+			128.0f)
+	);
+	m_allLights.push_back(
+		new LightClass(
+			XMFLOAT3(1.0f, 0.0f, 1.0f),
+			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
+			XMFLOAT4(0.0f, 01.0f, 01.0f, 1.0f),
+			XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
+			XMFLOAT4(-8.0f, 01.50f, -8.0f, 1.0f),
 			128.0f)
 	);
 	m_allLights.push_back(
@@ -90,16 +124,7 @@ bool LightManager::InitializeSet()
 			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
 			XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f),
 			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			XMFLOAT4(223.10f * 0.2f, 0.50f, -236.750f * 0.2f, 1.0f),
-			128.0f)
-	);
-	m_allLights.push_back(
-		new LightClass(
-			XMFLOAT3(1.0f, 0.0f, 1.0f),
-			XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-			XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f),
-			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			XMFLOAT4(273.10f * 0.2f, 0.50f, -296.750f * 0.2f, 1.0f),
+			XMFLOAT4(-10.0f, 01.50f, -10.0f, 1.0f),
 			128.0f)
 	);
 	return result;

@@ -276,6 +276,7 @@
     <Image Include="data\arrow.dds" />
     <Image Include="data\Campfire.dds" />
     <Image Include="data\Cannon.dds" />
+    <Image Include="data\Default.dds" />
     <Image Include="data\foliage.dds" />
     <Image Include="data\font.dds" />
     <Image Include="data\Golem.dds" />

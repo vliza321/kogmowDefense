@@ -302,7 +302,7 @@ void ObjectClass::CreateGameObject()
 	GameObject* player = new GameObject(true, Tag::Player, "Player");
 	player->AddComponent<Renderer>(L"./data/KogMaw.obj", L"./data/KogMaw.dds", 0);
 	player->AddComponent<Transform>
-		(XMFLOAT3(3, 0, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(0.04f, 0.04f, 0.04f), XMFLOAT3(0, 0, 0));
+		(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.04f, 0.04f, 0.04f), XMFLOAT3(0, 0, 0));
 	player->AddComponent<SphereCollider>(0.3f, true);
 	player->AddComponent<Player>();
 	player->AddComponent<BulletManager>();
@@ -316,9 +316,9 @@ void ObjectClass::CreateGameObject()
 
 	GameObject* monster = new GameObject(true, Tag::Default, "monster");
 	monster->AddComponent<Renderer>(L"./data/golem.obj", L"./data/golem.dds", 0);
-	monster->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
-	monster->AddComponent<Transform>(XMFLOAT3(5, 2, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-	monster->AddComponent<BoxCollider>(true, XMFLOAT3(5, 2, 5), XMFLOAT3(0, 0 * XM_PI / 180.0f, 0), XMFLOAT3(0.60f, 0.6f, 0.6f));
+	//monster->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
+	monster->AddComponent<Transform>(XMFLOAT3(0.1, 0.25, 0.1), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.5, 0.5), XMFLOAT3(0, 0, 0));
+	//monster->AddComponent<BoxCollider>(true, XMFLOAT3(5, 0.5, 5), XMFLOAT3(0, 0 * XM_PI / 180.0f, 0), XMFLOAT3(0.60f, 0.6f, 0.6f));
 	RegistGameObject(monster);
 
 	GameObject* test1 = new GameObject(true, Tag::Default, "test1");
@@ -1761,14 +1761,6 @@ bool ObjectClass::Render(LightShaderClass* lightShader, D3DClass* d3d, int)
 
 bool ObjectClass::Render(TextureShaderClass* textureShader, D3DClass* d3d, int)
 {
-	XMFLOAT4 diffuseColor[8];
-	XMFLOAT4 lightPosition[8];
-
-	for (int i = 0; i < 8; ++i) {
-		diffuseColor[i] = GetLights(i).diffuseColor;
-		lightPosition[i] = GetLights(i).position;
-	}
-
 	return RenderManager::GetInstance().RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix());
 }
 

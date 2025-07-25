@@ -68,6 +68,7 @@ public:
 	int GetIndexCount();
 	int GetInstanceCount();
 	ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView** GetTextureArray();
 
 	bool LoadModel(const WCHAR*);
 	void ReleaseModel();

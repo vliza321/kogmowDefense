@@ -24,7 +24,7 @@ void RenderManager::UnregisterRenderer(Renderer* renderer)
     renderers.erase(std::remove(renderers.begin(), renderers.end(), renderer), renderers.end());
 }
 
-bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, CameraObject* mainCamera, LightManager* lightManager, XMFLOAT4* lightDeffuserColor, XMFLOAT4* lightPosition)
+bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, CameraObject* mainCamera, LightManager* lightManager, XMFLOAT4* lightDiffuserColor, XMFLOAT4* lightPosition)
 {
     bool result = true;
     XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
@@ -50,11 +50,12 @@ bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, Came
             result = LightShader->Render(D3D->GetDeviceContext(),
                 renderer->GetModelIndexCount(), renderer->GetModelInstanceCount(),
                 worldMatrix, viewMatrix, projectionMatrix,
+                //renderer->GetModelTextureArray(),
                 renderer->GetModelTexture(),
                 lightManager->GetDirectionalLight()->direction, lightManager->GetDirectionalLight()->ambientColor, lightManager->GetDirectionalLight()->diffuseColor,
                 ct->position,
                 lightManager->GetDirectionalLight()->specularColor, lightManager->GetDirectionalLight()->specularPower,
-                lightDeffuserColor,lightPosition);
+                lightDiffuserColor,lightPosition);
 
             if (!result) return result;
         }

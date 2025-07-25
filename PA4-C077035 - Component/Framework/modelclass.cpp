@@ -113,6 +113,10 @@ ID3D11ShaderResourceView* ModelClass::GetTexture()
 	return m_Texture->GetTexture();
 }
 
+ID3D11ShaderResourceView** ModelClass::GetTextureArray()
+{
+	return m_Texture->GetTextureArray();
+}
 
 bool ModelClass::InitializeBuffers(ID3D11Device* device)
 {
@@ -633,62 +637,62 @@ bool ModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount, int 
 
 	if (filename == L"./data/panel.obj")
 	{
+		int i = 0;
+		m_model[i].x = PanelRect.x;
+		m_model[i].y = PanelRect.y;
+		m_model[i].z = 0;
+		m_model[i].tu = 0;
+		m_model[i].tv = 1;
+		m_model[i].nx = -0;
+		m_model[i].ny = -0;
+		m_model[i].nz = -1;
+		i++;
+		m_model[i].x = PanelRect.x;
+		m_model[i].y = PanelRect.w;
+		m_model[i].z = -0;
+		m_model[i].tu = 0;
+		m_model[i].tv = 0;
+		m_model[i].nx = -0;
+		m_model[i].ny = -0;
+		m_model[i].nz = -1;
+		i++;
+		m_model[i].x = PanelRect.z;
+		m_model[i].y = PanelRect.y;
+		m_model[i].z = 0;
+		m_model[i].tu = 1;
+		m_model[i].tv = 1;
+		m_model[i].nx = -0;
+		m_model[i].ny = -0;
+		m_model[i].nz = -1;
+		i++;
+		m_model[i].x = PanelRect.x;
+		m_model[i].y = PanelRect.w;
+		m_model[i].z = -0;
+		m_model[i].tu = 0;
+		m_model[i].tv = 0;
+		m_model[i].nx = -0;
+		m_model[i].ny = -0;
+		m_model[i].nz = -1;
+		i++;
+		m_model[i].x = PanelRect.z;
+		m_model[i].y = PanelRect.w;
+		m_model[i].z = -0;
+		m_model[i].tu = 1;
+		m_model[i].tv = 0;
+		m_model[i].nx = -0;
+		m_model[i].ny = -0;
+		m_model[i].nz = -1;
+		i++;
+		m_model[i].x = PanelRect.z;
+		m_model[i].y = PanelRect.y;
+		m_model[i].z = -0;
+		m_model[i].tu = 1;
+		m_model[i].tv = 1;
+		m_model[i].nx = -0;
+		m_model[i].ny = -0;
+		m_model[i].nz = -1;
+		i++;
 
-int i = 0;
-m_model[i].x = PanelRect.x;
-m_model[i].y = PanelRect.y;
-m_model[i].z = 0;
-m_model[i].tu = 0;
-m_model[i].tv = 1;
-m_model[i].nx = -0;
-m_model[i].ny = -0;
-m_model[i].nz = -1;
-i++;
-m_model[i].x = PanelRect.x;
-m_model[i].y = PanelRect.w;
-m_model[i].z = -0;
-m_model[i].tu = 0;
-m_model[i].tv = 0;
-m_model[i].nx = -0;
-m_model[i].ny = -0;
-m_model[i].nz = -1;
-i++;
-m_model[i].x = PanelRect.z;
-m_model[i].y = PanelRect.y;
-m_model[i].z = 0;
-m_model[i].tu = 1;
-m_model[i].tv = 1;
-m_model[i].nx = -0;
-m_model[i].ny = -0;
-m_model[i].nz = -1;
-i++;
-m_model[i].x = PanelRect.x;
-m_model[i].y = PanelRect.w;
-m_model[i].z = -0;
-m_model[i].tu = 0;
-m_model[i].tv = 0;
-m_model[i].nx = -0;
-m_model[i].ny = -0;
-m_model[i].nz = -1;
-i++;
-m_model[i].x = PanelRect.z;
-m_model[i].y = PanelRect.w;
-m_model[i].z = -0;
-m_model[i].tu = 1;
-m_model[i].tv = 0;
-m_model[i].nx = -0;
-m_model[i].ny = -0;
-m_model[i].nz = -1;
-i++;
-m_model[i].x = PanelRect.z;
-m_model[i].y = PanelRect.y;
-m_model[i].z = -0;
-m_model[i].tu = 1;
-m_model[i].tv = 1;
-m_model[i].nx = -0;
-m_model[i].ny = -0;
-m_model[i].nz = -1;
-i++;
 	}
 	//// Close the output file.
 	fout.close();

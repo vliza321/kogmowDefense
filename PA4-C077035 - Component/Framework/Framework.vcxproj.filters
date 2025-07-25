@@ -304,16 +304,36 @@
     <ClInclude Include="Player.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CameraManager.h" />
-    <ClInclude Include="ThirdPersonCamera.h" />
-    <ClInclude Include="FirstPersonCamera.h" />
-    <ClInclude Include="ScopeCamera.h" />
-    <ClInclude Include="ArtilleryCamera.h" />
-    <ClInclude Include="BulletManager.h" />
-    <ClInclude Include="BaseBullet.h" />
-    <ClInclude Include="Bullet.h" />
-    <ClInclude Include="ScopeBullet.h" />
-    <ClInclude Include="ArtilleryBullet.h" />
+    <ClInclude Include="ArtilleryBullet.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ArtilleryCamera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBullet.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FirstPersonCamera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ScopeBullet.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ScopeCamera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdPersonCamera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\Cannon.dds">
@@ -416,6 +436,9 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="data\TempScopeLineOfSight.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\Default.dds">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

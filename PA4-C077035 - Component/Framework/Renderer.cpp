@@ -58,6 +58,11 @@ ID3D11ShaderResourceView* Renderer::GetModelTexture()
 	return m_model->GetTexture();
 }
 
+ID3D11ShaderResourceView** Renderer::GetModelTextureArray()
+{
+	return m_model->GetTextureArray();
+}
+
 ModelClass* Renderer::GetModelData()
 {
 	return m_model;

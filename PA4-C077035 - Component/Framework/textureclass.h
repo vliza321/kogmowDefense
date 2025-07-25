@@ -9,7 +9,8 @@
 // INCLUDES //
 //////////////
 #include <d3d11.h>
-
+#include <cwchar>
+#include <iostream>
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: TextureClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,9 +25,10 @@ public:
 	void Shutdown();
 
 	ID3D11ShaderResourceView* GetTexture();
-
+	ID3D11ShaderResourceView** GetTextureArray();
 private:
 	ID3D11ShaderResourceView* m_texture;
+	ID3D11ShaderResourceView* m_textures[7] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 };
 
 #endif

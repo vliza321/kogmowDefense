@@ -14,6 +14,7 @@ LightShaderClass::LightShaderClass()
 	m_lightBuffer = 0;
 	m_lightColorBuffer = 0;
 	m_lightPositionBuffer = 0;
+	m_cameraBuffer = 0;
 }
 
 
@@ -64,6 +65,30 @@ bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, 
 		lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower, diffuseColors, lightPosition);
 	if(!result)
+	{
+		return false;
+	}
+
+	// Now render the prepared buffers with the shader.
+	RenderShader(deviceContext, indexCount, instanceCount);
+
+	return true;
+}
+
+
+bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, int instanceCount,
+	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+	ID3D11ShaderResourceView** textureArray,
+	XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower,
+	XMFLOAT4* diffuseColors, XMFLOAT4* lightPosition)
+{
+	bool result;
+
+	// Set the shader parameters that it will use for rendering.
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray,
+		lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower, diffuseColors, lightPosition);
+	if (!result)
 	{
 		return false;
 	}
@@ -414,7 +439,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	unsigned int bufferNumber;
-	MatrixBufferType* dataPtr;
+	MatrixBufferType* dataPtr0;
 	LightBufferType* dataPtr1;
 	CameraBufferType* dataPtr2;
 	LightPositionBufferType* dataPtr3;
@@ -437,12 +462,12 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	}
 
 	// Get a pointer to the data in the constant buffer.
-	dataPtr = (MatrixBufferType*)mappedResource.pData;
+	dataPtr0 = (MatrixBufferType*)mappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	dataPtr->world = worldMatrix;
-	dataPtr->view = viewMatrix;
-	dataPtr->projection = projectionMatrix;
+	dataPtr0->world = worldMatrix;
+	dataPtr0->view = viewMatrix;
+	dataPtr0->projection = projectionMatrix;
 
 	// Unlock the constant buffer.
 	deviceContext->Unmap(m_matrixBuffer, 0);
@@ -482,7 +507,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	deviceContext->Unmap(m_lightBuffer, 0);
 
 	// Set the position of the light constant buffer in the pixel shader.
-	bufferNumber = 0;
+	bufferNumber = 1;
 
 	// Finally set the light constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer);
@@ -513,7 +538,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	deviceContext->Unmap(m_cameraBuffer, 0);
 
 	// Set the position of the camera constant buffer in the vertex shader.
-	bufferNumber = 1;
+	bufferNumber = 2;
 
 	// Now set the camera constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_cameraBuffer);
@@ -550,7 +575,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	deviceContext->Unmap(m_lightPositionBuffer, 0);
 
 	// Set the position of the constant buffer in the vertex shader.
-	bufferNumber = 2;
+	bufferNumber = 3;
 
 	// Finally set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_lightPositionBuffer);
@@ -590,7 +615,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	deviceContext->Unmap(m_lightColorBuffer, 0);
 
 	// Set the position of the constant buffer in the pixel shader.
-	bufferNumber = 1;
+	bufferNumber = 4;
 
 	// Finally set the constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightColorBuffer);
@@ -600,6 +625,205 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	return true;
 }
+
+
+// The SetShaderParameters function now takes in lightDirection and diffuseColor as inputs.
+bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
+	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+	ID3D11ShaderResourceView** textureArray,
+	XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower,
+	XMFLOAT4* diffuseColors, XMFLOAT4* lightPositions)
+{
+	HRESULT result;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	unsigned int bufferNumber;
+	MatrixBufferType* dataPtr0;
+	LightBufferType* dataPtr1;
+	CameraBufferType* dataPtr2;
+	LightPositionBufferType* dataPtr3;
+	LightColorBufferType* dataPtr4;
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Set MatrixBuffer***//////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Transpose the matrices to prepare them for the shader.
+	worldMatrix = XMMatrixTranspose(worldMatrix);
+	viewMatrix = XMMatrixTranspose(viewMatrix);
+	projectionMatrix = XMMatrixTranspose(projectionMatrix);
+
+	// Lock the constant buffer so it can be written to.
+	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	dataPtr0 = (MatrixBufferType*)mappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	dataPtr0->world = worldMatrix;
+	dataPtr0->view = viewMatrix;
+	dataPtr0->projection = projectionMatrix;
+
+	// Unlock the constant buffer.
+	deviceContext->Unmap(m_matrixBuffer, 0);
+
+	// Set the position of the constant buffer in the vertex shader.
+	bufferNumber = 0;
+
+	// Now set the constant buffer in the vertex shader with the updated values.
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Done Set MatrixBuffer***/////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Set LightBuffer***///////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Lock the light constant buffer so it can be written to.
+	result = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	dataPtr1 = (LightBufferType*)mappedResource.pData;
+
+	// Copy the lighting variables into the constant buffer.
+	dataPtr1->ambientColor = ambientColor;
+	dataPtr1->diffuseColor = diffuseColor;
+	dataPtr1->lightDirection = lightDirection;
+	dataPtr1->specularColor = specularColor;
+	dataPtr1->specularPower = specularPower;
+
+	// Unlock the constant buffer.
+	deviceContext->Unmap(m_lightBuffer, 0);
+
+	// Set the position of the light constant buffer in the pixel shader.
+	bufferNumber = 1;
+
+	// Finally set the light constant buffer in the pixel shader with the updated values.
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Done Set LightBuffer***//////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Set CameraBuffer***//////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Lock the camera constant buffer so it can be written to.
+	result = deviceContext->Map(m_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	dataPtr2 = (CameraBufferType*)mappedResource.pData;
+
+	// Copy the camera position into the constant buffer.
+	dataPtr2->cameraPosition = cameraPosition;
+	dataPtr2->padding = 0.0f;
+
+	// Unlock the camera constant buffer.
+	deviceContext->Unmap(m_cameraBuffer, 0);
+
+	// Set the position of the camera constant buffer in the vertex shader.
+	bufferNumber = 2;
+
+	// Now set the camera constant buffer in the vertex shader with the updated values.
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_cameraBuffer);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Done Set CameraBuffer***/////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Set LightPositionBuffer***///////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Lock the light position constant buffer so it can be written to.
+	result = deviceContext->Map(m_lightPositionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	dataPtr3 = (LightPositionBufferType*)mappedResource.pData;
+
+	// Copy the light position variables into the constant buffer.
+	dataPtr3->lightPosition[0] = lightPositions[0];
+	dataPtr3->lightPosition[1] = lightPositions[1];
+	dataPtr3->lightPosition[2] = lightPositions[2];
+	dataPtr3->lightPosition[3] = lightPositions[3];
+	dataPtr3->lightPosition[4] = lightPositions[4];
+	dataPtr3->lightPosition[5] = lightPositions[5];
+	dataPtr3->lightPosition[6] = lightPositions[6];
+	dataPtr3->lightPosition[7] = lightPositions[7];
+
+	// Unlock the constant buffer.
+	deviceContext->Unmap(m_lightPositionBuffer, 0);
+
+	// Set the position of the constant buffer in the vertex shader.
+	bufferNumber = 3;
+
+	// Finally set the constant buffer in the vertex shader with the updated values.
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_lightPositionBuffer);
+
+	// Set shader texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 7, textureArray);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Done Set LightPositionBuffer***//////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Set LightColorBuffer***//////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Lock the light color constant buffer so it can be written to.
+	result = deviceContext->Map(m_lightColorBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	dataPtr4 = (LightColorBufferType*)mappedResource.pData;
+
+	// Copy the light color variables into the constant buffer.
+	dataPtr4->diffuseColor[0] = diffuseColors[0];
+	dataPtr4->diffuseColor[1] = diffuseColors[1];
+	dataPtr4->diffuseColor[2] = diffuseColors[2];
+	dataPtr4->diffuseColor[3] = diffuseColors[3];
+	dataPtr4->diffuseColor[4] = diffuseColors[4];
+	dataPtr4->diffuseColor[5] = diffuseColors[5];
+	dataPtr4->diffuseColor[6] = diffuseColors[6];
+	dataPtr4->diffuseColor[7] = diffuseColors[7];
+
+	// Unlock the constant buffer.
+	deviceContext->Unmap(m_lightColorBuffer, 0);
+
+	// Set the position of the constant buffer in the pixel shader.
+	bufferNumber = 4;
+
+	// Finally set the constant buffer in the pixel shader with the updated values.
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightColorBuffer);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////***Done Set LightColorBuffer***/////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	return true;
+}
+
 
 
 void LightShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount, int instanceCount)
