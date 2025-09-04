@@ -32,6 +32,8 @@ private:
 		XMFLOAT3 position;
 	    XMFLOAT2 texture;
 		XMFLOAT3 normal;
+		XMFLOAT3 tangent;
+		XMFLOAT3 binormal;
 	};
 
 	struct FaceType
@@ -46,12 +48,19 @@ private:
 		float x, y, z;
 		float tu, tv;
 		float nx, ny, nz;
+		float tx, ty, tz;
+		float bx, by, bz;
 	};
 
 	struct InstanceType
 	{
 		XMFLOAT3 position;
 		float padding;
+	};
+
+	struct VectorType
+	{
+		float x, y, z;
 	};
 
 public:
@@ -75,6 +84,10 @@ public:
 
 	bool ReadFileCounts(const WCHAR*);
 	bool LoadDataStructures(const WCHAR*, int, int, int, int);
+
+	void CalculateModelVectors();
+	void CalculateTangentBinormal(ModelType, ModelType, ModelType, VectorType&, VectorType&);
+	void CalculateNormal(VectorType, VectorType, VectorType&);
 
 private:
 	bool InitializeBuffers(ID3D11Device*);

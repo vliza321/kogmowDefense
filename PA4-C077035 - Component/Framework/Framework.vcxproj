@@ -180,6 +180,7 @@
     <ClCompile Include="modelclass.cpp" />
     <ClCompile Include="ObjectClass.cpp" />
     <ClCompile Include="PanelModelClass.cpp" />
+    <ClCompile Include="PanelTextureClass.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RayCollider.cpp" />
     <ClCompile Include="RectTransform.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="FirstPersonCamera.h" />
     <ClInclude Include="GUIRenderer.h" />
     <ClInclude Include="GUIRenderManager.h" />
+    <ClInclude Include="PanelTextureClass.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RayCollider.h" />
     <ClInclude Include="RectTransform.h" />
@@ -256,36 +258,36 @@
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="data\1.dds" />
-    <Image Include="data\10.dds" />
-    <Image Include="data\11.dds" />
-    <Image Include="data\12.dds" />
-    <Image Include="data\13.dds" />
-    <Image Include="data\14.dds" />
-    <Image Include="data\15.dds" />
-    <Image Include="data\16.dds" />
-    <Image Include="data\1911.dds" />
-    <Image Include="data\2.dds" />
-    <Image Include="data\3.dds" />
-    <Image Include="data\4.dds" />
-    <Image Include="data\5.dds" />
-    <Image Include="data\6.dds" />
-    <Image Include="data\7.dds" />
-    <Image Include="data\8.dds" />
-    <Image Include="data\9.dds" />
-    <Image Include="data\arrow.dds" />
-    <Image Include="data\Campfire.dds" />
+    <Image Include="data\10T1.dds" />
+    <Image Include="data\11T1.dds" />
+    <Image Include="data\12T1.dds" />
+    <Image Include="data\13T1.dds" />
+    <Image Include="data\14T1.dds" />
+    <Image Include="data\15T1.dds" />
+    <Image Include="data\16T1.dds" />
+    <Image Include="data\1911T1.dds" />
+    <Image Include="data\1T1.dds" />
+    <Image Include="data\2T1.dds" />
+    <Image Include="data\3T1.dds" />
+    <Image Include="data\4T1.dds" />
+    <Image Include="data\5T1.dds" />
+    <Image Include="data\6T1.dds" />
+    <Image Include="data\7T1.dds" />
+    <Image Include="data\8T1.dds" />
+    <Image Include="data\9T1.dds" />
+    <Image Include="data\arrowT1.dds" />
+    <Image Include="data\CampfireT1.dds" />
     <Image Include="data\Cannon.dds" />
     <Image Include="data\Default.dds" />
-    <Image Include="data\foliage.dds" />
+    <Image Include="data\foliageT1.dds" />
     <Image Include="data\font.dds" />
-    <Image Include="data\Golem.dds" />
-    <Image Include="data\KogMaw.dds" />
-    <Image Include="data\plant.dds" />
-    <Image Include="data\props.dds" />
-    <Image Include="data\rock-blue.dds" />
-    <Image Include="data\rock-red.dds" />
-    <Image Include="data\spacesphere.dds" />
+    <Image Include="data\GolemT1.dds" />
+    <Image Include="data\KogMawT1.dds" />
+    <Image Include="data\plantT1.dds" />
+    <Image Include="data\propsT1.dds" />
+    <Image Include="data\rock-blueT1.dds" />
+    <Image Include="data\rock-redT1.dds" />
+    <Image Include="data\spacesphereT1.dds" />
     <Image Include="data\TempArtilleryLineOfSight.dds">
       <DeploymentContent>true</DeploymentContent>
     </Image>
@@ -296,7 +298,7 @@
       <DeploymentContent>true</DeploymentContent>
     </Image>
     <Image Include="data\title.dds" />
-    <Image Include="data\Wolf.dds" />
+    <Image Include="data\WolfT1.dds" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\font.ps">

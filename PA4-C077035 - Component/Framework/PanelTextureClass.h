@@ -1,0 +1,33 @@
+#pragma once
+////////////////////////////////////////////////////////////////////////////////
+// Filename: PanelTextureClass.h
+////////////////////////////////////////////////////////////////////////////////
+#ifndef _PANELTEXTURECLASS_H_
+#define _PANELTEXTURECLASS_H_
+
+
+//////////////
+// INCLUDES //
+//////////////
+#include <d3d11.h>
+#include <cwchar>
+#include <iostream>
+////////////////////////////////////////////////////////////////////////////////
+// Class name: TextureClass
+////////////////////////////////////////////////////////////////////////////////
+class PanelTextureClass
+{
+public:
+	PanelTextureClass();
+	PanelTextureClass(const PanelTextureClass&);
+	~PanelTextureClass();
+
+	bool Initialize(ID3D11Device*, const WCHAR*);
+	void Shutdown();
+
+	ID3D11ShaderResourceView* GetTexture();
+private:
+	ID3D11ShaderResourceView* m_texture;
+};
+
+#endif

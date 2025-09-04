@@ -30,7 +30,6 @@ public:
 
 	RectTransform* GetRectTransform();
 private:
-	ModelClass* m_baseModel;
 	PanelModelClass* m_model;
 	std::shared_ptr<RectTransform> m_rectTransform;
 private:

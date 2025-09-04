@@ -33,9 +33,15 @@ cbuffer LightColorBuffer : register(b4)
 	float4 diffuseColor[8];
 };
 
-
+//0. Texture0
+//1. Texture1
+//2. Alpha0
+//3. Alpha1
+//4. Light
+//5. Bump
+//6. Specular
 Texture2D shaderTexture[7] : register(t0);
-SamplerState SampleType;
+SamplerState SampleType : register(s0);
 
 // TYPEDEFS //
 struct VertexInputType
@@ -43,6 +49,8 @@ struct VertexInputType
     float4 position : POSITION;
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
     float4 instancePosition : TEXCOORD1;
 };
 
@@ -52,6 +60,8 @@ struct PixelInputType
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
     float3 viewDirection : TEXCOORD1;
 	float3 lightDir0 : TEXCOORD2;
     float3 lightDir1 : TEXCOORD3;
@@ -90,13 +100,19 @@ PixelInputType LightVertexShader(VertexInputType input)
     // Store the texture coordinates for the pixel shader.
     output.tex = input.tex;
 
-    // Calculate the normal vector against the world matrix only.
+    // Calculate the normal vector against the world matrix only and Normalize the normal vector.
     output.normal = mul(input.normal, (float3x3)worldMatrix);
-
-    // Normalize the normal vector.
     output.normal = normalize(output.normal);
 
+    // 월드 행렬에 대해서만 접선 벡터를 계산 한 다음 최종 값을 정규화합니다.
+    output.tangent = mul(input.tangent, (float3x3) worldMatrix);
+    output.tangent = normalize(output.tangent);
 
+    // 세계 행렬에 대해서만 비 유효 벡터를 계산 한 다음 최종 값을 정규화합니다.
+    output.binormal = mul(input.binormal, (float3x3) worldMatrix);
+    output.binormal = normalize(output.binormal);
+    
+    
 
     // Determine the viewing direction based on the position of the camera and the position of the vertex in the world.
     output.viewDirection = cameraPosition.xyz - worldPosition.xyz;
@@ -121,7 +137,12 @@ PixelInputType LightVertexShader(VertexInputType input)
 // Pixel Shader
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
-    float4 textureColor;
+    float4 textureColor1;
+    float4 textureColor2;
+    float4 lightAlphaColor;
+    float4 bumpColor;
+    float3 bumpNormal;
+    
     float3 lightDir;
     float lightIntensity;
 	float4 color;
@@ -136,19 +157,29 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 PLS[8];
     
     // Sample the pixel color from the texture using the sampler at this texture coordinate location.
-    textureColor = shaderTexture[0].Sample(SampleType, input.tex);
-
+    textureColor1 = shaderTexture[0].Sample(SampleType, input.tex);
+    textureColor2 = shaderTexture[1].Sample(SampleType, input.tex);
+    lightAlphaColor = shaderTexture[4].Sample(SampleType, input.tex);
+    bumpColor = shaderTexture[5].Sample(SampleType, input.tex);
+    
     // Set the default output color to the ambient light value for all pixels.
     color = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Initialize the specular color.
     specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
+    bumpColor = ((bumpColor * 2.0f) - 1.0f) * 0.5f;
+    
+    bumpNormal = (bumpColor.x * input.tangent) + (bumpColor.y * input.binormal) + (bumpColor.z * input.normal);
+    
+    bumpNormal = normalize(bumpNormal);
+    
     // Invert the light direction for calculations.
     lightDir = -lightDirection;
 
     // Calculate the amount of light on this pixel.
-    lightIntensity = dot(lightDir, input.normal);
+    //lightIntensity = dot(lightDir, input.normal);
+    lightIntensity = saturate(dot(lightDir, bumpNormal));
     
     inputPLDir[0] = input.lightDir0;
     inputPLDir[1] = input.lightDir1;
@@ -166,18 +197,19 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     {
         PLD[i] = dot(inputPLDir[i], inputPLDir[i]);
         PLC[i] = diffuseColor[i] / (PLD[i] * 2 + 0.5f);
-        PLI[i] = max(dot(normalize(inputPLDir[i]), input.normal), 0.0f);
+        PLI[i] = max(dot(normalize(inputPLDir[i]), bumpNormal), 0.0f);
         PLC[i] = saturate(PLC[i] * PLI[i]);
         
         pointLightColor += PLC[i];
         
-        PLR[i] = normalize(2 * PLI[i] * input.normal - inputPLDir[i]);
+        PLR[i] = normalize(2 * PLI[i] * bumpNormal - inputPLDir[i]);
         PLS[i] = PLC[i] * pow(saturate(dot(PLR[i], input.viewDirection)), specularPower / 2);
         pointLightSpecular += PLS[i];
 
     }
     
-    color = ambientColor;
+    float4 minColor = float4(0.1f, 0.1f, 0.1f, 0.1f) * 5;
+    color = ambientColor + minColor;
     
     if (lightIntensity > 0.0f)
     {
@@ -188,20 +220,24 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         color = saturate(color);
 
         // Calculate the reflection vector based on the light intensity, normal vector, and light direction.
-        reflection = normalize(2 * lightIntensity * input.normal - lightDir) ;
+        reflection = normalize(2 * lightIntensity * bumpNormal - lightDir);
 
         // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
         specular = specularColor * pow(saturate(dot(reflection, input.viewDirection)), specularPower);
     }
 
     // Multiply the texture pixel and the input color to get the textured result.
-    color = color * textureColor;
+    float4 finalTextureColor = textureColor1 * textureColor2 * 2.0f;
+    finalTextureColor = saturate(finalTextureColor);
+    finalTextureColor = finalTextureColor * lightAlphaColor;
+    
+    color = color * finalTextureColor;
     
     // Add the pointLight DiffuseColor componenet
     color += pointLightColor;
 
     // Add the specular component last to the output color.
-    color = saturate(color + specular + pointLightSpecular); // + pointcolor0 + pointcolor1 + pointcolor2 + pointcolor3 + pointcolor4 + pointcolor5 + pointcolor6 + pointcolor7;
+    color = saturate(color + specular + pointLightSpecular);
     
     return color;
 }

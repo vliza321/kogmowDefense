@@ -170,6 +170,9 @@
     <ClCompile Include="ArtilleryBullet.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="PanelTextureClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="textureshaderclass.h">
@@ -334,96 +337,15 @@
     <ClInclude Include="ThirdPersonCamera.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="PanelTextureClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\Cannon.dds">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="data\1911.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
     <Image Include="data\font.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\Golem.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\KogMaw.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\Wolf.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\spacesphere.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\1.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\2.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\3.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\4.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\5.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\6.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\7.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\8.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\9.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\16.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\10.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\11.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\12.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\13.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\14.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\15.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\foliage.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\plant.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\props.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\rock-blue.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\rock-red.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\Campfire.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\arrow.dds">
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="data\title.dds">
@@ -439,6 +361,90 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="data\Default.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\spacesphereT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\WolfT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\1T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\2T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\3T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\4T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\5T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\6T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\7T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\8T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\9T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\10T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\11T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\12T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\13T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\14T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\15T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\16T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\1911T1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\arrowT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\CampfireT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\foliageT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\GolemT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\KogMawT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\plantT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\propsT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\rock-blueT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\rock-redT1.dds">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

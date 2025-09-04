@@ -314,7 +314,7 @@ bool PanelModelClass::LoadTexture(ID3D11Device* device, const WCHAR* filename)
 
 
 	// Create the texture object.
-	m_Texture = new TextureClass;
+	m_Texture = new PanelTextureClass;
 	if (!m_Texture)
 	{
 		return false;

@@ -23,7 +23,6 @@ CanvasRenderer::~CanvasRenderer()
 bool CanvasRenderer::InitializeSet()
 {
 	m_model = new PanelModelClass();
-	m_baseModel = new ModelClass();
 
 	auto rect = m_rectTransform;
 	if (!rect)
@@ -51,13 +50,12 @@ bool CanvasRenderer::InitializeRender(ID3D11Device* device)
 	}
 
 	result = m_model->InitializeRender(device, m_textureFileName, m_instanceCounter, rectTransform->panelRect);
-	result = m_baseModel->InitializeRenderer(device, m_modelFileName, m_textureFileName, 0);
 	return result;
 }
 
 void CanvasRenderer::Render(ID3D11DeviceContext* DeviceContext)
 {
-	m_baseModel->Render(DeviceContext);
+	m_model->Render(DeviceContext);
 }
 
 bool CanvasRenderer::Shutdown()
@@ -68,37 +66,31 @@ bool CanvasRenderer::Shutdown()
 		delete m_model;
 		m_model = 0;
 	}
-	if (m_baseModel != 0)
-	{
-		m_baseModel->Shutdown();
-		delete m_baseModel;
-		m_baseModel = 0;
-	}
 	return true;
 }
 
 ID3D11ShaderResourceView* CanvasRenderer::GetModelTexture()
 {
-	//return m_model->GetTexture();
-	return m_baseModel->GetTexture();
+	return m_model->GetTexture();
+	//return m_baseModel->GetTexture();
 }
 
 int CanvasRenderer::GetModelIndexCount()
 {
-	//return m_model->GetIndexCount();
-	return m_baseModel->GetIndexCount();
+	return m_model->GetIndexCount();
+	//return m_baseModel->GetIndexCount();
 }
 
 int CanvasRenderer::GetModelVertexCount()
 {
-	//return m_model->GetIndexCount();
-	return m_baseModel->GetIndexCount();
+	return m_model->GetIndexCount();
+	//return m_baseModel->GetIndexCount();
 }
 
 int CanvasRenderer::GetModelInstanceCount()
 {
-	//return m_model->GetIndexCount();
-	return m_baseModel->GetIndexCount();
+	return m_model->GetIndexCount();
+	//return m_baseModel->GetIndexCount();
 }
 
 RectTransform* CanvasRenderer::GetRectTransform()

@@ -16,7 +16,7 @@ using namespace DirectX;
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
-#include "textureclass.h"
+#include "PanelTextureClass.h"
 #include <fstream>
 using namespace std;
 
@@ -85,7 +85,7 @@ private:
 	ID3D11Buffer* m_vertexBuffer, * m_indexBuffer;
 	ID3D11Buffer* m_instanceBuffer;
 	int m_vertexCount, m_indexCount, m_textureCount, m_normalCount, m_faceCount, m_instanceCount;
-	TextureClass* m_Texture;
+	PanelTextureClass* m_Texture;
 
 	ModelType* m_model;
 };
