@@ -1,5 +1,6 @@
 #include "GUIRenderer.h"
 #include "GUIRenderManager.h"
+#include "ObjectClass.h"
 
 GUIRenderer::GUIRenderer(const WCHAR* TextureFilename, int InstanceCoutner)
 	:Component()
@@ -18,7 +19,15 @@ GUIRenderer::~GUIRenderer()
 bool GUIRenderer::InitializeSet()
 {
 	m_model = new PanelModelClass();
-	m_rectTransform = this->gameObject->GetComponentIncludingBase<RectTransform>();
+	return true;
+}
+
+bool GUIRenderer::InitializeRef()
+{
+	GUIRenderManager::GetInstance().RegisterRenderer(this);
+
+	m_rectTransform = this->gameObject->GetComponent<RectTransform>();
+	m_transform = this->gameObject->GetComponent<Transform>();
 	auto rect = m_rectTransform.lock();
 	if (!rect)
 	{
@@ -26,12 +35,14 @@ bool GUIRenderer::InitializeSet()
 		this->gameObject->AddComponent(newRectTransform);
 		m_rectTransform = newRectTransform;
 	}
-	return true;
-}
-
-bool GUIRenderer::InitializeRef()
-{
-	GUIRenderManager::GetInstance().RegisterRenderer(this);
+	auto tf = m_rectTransform.lock();
+	if (!tf)
+	{
+		auto newTransform = std::make_shared<Transform>();
+		this->gameObject->AddComponent(newTransform);
+		m_transform = newTransform;
+	}
+	m_cameraManager = gameObject->Root().Find("CameraManager")->GetComponent<CameraManager>();
 	return true;
 }
 
@@ -90,4 +101,31 @@ int GUIRenderer::GetModelVertexCount()
 int GUIRenderer::GetModelInstanceCount()
 {
 	return m_instanceCounter;
+}
+
+void GUIRenderer::PostExecute()
+{
+	auto MainCamera = m_cameraManager.lock().get()->GetCamera()->GetPosition();
+	auto CameraLookAt = m_cameraManager.lock()->GetLookAt();
+	auto tf = m_transform.lock();
+
+	XMVECTOR Camera = XMVector3Normalize(XMVectorSet(MainCamera.x - XMVectorGetX(CameraLookAt), MainCamera.y - XMVectorGetY(CameraLookAt), MainCamera.z - XMVectorGetZ(CameraLookAt), 1));
+
+	double angle = atan2(XMVectorGetX(Camera), XMVectorGetZ(Camera));
+
+	float delta = angle - tf->eulerRotation.z;
+
+	// ¹üÀ§¸¦ -¥ð ~ +¥ð ·Î ¸ÂÃçÁÜ
+	if (delta > XM_PI)  angle -= XM_2PI;
+	if (delta < -XM_PI) angle += XM_2PI;
+
+	if (MainCamera.y - tf->position.y > 5)
+	{
+		tf->eulerRotation.x = XM_PIDIV2;
+	}
+	else
+	{
+		tf->eulerRotation.x = 0;
+		tf->eulerRotation.y = angle + XM_PI;
+	}
 }

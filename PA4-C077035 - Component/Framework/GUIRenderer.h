@@ -7,6 +7,8 @@
 #include "textureclass.h"
 #include "RenderComponent.h"
 #include "RectTransform.h"
+#include "Transform.h"
+#include "CameraManager.h"
 
 class GUIRenderer : public Component, public RenderComponent
 {
@@ -18,6 +20,7 @@ public:
 	bool InitializeRef() override;
 	bool InitializeRender(ID3D11Device*) override;
 	void Render(ID3D11DeviceContext*);
+	void PostExecute();
 	bool Shutdown();
 
 	ID3D11ShaderResourceView* GetModelTexture();
@@ -29,6 +32,8 @@ public:
 private:
 	PanelModelClass* m_model;
 	std::weak_ptr<RectTransform> m_rectTransform;
+	std::weak_ptr<Transform> m_transform;
+	std::weak_ptr<CameraManager> m_cameraManager;
 private:
 	const WCHAR* m_modelFileName;
 	const WCHAR* m_textureFileName;

@@ -170,6 +170,7 @@ bool GraphicsClass::Frame(int fps, int cpu)
 	m_Object->FixedExecute();
 	m_Object->Execute();
 	m_Object->LateExecute();
+	m_Object->PostExecute();
 
 	result = Render();
 	if (!result)
@@ -193,14 +194,19 @@ bool GraphicsClass::Render()
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 	
+	m_D3D->TurnZBufferOn();
+	m_D3D->TurnOffAlphaBlending();
+	m_D3D->TurnOnCullBackMode();
+
 	result = m_Object->Render(m_LightShader, m_D3D, SceneCount);
 	if (!result)
 	{
 		return false;
 	}
 
-	m_D3D->TurnZBufferOff();
+	//m_D3D->TurnZBufferOn();
 	m_D3D->TurnOnAlphaBlending();
+	m_D3D->TurnOnCullNoneMode();
 
 	result = m_Object->GUIRender(m_TextureShader, m_D3D, SceneCount);
 	if (!result)
@@ -209,7 +215,7 @@ bool GraphicsClass::Render()
 	}
 
 	m_D3D->TurnZBufferOff();
-	m_D3D->TurnOnAlphaBlending();
+	//m_D3D->TurnOnAlphaBlending();
 	m_D3D->TurnOnCullNoneMode();
 
 	result = m_Object->UIRender(m_TextureShader, m_D3D, SceneCount);
@@ -217,9 +223,6 @@ bool GraphicsClass::Render()
 	{
 		return false;
 	}
-	m_D3D->TurnZBufferOn();
-	//m_D3D->TurnOffAlphaBlending();
-	m_D3D->TurnOnCullBackMode();
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();

@@ -13,6 +13,7 @@ enum class Tag
 	ScopeBullet,
 	ArtilleryBullet,
 	Canvas,
+	GUI,
 	NUM
 };
 

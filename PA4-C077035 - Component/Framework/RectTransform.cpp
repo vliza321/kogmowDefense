@@ -11,7 +11,9 @@ RectTransform::RectTransform()
 RectTransform::RectTransform(XMFLOAT4 rect, XMFLOAT2 pos, XMFLOAT3 rot, XMFLOAT3 scale)
 	: panelRect(rect), position(pos), rotation(rot), scale(scale)
 {
-
+	///
+	/// rect(left, top, right, bottom)
+	///
 }
 
 RectTransform::~RectTransform()

@@ -32,6 +32,8 @@
 #include "Canvas.h"
 #include "CanvasRenderer.h"
 
+#include "GUIRenderer.h"
+
 class ObjectClass
 {
 public:
@@ -68,7 +70,7 @@ public:
 	LightClass& GetLights(int i);
 
 private:
-	unordered_map<Tag, vector<GameObject*>> m_gameOjbects;
+	unordered_map<Tag, vector<GameObject*>> m_gameObjects;
 
 public:
 	GameObject* Find(string);

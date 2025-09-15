@@ -3,7 +3,7 @@
 
 #include <d3d11.h>
 #include <directxmath.h>
-#include "Component.h"
+//#include "Component.h"
 
 #pragma once
 class RenderComponent {

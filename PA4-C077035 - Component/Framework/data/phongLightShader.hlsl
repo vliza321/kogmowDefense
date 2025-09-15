@@ -197,12 +197,14 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     {
         PLD[i] = dot(inputPLDir[i], inputPLDir[i]);
         PLC[i] = diffuseColor[i] / (PLD[i] * 2 + 0.5f);
-        PLI[i] = max(dot(normalize(inputPLDir[i]), bumpNormal), 0.0f);
+        PLI[i] = max(dot(normalize(inputPLDir[i]), input.normal), 0.0f);
+        //PLI[i] = max(dot(normalize(inputPLDir[i]), bumpNormal), 0.0f);
         PLC[i] = saturate(PLC[i] * PLI[i]);
         
         pointLightColor += PLC[i];
         
-        PLR[i] = normalize(2 * PLI[i] * bumpNormal - inputPLDir[i]);
+        //PLR[i] = normalize(2 * PLI[i] * bumpNormal - inputPLDir[i]);
+        PLR[i] = normalize(2 * PLI[i] * input.normal - inputPLDir[i]);
         PLS[i] = PLC[i] * pow(saturate(dot(PLR[i], input.viewDirection)), specularPower / 2);
         pointLightSpecular += PLS[i];
 
@@ -220,7 +222,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         color = saturate(color);
 
         // Calculate the reflection vector based on the light intensity, normal vector, and light direction.
-        reflection = normalize(2 * lightIntensity * bumpNormal - lightDir);
+        //reflection = normalize(2 * lightIntensity * bumpNormal - lightDir);
+        reflection = normalize(2 * lightIntensity * input.normal - lightDir);
 
         // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
         specular = specularColor * pow(saturate(dot(reflection, input.viewDirection)), specularPower);
