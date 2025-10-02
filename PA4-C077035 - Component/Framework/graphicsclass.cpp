@@ -19,7 +19,6 @@ GraphicsClass::GraphicsClass()
 	intensity = 5;
 	pointLightColor = white;
 	SceneCount = 0;
-	//m_LightManager = 0;
 }
 
 
@@ -44,44 +43,32 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Inp
 	{
 		return false;
 	}
-
-	// Create the Direct3D object.
 	m_D3D = new D3DClass;
 	if(!m_D3D)
 	{
 		return false;
 	}
-
-	// Initialize the Direct3D object.
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
 		return false;
 	}
-
-
-	// Initialize the ObjectClass.
 	m_Object = new ObjectClass;
 	if (!m_Object)
 	{
 		return false;
 	}
-
 	result = m_Object->Initialize(hwnd, m_D3D->GetDevice());
 	if (!result)
 	{
 		return false;
 	}
-
-	// Create the texture shader object.
 	m_TextureShader = new TextureShaderClass;
 	if(!m_TextureShader)
 	{
 		return false;
 	}
-
-	// Initialize the texture shader object.
 	result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if(!result)
 	{
@@ -89,26 +76,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Inp
 		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
 		return false;
 	}
-
-
 	m_LightShader = new LightShaderClass;
 	if (!m_LightShader)
 	{
 		return false;
 	}
-
-	// Initialize the light shader object.
 	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
-		return false;
-	}
-	// Initialize the text object.
-	//result = m_Text->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix, m_Object->GetAllPolygon(), m_Object->GetAllObject());
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
 		return false;
 	}
 	
@@ -162,12 +138,12 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame(int fps, int cpu)
+bool GraphicsClass::Frame()
 {
 	bool result = true;
 	TimerClass::GetInstance().Execute();
-	m_Object->CollisionDetection();
 	m_Object->FixedExecute();
+	m_Object->CollisionDetection();
 	m_Object->Execute();
 	m_Object->LateExecute();
 	m_Object->PostExecute();
@@ -182,14 +158,7 @@ bool GraphicsClass::Frame(int fps, int cpu)
 
 bool GraphicsClass::Render()
 {
-	XMFLOAT4 diffuseColor[8];
-	XMFLOAT4 lightPosition[8];
 	bool result = true;
-	
-	for (int i = 0; i < 8; ++i) {
-		diffuseColor[i] = m_Object->GetLights(i).diffuseColor;
-		lightPosition[i] = m_Object->GetLights(i).position;
-	}
 
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -204,7 +173,6 @@ bool GraphicsClass::Render()
 		return false;
 	}
 
-	//m_D3D->TurnZBufferOn();
 	m_D3D->TurnOnAlphaBlending();
 	m_D3D->TurnOnCullNoneMode();
 
@@ -215,7 +183,6 @@ bool GraphicsClass::Render()
 	}
 
 	m_D3D->TurnZBufferOff();
-	//m_D3D->TurnOnAlphaBlending();
 	m_D3D->TurnOnCullNoneMode();
 
 	result = m_Object->UIRender(m_TextureShader, m_D3D, SceneCount);

@@ -44,8 +44,7 @@ protected:
 		return TimerClass::GetInstance().DeltaTime;
 	}
 
-	const InputClass& GetInput() const
-	{
+	const InputClass& GetInput() const	{
 		return InputClass::GetInstance();
 	}
 };

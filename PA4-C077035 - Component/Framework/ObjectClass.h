@@ -37,21 +37,18 @@
 class ObjectClass
 {
 public:
-
 	ObjectClass();
 	~ObjectClass();
-
-
 public:
 	void CreateBaseObject();
 	void CreateGameObject();
 
-	bool InitializeSet(HWND hwnd, ID3D11Device* device);
-	bool Initialize(HWND hwnd, ID3D11Device* device);
-	bool InitializeRef(HWND hwnd, ID3D11Device* device);
-	bool InitializeRender(HWND hwnd, ID3D11Device* device);
-	bool InitializeSynchronization(HWND hwnd, ID3D11Device* device);
-	bool PostInitialize(HWND hwnd, ID3D11Device* device);
+	bool InitializeSet(HWND , ID3D11Device*);
+	bool Initialize(HWND , ID3D11Device*);
+	bool InitializeRef(HWND , ID3D11Device*);
+	bool InitializeRender(HWND , ID3D11Device*);
+	bool InitializeSynchronization(HWND , ID3D11Device*);
+	bool PostInitialize(HWND , ID3D11Device*);
 
 	void CollisionDetection();
 
@@ -62,13 +59,12 @@ public:
 
 	bool GUIRender(TextureShaderClass*, D3DClass*, int);
 	bool Render(LightShaderClass*, D3DClass*, int);
-	bool Render(TextureShaderClass* textureShader, D3DClass* d3d, int);
+	bool Render(TextureShaderClass* , D3DClass* , int);
 	bool UIRender(TextureShaderClass*, D3DClass*, int);
 	
 	void Shutdown();
 public:
 	LightClass& GetLights(int i);
-
 private:
 	unordered_map<Tag, vector<GameObject*>> m_gameObjects;
 

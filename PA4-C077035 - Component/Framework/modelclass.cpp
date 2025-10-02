@@ -55,7 +55,7 @@ bool ModelClass::InitializeRenderer(ID3D11Device* device, const WCHAR* modelFile
 		return false;
 	}
 
-	CalculateModelVectors();
+	//CalculateModelVectors();
 
 	// Initialize the vertex and index buffers.
 	result = InitializeBuffers(device);

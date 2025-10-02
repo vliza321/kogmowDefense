@@ -178,8 +178,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     lightDir = -lightDirection;
 
     // Calculate the amount of light on this pixel.
-    //lightIntensity = dot(lightDir, input.normal);
-    lightIntensity = saturate(dot(lightDir, bumpNormal));
+    lightIntensity = dot(lightDir, input.normal);
+    //lightIntensity = saturate(dot(lightDir, bumpNormal));
     
     inputPLDir[0] = input.lightDir0;
     inputPLDir[1] = input.lightDir1;

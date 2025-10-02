@@ -22,14 +22,10 @@ bool BulletManager::InitializeSet()
 	m_BulletMapSet[ShootType::Scope] = make_shared<vector<BaseBullet*>>();
 	m_BulletMapSet[ShootType::Artillery] = make_shared<vector<BaseBullet*>>();
 
-	m_BulletMapSet[ShootType::TPC] = m_BulletMapSet[ShootType::FPC];
-
 	//ReleasePool
 	m_ReleaseBullet[ShootType::FPC] = make_shared<vector<BaseBullet*>>();
 	m_ReleaseBullet[ShootType::Scope] = make_shared<vector<BaseBullet*>>();
 	m_ReleaseBullet[ShootType::Artillery] = make_shared<vector<BaseBullet*>>();
-
-	m_ReleaseBullet[ShootType::TPC] = m_ReleaseBullet[ShootType::FPC];
 	return result;
 }
 
@@ -39,12 +35,14 @@ bool BulletManager::Initialize()
 	m_AllActivatedBullets.clear();
 	m_ReloadTimer = 0;
 	m_DoReload = false;
-
 	return result;
 }
 
 bool BulletManager::InitializeRef()
 {
+	m_BulletMapSet[ShootType::TPC] = m_BulletMapSet[ShootType::FPC];
+	m_ReleaseBullet[ShootType::TPC] = m_ReleaseBullet[ShootType::FPC];
+
 	bool result = true;
 	m_CurrentShootType = (this->gameObject->GetComponent<Player>()->GetShootType());
 	auto bullets = this->gameObject->Root().FindObjectsWithTag(Tag::NormalBullet);

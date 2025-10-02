@@ -38,21 +38,9 @@ private:
 	float speed;
 private:
 	std::weak_ptr<CameraManager> m_cameraManager;
-	std::weak_ptr<Canvas> m_uiCanvas;
+	std::weak_ptr<Canvas> m_uiCanvasManager;
 	std::weak_ptr<BulletManager> m_bulletManager;
 	ShootType m_currentShootType;
-	/*
-	virtual void SetRollPitchYaw(float, float, float);
-	
-	void SetArtilleryMod();
-	void ResetArtilleryMod();
-	void Shoot();
-	
-	bool SetCurrentShootType(ShootType);
-	ShootType GetCurrentShootType();
-
-	bool GetCanFire();
-	*/
 private:
 	void ChangePovCul();
 	void SetPov(ShootType);

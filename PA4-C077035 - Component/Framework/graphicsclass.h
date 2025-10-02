@@ -47,7 +47,7 @@ public:
 
 	bool Initialize(int, int, HWND, InputClass*,int);
 	void Shutdown();
-	bool Frame(int, int);
+	bool Frame();
 	int a = 0;
 private:
 	bool Render();

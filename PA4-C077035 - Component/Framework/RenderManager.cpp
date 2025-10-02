@@ -39,12 +39,7 @@ bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, Came
             auto RenderTransform = renderer->gameObject->GetComponentIncludingBase<Transform>().get();
             if (!RenderTransform) break;
 
-            worldMatrix = XMMatrixScaling(RenderTransform->scale.x, RenderTransform->scale.y, RenderTransform->scale.z)
-                * XMMatrixRotationX(RenderTransform->rotation.x)
-                * XMMatrixRotationY(RenderTransform->rotation.y)
-                * XMMatrixRotationZ(RenderTransform->rotation.z)
-                * XMMatrixRotationRollPitchYaw(RenderTransform->eulerRotation.x, RenderTransform->eulerRotation.y, 0)
-                * XMMatrixTranslation(RenderTransform->position.x, RenderTransform->position.y, RenderTransform->position.z);
+            worldMatrix = RenderTransform->WorldMatrix;
 
             renderer->Render(D3D->GetDeviceContext());
             result = LightShader->Render(D3D->GetDeviceContext(),

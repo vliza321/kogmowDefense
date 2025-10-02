@@ -20,6 +20,11 @@ public:
 	XMFLOAT3 scale;
 	XMFLOAT3 eulerRotation;
 	XMFLOAT3 moveVector;
+	XMMATRIX WorldMatrix;
+private:
+	XMFLOAT3 prevRotation;
+	XMFLOAT3 prevEulerRotation;
+	XMFLOAT3 prevScale;
 public:
 	XMVECTOR DefaultForward;
 	XMVECTOR DefaultRight;
@@ -27,6 +32,10 @@ public:
 public:
 	void Translate(XMFLOAT3);
 	void ApplyTranslate(XMFLOAT3);
+private:
+	void SetWorldMatrix();
+public:
+	virtual void PostExecute() override;
 };
 
 #endif

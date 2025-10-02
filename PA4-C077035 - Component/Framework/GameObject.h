@@ -26,7 +26,6 @@ public:
 	GameObject();
 	GameObject(bool, Tag, string);
 	~GameObject();
-
 public:
 	bool InitializeSet();
 	bool Initialize();
@@ -60,7 +59,6 @@ public:
 
 private:
 	unordered_map<type_index, deque<shared_ptr<Component>>>components;
-
 public:
 	template<typename T>
 	void AddComponent(std::shared_ptr<T> component);
@@ -79,8 +77,6 @@ public:
 
 	template<typename T>
 	std::vector<std::shared_ptr<T>> GetComponents();
-
-
 public:
 	bool CompareTag(Tag Tag) const
 	{

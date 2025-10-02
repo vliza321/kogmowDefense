@@ -16,6 +16,11 @@ Player::~Player()
 
 bool Player::InitializeSet()
 {
+	return true;
+}
+
+bool Player::Initialize()
+{
 	m_moveLeftRight = 0;
 	m_moveBackForward = 0;
 	speed = 0.0033f;
@@ -31,12 +36,6 @@ bool Player::InitializeSet()
 	return true;
 }
 
-bool Player::Initialize()
-{
-	
-	return true;
-}
-
 bool Player::InitializeRef()
 {
 	transform = this->gameObject->GetComponent<Transform>();
@@ -48,7 +47,7 @@ bool Player::InitializeRef()
 		transform = newTransform;
 	}
 	m_cameraManager = gameObject->Root().Find("CameraManager")->GetComponent<CameraManager>();
-	m_uiCanvas = gameObject->Root().Find("Canvas")->GetComponent<Canvas>();
+	m_uiCanvasManager = gameObject->Root().Find("Canvas")->GetComponent<Canvas>();
 	m_bulletManager = gameObject->GetComponent<BulletManager>();
 	return true;
 }
@@ -221,7 +220,7 @@ void Player::ChangePovCul()
 void Player::SetPov(ShootType shootType)
 {
 	auto cm = m_cameraManager.lock();
-	auto UIC = m_uiCanvas.lock();
+	auto UIC = m_uiCanvasManager.lock();
 
 	cm->SetCamera(shootType);
 
