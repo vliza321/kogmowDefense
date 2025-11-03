@@ -21,6 +21,7 @@
 #include <directxmath.h>
 
 #include "AlignedAllocationPolicy.h"
+#include "AsyncD3DClass.h"
 
 using namespace DirectX;
 
@@ -36,7 +37,7 @@ public:
 
 	bool Initialize(int, int, bool, HWND, bool, float, float);
 	void Shutdown();
-	
+
 	void BeginScene(float, float, float, float);
 	void EndScene();
 
@@ -58,6 +59,7 @@ public:
 	void TurnOnCullBackMode();
 	void TurnOnCullNoneMode();
 
+	bool UpdateDevice();
 private:
 	bool m_vsync_enabled;
 	int m_videoCardMemory;

@@ -1,5 +1,15 @@
 #include "RenderManager.h"
 #include "Renderer.h"
+#include "Scene.h"
+
+RenderManager::RenderManager()
+{
+}
+
+RenderManager::~RenderManager()
+{
+}
+
 
 bool RenderManager::InitializeRender(ID3D11Device* device)
 {
@@ -86,6 +96,17 @@ bool RenderManager::RenderAll(TextureShaderClass* TextureShader, D3DClass* D3D, 
             if (!result) return result;
         }
     }
+    return result;
+}
+
+bool RenderManager::Shutdown()
+{
+    bool result = true;
+    for (auto& renderer : renderers) {
+        if (!renderer->Shutdown())
+            return false;
+    }
+    renderers.clear();
     return result;
 }
 

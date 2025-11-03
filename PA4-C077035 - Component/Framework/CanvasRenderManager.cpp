@@ -1,5 +1,13 @@
 #include "CanvasRenderManager.h"
 
+CanvasRenderManager::CanvasRenderManager()
+{
+}
+
+CanvasRenderManager::~CanvasRenderManager()
+{
+}
+
 bool CanvasRenderManager::RenderAll(TextureShaderClass* TextureShader, D3DClass* D3D, XMMATRIX vMatrix)
 {
     bool result = true;
@@ -28,5 +36,16 @@ bool CanvasRenderManager::RenderAll(TextureShaderClass* TextureShader, D3DClass*
             if (!result) return result;
         }
     }
+    return result;
+}
+
+bool CanvasRenderManager::Shutdown()
+{
+    bool result = true;
+    for (auto& renderer : renderers) {
+        if (!renderer->Shutdown())
+            return false;
+    }
+    renderers.clear();
     return result;
 }

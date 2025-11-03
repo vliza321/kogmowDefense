@@ -2,9 +2,9 @@
 #define RENDERER_H
 
 #pragma once
-#include "Component.h"
 #include "modelclass.h"
 #include "textureclass.h"
+#include "Component.h"
 #include "RenderComponent.h"
 
 class Renderer : public Component, public RenderComponent
@@ -16,7 +16,7 @@ public:
 	bool InitializeSet() override;
 	bool InitializeRef() override;
 	bool InitializeRender(ID3D11Device*) override;
-	void Render(ID3D11DeviceContext*);
+	void Render(ID3D11DeviceContext*) override;
 	bool Shutdown() override;
 
 	ID3D11ShaderResourceView* GetModelTexture();

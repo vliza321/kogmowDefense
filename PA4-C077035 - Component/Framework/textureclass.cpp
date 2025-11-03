@@ -126,15 +126,13 @@ void TextureClass::Shutdown()
 
 
 	// Release the texutres resource.
-	if (m_textures[0])
+	for (int i = 0; i < 7; i++)
 	{
-		m_textures[0]->Release();
-		m_textures[0] = 0;
-	}
-	if (m_textures[1])
-	{
-		m_textures[1]->Release();
-		m_textures[1] = 0;
+		if (m_textures[i])
+		{
+			m_textures[i]->Release();
+			m_textures[i] = 0;
+		}
 	}
 	return;
 }

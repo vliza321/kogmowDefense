@@ -2,6 +2,7 @@
 #include "Collision.h"
 #include "MoveEvent.h"
 
+#include "Scene.h"
 #define epsilon 0.0001f
 
 Transform::Transform()
@@ -21,6 +22,15 @@ Transform::Transform()
 	DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	DefaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	DefaultUp = XMVectorSet(0.0f, 01.0f, 0.0f, 0.0f);
+
+	pad1 = 0;
+	pad2 = 0;
+	pad3 = 0;
+	pad4 = 0;
+	pad5 = 0;
+	pad6 = 0;
+	pad7 = 0;
+	pad8 = 0;
 }
 
 Transform::Transform(XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, XMFLOAT3 eulerRot)
@@ -32,6 +42,15 @@ Transform::Transform(XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, XMFLOAT3 eulerR
 	DefaultUp = XMVectorSet(0.0f, 01.0f, 0.0f, 0.0f);
 
 	SetWorldMatrix();
+
+	pad1 = 0;
+	pad2 = 0;
+	pad3 = 0;
+	pad4 = 0;
+	pad5 = 0;
+	pad6 = 0;
+	pad7 = 0;
+	pad8 = 0;
 }
 
 Transform::~Transform()
@@ -44,7 +63,7 @@ void Transform::Translate(XMFLOAT3 t)
 	MoveEvent* moveEvent = new MoveEvent;
 	moveEvent->transform = this;
 	moveEvent->MoveVector = t;
-	Collision::GetInstance().AddEvent(moveEvent);
+	gameObject->root->GetCollision()->AddEvent(moveEvent);
 }
 
 void Transform::ApplyTranslate(XMFLOAT3 t)

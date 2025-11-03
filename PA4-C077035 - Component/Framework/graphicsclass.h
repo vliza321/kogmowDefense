@@ -13,10 +13,10 @@
 #include "modelclass.h"
 #include "textureshaderclass.h"
 #include "inputclass.h"
-#include "ObjectClass.h"
 #include "textclass.h"
 #include "lightshaderclass.h"
 #include "timerclass.h"
+#include "SceneManager.h"
 
 /////////////
 // GLOBALS //
@@ -52,22 +52,19 @@ public:
 private:
 	bool Render();
 private:
-	int timer;
-	bool canInput;
-	bool isPause;
-	int intensity;
-	
-	pointColor pointLightColor;
 
-	D3DClass* m_D3D;
 	InputClass* m_Input;
+
+	//=========================
+	D3DClass* m_D3D;
 
 	TextureShaderClass* m_TextureShader;
 
-	ObjectClass* m_Object;
-
 	LightShaderClass* m_LightShader;
-
+	//=========================
 	int SceneCount;
+
+private:
+	SceneManager* m_sceneManager;
 };
 #endif

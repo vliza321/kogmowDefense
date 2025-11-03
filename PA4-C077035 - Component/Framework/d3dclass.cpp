@@ -2,7 +2,7 @@
 // Filename: d3dclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "d3dclass.h"
-
+#include <iostream>
 
 D3DClass::D3DClass()
 {
@@ -223,10 +223,10 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	{
 		return false;
 	}
-
+	
 	// Create the render target view with the back buffer pointer.
 	result = m_device->CreateRenderTargetView(backBufferPtr, NULL, &m_renderTargetView);
-	if(FAILED(result))
+	if (FAILED(result))
 	{
 		return false;
 	}
@@ -351,7 +351,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	// Now set the rasterizer state.
 	m_deviceContext->RSSetState(m_rasterStateBack);
-	
+
 	// Setup the viewport for rendering.
     viewport.Width = (float)screenWidth;
     viewport.Height = (float)screenHeight;
@@ -361,7 +361,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
     viewport.TopLeftY = 0.0f;
 
 	// Create the viewport.
-    m_deviceContext->RSSetViewports(1, &viewport);
+	m_deviceContext->RSSetViewports(1, &viewport);
 
 	// Setup the projection matrix.
 	fieldOfView = (float)XM_PI / 4.0f;
@@ -444,12 +444,12 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	// Create the blend state using the description.
 	result = m_device->CreateBlendState(&blendStateDescription1, &m_alphaDisableBlendingState);
-
-	this->TurnOnAlphaBlending();
 	if (FAILED(result))
 	{
 		return false;
 	}
+
+	this->TurnOnAlphaBlending();
 
     return true;
 }
@@ -584,7 +584,6 @@ ID3D11DeviceContext* D3DClass::GetDeviceContext()
 	return m_deviceContext;
 }
 
-
 void D3DClass::GetProjectionMatrix(XMMATRIX& projectionMatrix)
 {
 	projectionMatrix = m_projectionMatrix;
@@ -671,4 +670,9 @@ void D3DClass::TurnOnCullNoneMode()
 {
 	// Now set the rasterizer state.
 	m_deviceContext->RSSetState(m_rasterStateFront);
+}
+
+bool D3DClass::UpdateDevice()
+{
+	return true;
 }

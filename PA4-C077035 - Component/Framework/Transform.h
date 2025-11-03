@@ -14,17 +14,24 @@ public:
 	Transform();
 	Transform(XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, XMFLOAT3 eulerRot);
 	~Transform();
-public:
-	XMFLOAT3 position;
-	XMFLOAT3 rotation;
-	XMFLOAT3 scale;
-	XMFLOAT3 eulerRotation;
-	XMFLOAT3 moveVector;
-	XMMATRIX WorldMatrix;
+public:	XMFLOAT3 position;
+private:float pad1;          
+public: XMFLOAT3 rotation;
+private:float pad2;
+public: XMFLOAT3 scale;
+private:float pad3;
+public:	XMFLOAT3 eulerRotation;
+private:float pad4;
+public:	XMFLOAT3 moveVector;
+private:float pad5;
+public:	XMMATRIX WorldMatrix;
 private:
 	XMFLOAT3 prevRotation;
+	float pad6;
 	XMFLOAT3 prevEulerRotation;
+	float pad7;
 	XMFLOAT3 prevScale;
+	float pad8;
 public:
 	XMVECTOR DefaultForward;
 	XMVECTOR DefaultRight;

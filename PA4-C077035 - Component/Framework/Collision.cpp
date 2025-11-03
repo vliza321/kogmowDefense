@@ -436,3 +436,35 @@ void Collision::ProcessCollision()
 		m_trackingCollider.insert(cp.second);
 	}
 }
+
+void Collision::Shutdown()
+{
+	for (auto& sc : m_sphereCollider)
+	{
+		sc->Shutdown();
+	}
+	for (auto& rc : m_rayCollider)
+	{
+		rc->Shutdown();
+	}
+	for (auto& bc : m_boxCollider)
+	{
+		bc->Shutdown();
+	}
+	for (auto& tc : m_trackingCollider)
+	{
+		tc->Shutdown();
+	}
+
+	m_sphereCollider.clear();
+	m_rayCollider.clear();
+	m_boxCollider.clear();
+	m_trackingCollider.clear();
+
+	while (!m_eventQueue.empty())
+	{
+		MoveEvent* e = m_eventQueue.front();
+		m_eventQueue.pop();
+		delete e;
+	}
+}

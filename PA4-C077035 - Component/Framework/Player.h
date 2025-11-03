@@ -8,11 +8,9 @@
 #include "Transform.h"
 #include "CameraManager.h"
 #include "BulletManager.h"
-
+#include "Canvas.h"
 using namespace std;
 using namespace DirectX;
-
-class Canvas;
 
 class Player : public Component
 {

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _LIGHTMANAGER_H
+#define _LIGHTMANAGER_H
+
 #include "lightclass.h"
 #include <vector>
 #include <algorithm>
@@ -11,7 +13,9 @@ class LightManager : public Component
 {
 public:
 	LightManager();
+	LightManager(const LightManager&);
 	~LightManager();
+public:
 	virtual bool InitializeSet() override;
 	virtual bool InitializeRef() override;
 	virtual bool InitializeSynchronization() override;
@@ -19,6 +23,8 @@ public:
 	virtual bool Shutdown() override;
 
 public:
+	void AddLight(LightClass*);
+	void SetDirectionalLight(LightClass* light);
 	LightClass** GetLights();
 	LightClass& GetLights(int);
 	LightClass* GetDirectionalLight();
@@ -35,3 +41,4 @@ private:
 	int m_frameTimer;	
 };
 
+#endif // !_LIGHTMANAGER_H

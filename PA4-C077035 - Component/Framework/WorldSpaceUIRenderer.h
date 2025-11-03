@@ -1,25 +1,27 @@
-#ifndef GUI_RENDERER_H
-#define GUI_RENDERER_H
+#ifndef WORLD_SPACE_UI_RENDERER_H
+#define WORLD_SPACE_UI_RENDERER_H
 
 #pragma once
-#include "Component.h"
 #include "PanelModelClass.h"
 #include "textureclass.h"
+
+#include "Component.h"
 #include "RenderComponent.h"
+
 #include "RectTransform.h"
 #include "Transform.h"
 #include "CameraManager.h"
 
-class GUIRenderer : public Component, public RenderComponent
+class WorldSpaceUIRenderer : public Component, public RenderComponent
 {
 public:
-	GUIRenderer(const WCHAR* TextureFilename, int InstanceCoutner);
-	~GUIRenderer();
+	WorldSpaceUIRenderer(const WCHAR* TextureFilename, int InstanceCoutner);
+	~WorldSpaceUIRenderer();
 public:
 	bool InitializeSet() override;
 	bool InitializeRef() override;
 	bool InitializeRender(ID3D11Device*) override;
-	void Render(ID3D11DeviceContext*);
+	void Render(ID3D11DeviceContext*) override;
 	void PostExecute();
 	bool Shutdown();
 

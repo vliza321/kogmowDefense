@@ -14,8 +14,6 @@
 
 class CanvasRenderer;
 
-using namespace std;
-
 class Canvas : public Component
 {
 public:
@@ -38,7 +36,7 @@ private:
 	CanvasRenderer* m_baseScope;
 	ShootType m_currentUIType;
 
-	unordered_map<ShootType, CanvasRenderer*>m_shootUIMap;
+	std::unordered_map<ShootType, CanvasRenderer*>m_shootUIMap;
 };
 
 #endif

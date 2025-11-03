@@ -1,9 +1,10 @@
 #include "CanvasRenderer.h"
 #include "CanvasRenderManager.h"
+#include "Scene.h"
 
 
 CanvasRenderer::CanvasRenderer(const WCHAR* TextureFilename, XMFLOAT4 PanelRect)
-	:Component()
+	: RenderComponent()
 {
 	m_model = 0;
 
@@ -35,7 +36,7 @@ bool CanvasRenderer::InitializeSet()
 
 bool CanvasRenderer::InitializeRef()
 {
-	CanvasRenderManager::GetInstance().RegisterRenderer(this);
+	gameObject->Root().GetCanvasRenderManager()->RegisterRenderer(this);
 	return true;
 }
 
@@ -72,25 +73,21 @@ bool CanvasRenderer::Shutdown()
 ID3D11ShaderResourceView* CanvasRenderer::GetModelTexture()
 {
 	return m_model->GetTexture();
-	//return m_baseModel->GetTexture();
 }
 
 int CanvasRenderer::GetModelIndexCount()
 {
 	return m_model->GetIndexCount();
-	//return m_baseModel->GetIndexCount();
 }
 
 int CanvasRenderer::GetModelVertexCount()
 {
 	return m_model->GetIndexCount();
-	//return m_baseModel->GetIndexCount();
 }
 
 int CanvasRenderer::GetModelInstanceCount()
 {
 	return m_model->GetIndexCount();
-	//return m_baseModel->GetIndexCount();
 }
 
 RectTransform* CanvasRenderer::GetRectTransform()

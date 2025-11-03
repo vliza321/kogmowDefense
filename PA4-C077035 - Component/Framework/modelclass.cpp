@@ -272,7 +272,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 			return false;
 		}
 
-		// 인스턴스 버퍼가 생성되고로드되었으므로 인스턴스 배열을 해제합니다.
+		// 인스턴스 버퍼가 생성되고 로드되었으므로 인스턴스 배열을 해제합니다.
 		delete[] instances;
 		instances = 0;
 

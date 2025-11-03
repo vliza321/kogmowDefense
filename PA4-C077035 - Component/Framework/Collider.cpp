@@ -1,6 +1,8 @@
 #include "Collider.h"
 #include "Collision.h"
 
+#include "Scene.h"
+
 Collider::Collider()
 	:Component()
 {
@@ -25,12 +27,12 @@ Collider::~Collider()
 bool Collider::Shutdown()
 {
 	bool result = false;
-	result = Collision::GetInstance().RemoveCollider(this);
+	result = gameObject->root->GetCollision()->RemoveCollider(this);
 	return result;
 }
 
 bool Collider::InitializeRef()
 {
-	Collision::GetInstance().AddCollider(this);
+	gameObject->root->GetCollision()->AddCollider(this);
 	return true;
 }

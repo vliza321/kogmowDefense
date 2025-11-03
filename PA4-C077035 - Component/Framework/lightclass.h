@@ -20,10 +20,20 @@ class LightClass : public Component
 {
 public:
 	LightClass();
+	/// 순서대로
+	/// 1. 방향
+	/// 2. 앰비언트
+	/// 3. 디퓨즈
+	/// 4. 스페큘라
+	/// 5. 포지션
+	/// 6. 스페큘라 파워
+
 	LightClass(XMFLOAT3,XMFLOAT4,XMFLOAT4,XMFLOAT4,XMFLOAT4,float);
 	LightClass(const LightClass&);
 	~LightClass();
 
+	virtual bool InitializeRef() override;
+public:
 	bool isSpecularPower;
 	bool isDiffuseColor;
 	bool isAmbientColor;

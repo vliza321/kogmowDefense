@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="ArtilleryBullet.cpp" />
     <ClCompile Include="ArtilleryCamera.cpp" />
+    <ClCompile Include="AsyncD3DClass.cpp" />
     <ClCompile Include="BaseBullet.cpp" />
     <ClCompile Include="BaseCamera.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
@@ -162,8 +163,10 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="FirstPersonCamera.cpp" />
-    <ClCompile Include="GUIRenderer.cpp" />
-    <ClCompile Include="GUIRenderManager.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="WorldSpaceUIRenderer.cpp" />
+    <ClCompile Include="WorldSpaceUIRenderManager.cpp" />
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
@@ -202,6 +205,7 @@
     <ClInclude Include="AlignedAllocationPolicy.h" />
     <ClInclude Include="ArtilleryBullet.h" />
     <ClInclude Include="ArtilleryCamera.h" />
+    <ClInclude Include="AsyncD3DClass.h" />
     <ClInclude Include="BaseBullet.h" />
     <ClInclude Include="BaseCamera.h" />
     <ClInclude Include="BoxCollider.h" />
@@ -216,8 +220,10 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="FirstPersonCamera.h" />
-    <ClInclude Include="GUIRenderer.h" />
-    <ClInclude Include="GUIRenderManager.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="WorldSpaceUIRenderer.h" />
+    <ClInclude Include="WorldSpaceUIRenderManager.h" />
     <ClInclude Include="PanelTextureClass.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RayCollider.h" />

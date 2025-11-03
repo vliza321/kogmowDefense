@@ -16,7 +16,7 @@
 using namespace std;
 using namespace DirectX;
 
-class ObjectClass;
+class Scene;
 class Component;
 class Collider;
 
@@ -55,7 +55,7 @@ public:
 	Tag tag;
 	string name;
 	bool isDestroy;
-	ObjectClass* root;
+	Scene* root;
 
 private:
 	unordered_map<type_index, deque<shared_ptr<Component>>>components;
@@ -86,16 +86,15 @@ public:
 		}
 		return false;
 	}
-	ObjectClass& Root() const
+	Scene& Root() const
 	{
 		return *root;
 	}
 	void Destroy();
 	void Destory(shared_ptr<Component>);
 	void SetActive(bool active);
-	void SetRoot(ObjectClass*);
+	void SetRoot(Scene*);
 };
-
 
 #include "Component.h"
 #include "RenderComponent.h"

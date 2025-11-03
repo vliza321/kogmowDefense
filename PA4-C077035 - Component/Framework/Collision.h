@@ -21,18 +21,11 @@ public:
 	Collision();
 	~Collision();
 public:
-	
-	static Collision& GetInstance()
-	{
-		static Collision instance;
-		return instance;
-	}
-
 	void AddCollider(Collider*);
 	bool RemoveCollider(Collider*);
 	void AddEvent(MoveEvent*);
 	void ProcessCollision();
-
+	void Shutdown();
 private:
 	vector<SphereCollider*> m_sphereCollider;
 	vector<RayCollider*> m_rayCollider;

@@ -107,13 +107,13 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="GUIRenderManager.cpp">
+    <ClCompile Include="WorldSpaceUIRenderManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CanvasRenderManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="GUIRenderer.cpp">
+    <ClCompile Include="WorldSpaceUIRenderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="BaseCamera.cpp">
@@ -171,6 +171,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PanelTextureClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncD3DClass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -277,7 +286,7 @@
     <ClInclude Include="Renderer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="GUIRenderManager.h">
+    <ClInclude Include="WorldSpaceUIRenderManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="RenderManager.h">
@@ -286,7 +295,7 @@
     <ClInclude Include="CanvasRenderManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="GUIRenderer.h">
+    <ClInclude Include="WorldSpaceUIRenderer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="BaseCamera.h">
@@ -338,6 +347,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="PanelTextureClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncD3DClass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

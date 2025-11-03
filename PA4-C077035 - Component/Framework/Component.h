@@ -1,7 +1,6 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#pragma once
 #include "timerclass.h"
 #include "inputclass.h"
 #include "GameObject.h"

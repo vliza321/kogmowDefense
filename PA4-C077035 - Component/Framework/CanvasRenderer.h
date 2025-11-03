@@ -3,10 +3,11 @@
 
 #pragma once
 #include <memory>
-#include "Component.h"
 #include "modelclass.h"
 #include "PanelModelClass.h"
 #include "textureclass.h"
+
+#include "Component.h"
 #include "RenderComponent.h"
 #include "RectTransform.h"
 
@@ -19,7 +20,7 @@ public:
 	bool InitializeSet() override;
 	bool InitializeRef() override;
 	bool InitializeRender(ID3D11Device*) override;
-	void Render(ID3D11DeviceContext*);
+	void Render(ID3D11DeviceContext*) override;
 	bool Shutdown() override;
 
 	ID3D11ShaderResourceView* GetModelTexture();

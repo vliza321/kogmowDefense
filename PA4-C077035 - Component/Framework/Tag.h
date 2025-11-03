@@ -9,6 +9,8 @@ enum class Tag
 	Player,
 	Monster,
 	Camera,
+	DirectionalLight,
+	Light,
 	NormalBullet,
 	ScopeBullet,
 	ArtilleryBullet,

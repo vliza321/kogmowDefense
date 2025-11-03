@@ -1,12 +1,13 @@
+#include "Scene.h"
 #include "Canvas.h"
-#include "CanvasRenderer.h"
-
 
 Canvas::Canvas()
 {
 	m_shootUIMap.clear();
 
 	m_title = 0;
+	m_baseScope = 0;
+	m_currentUIType = ShootType::Num;
 }
 
 Canvas::~Canvas()

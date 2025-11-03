@@ -71,6 +71,8 @@ bool CameraManager::Shutdown()
 	m_CameraMapSet[ShootType::Scope]->Shutdown();
 	m_CameraMapSet[ShootType::Artillery]->Shutdown();
 	m_CameraMapSet[ShootType::Debug]->Shutdown();
+
+	m_CameraMapSet.clear();
 	return true;
 }
 

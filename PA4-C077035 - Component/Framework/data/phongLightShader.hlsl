@@ -155,6 +155,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float PLI[8];
     float3 PLR[8];
     float4 PLS[8];
+   
     
     // Sample the pixel color from the texture using the sampler at this texture coordinate location.
     textureColor1 = shaderTexture[0].Sample(SampleType, input.tex);
@@ -196,9 +197,9 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     for (int i = 0; i < 8; ++i)
     {
         PLD[i] = dot(inputPLDir[i], inputPLDir[i]);
-        PLC[i] = diffuseColor[i] / (PLD[i] * 2 + 0.5f);
-        PLI[i] = max(dot(normalize(inputPLDir[i]), input.normal), 0.0f);
+        PLC[i] = diffuseColor[i] / (PLD[i] * 2.0f + 0.5f);
         //PLI[i] = max(dot(normalize(inputPLDir[i]), bumpNormal), 0.0f);
+        PLI[i] = max(dot(normalize(inputPLDir[i]), input.normal), 0.0f);
         PLC[i] = saturate(PLC[i] * PLI[i]);
         
         pointLightColor += PLC[i];
@@ -207,7 +208,6 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         PLR[i] = normalize(2 * PLI[i] * input.normal - inputPLDir[i]);
         PLS[i] = PLC[i] * pow(saturate(dot(PLR[i], input.viewDirection)), specularPower / 2);
         pointLightSpecular += PLS[i];
-
     }
     
     float4 minColor = float4(0.1f, 0.1f, 0.1f, 0.1f) * 5;
@@ -234,10 +234,10 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     finalTextureColor = saturate(finalTextureColor);
     finalTextureColor = finalTextureColor * lightAlphaColor;
     
-    color = color * finalTextureColor;
+    color *= finalTextureColor;
     
     // Add the pointLight DiffuseColor componenet
-    color += pointLightColor;
+    color += saturate(pointLightColor);
 
     // Add the specular component last to the output color.
     color = saturate(color + specular + pointLightSpecular);

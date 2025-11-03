@@ -15,10 +15,8 @@ private:
     std::vector<CanvasRenderer*> renderers;
 
 public:
-    static CanvasRenderManager& GetInstance() {
-        static CanvasRenderManager instance;
-        return instance;
-    }
+    CanvasRenderManager();
+    ~CanvasRenderManager();
 
     bool InitializeRender(ID3D11Device* Device)
     {
@@ -42,6 +40,8 @@ public:
     }
 
     bool RenderAll(TextureShaderClass* TextureShader, D3DClass* D3D, XMMATRIX vMatrix);
+
+    bool Shutdown();
 };
 
 #endif // !RENDER_MANAGER_H

@@ -1,9 +1,9 @@
-#include "GUIRenderer.h"
-#include "GUIRenderManager.h"
-#include "ObjectClass.h"
+#include "WorldSpaceUIRenderer.h"
+#include "WorldSpaceUIRenderManager.h"
+#include "Scene.h"
+#include "GameObject.h"
 
-GUIRenderer::GUIRenderer(const WCHAR* TextureFilename, int InstanceCoutner)
-	:Component()
+WorldSpaceUIRenderer::WorldSpaceUIRenderer(const WCHAR* TextureFilename, int InstanceCoutner)
 {
 	m_model = 0;
 
@@ -12,19 +12,19 @@ GUIRenderer::GUIRenderer(const WCHAR* TextureFilename, int InstanceCoutner)
 	m_instanceCounter = InstanceCoutner;
 }
 
-GUIRenderer::~GUIRenderer()
+WorldSpaceUIRenderer::~WorldSpaceUIRenderer()
 {
 }
 
-bool GUIRenderer::InitializeSet()
+bool WorldSpaceUIRenderer::InitializeSet()
 {
 	m_model = new PanelModelClass();
 	return true;
 }
 
-bool GUIRenderer::InitializeRef()
+bool WorldSpaceUIRenderer::InitializeRef()
 {
-	GUIRenderManager::GetInstance().RegisterRenderer(this);
+	gameObject->Root().GetWorldSpaceUIRenderManager()->RegisterRenderer(this);
 
 	m_rectTransform = this->gameObject->GetComponent<RectTransform>();
 	m_transform = this->gameObject->GetComponent<Transform>();
@@ -47,7 +47,7 @@ bool GUIRenderer::InitializeRef()
 }
 
 
-bool GUIRenderer::InitializeRender(ID3D11Device* Device)
+bool WorldSpaceUIRenderer::InitializeRender(ID3D11Device* Device)
 {
 	bool result = true;
 
@@ -62,12 +62,12 @@ bool GUIRenderer::InitializeRender(ID3D11Device* Device)
 	return result;
 }
 
-void GUIRenderer::Render(ID3D11DeviceContext* DeviceContext)
+void WorldSpaceUIRenderer::Render(ID3D11DeviceContext* DeviceContext)
 {
 	m_model->Render(DeviceContext);
 }
 
-bool GUIRenderer::Shutdown()
+bool WorldSpaceUIRenderer::Shutdown()
 {
 	if (m_model != 0)
 	{
@@ -78,32 +78,32 @@ bool GUIRenderer::Shutdown()
 	return true;
 }
 
-ID3D11ShaderResourceView* GUIRenderer::GetModelTexture()
+ID3D11ShaderResourceView* WorldSpaceUIRenderer::GetModelTexture()
 {
 	return m_model->GetTexture();
 }
 
-PanelModelClass* GUIRenderer::GetModelData()
+PanelModelClass* WorldSpaceUIRenderer::GetModelData()
 {
 	return m_model;
 }
 
-int GUIRenderer::GetModelIndexCount()
+int WorldSpaceUIRenderer::GetModelIndexCount()
 {
 	return  m_model->GetIndexCount();
 }
 
-int GUIRenderer::GetModelVertexCount()
+int WorldSpaceUIRenderer::GetModelVertexCount()
 {
 	return  m_model->GetIndexCount();
 }
 
-int GUIRenderer::GetModelInstanceCount()
+int WorldSpaceUIRenderer::GetModelInstanceCount()
 {
 	return m_instanceCounter;
 }
 
-void GUIRenderer::PostExecute()
+void WorldSpaceUIRenderer::PostExecute()
 {
 	auto MainCamera = m_cameraManager.lock().get()->GetCamera()->GetPosition();
 	auto CameraLookAt = m_cameraManager.lock()->GetLookAt();

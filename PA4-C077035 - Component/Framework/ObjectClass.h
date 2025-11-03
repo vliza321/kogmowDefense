@@ -1,27 +1,13 @@
 #ifndef OBJECTCLASS_H
 #define OBJECTCLASS_H
 
-#include <vector>
-#include <map>
-#include <d3d11.h>
-#include <directxmath.h>
+#include "Scene.h"
 
-#include "textureshaderclass.h"
-#include "d3dclass.h"
-#include "lightshaderclass.h"
-
-#include "Component.h"
-#include "GameObject.h"
 #include "CameraObject.h"
-
-#include "RenderManager.h"
-#include "GUIRenderManager.h"
-#include "CanvasRenderManager.h"
 
 #include "LightManager.h"
 #include "lightclass.h"
 
-#include "Collision.h"
 #include "ColliderType.h"
 
 #include "CameraManager.h"
@@ -29,54 +15,14 @@
 
 #include "BulletManager.h"
 
-#include "Canvas.h"
-#include "CanvasRenderer.h"
-
-#include "GUIRenderer.h"
-
-class ObjectClass
+class ObjectClass : public Scene
 {
 public:
 	ObjectClass();
 	~ObjectClass();
 public:
-	void CreateBaseObject();
-	void CreateGameObject();
-
-	bool InitializeSet(HWND , ID3D11Device*);
-	bool Initialize(HWND , ID3D11Device*);
-	bool InitializeRef(HWND , ID3D11Device*);
-	bool InitializeRender(HWND , ID3D11Device*);
-	bool InitializeSynchronization(HWND , ID3D11Device*);
-	bool PostInitialize(HWND , ID3D11Device*);
-
-	void CollisionDetection();
-
-	void FixedExecute();
-	void Execute();
-	void LateExecute();
-	void PostExecute();
-
-	bool GUIRender(TextureShaderClass*, D3DClass*, int);
-	bool Render(LightShaderClass*, D3DClass*, int);
-	bool Render(TextureShaderClass* , D3DClass* , int);
-	bool UIRender(TextureShaderClass*, D3DClass*, int);
-	
-	void Shutdown();
-public:
-	LightClass& GetLights(int i);
-private:
-	unordered_map<Tag, vector<GameObject*>> m_gameObjects;
-
-public:
-	GameObject* Find(string);
-	GameObject* FindObjectWithTag(Tag);
-	vector<GameObject*> FindObjectsWithTag(Tag);
-private:
-	void RegistGameObject(GameObject*);
-private:
-	CameraManager* m_cameraManager;
-	LightManager* m_lightManager;
+	virtual void CreateBaseObject() override;
+	virtual void CreateGameObject() override;
 };
 
 #endif

@@ -1,8 +1,8 @@
 #include "Renderer.h"
+#include "Scene.h"
 #include "RenderManager.h"
 
 Renderer::Renderer(const WCHAR* ModelFilename, const WCHAR* TextureFilename, int InstanceCoutner)
-	:Component()
 {
 	m_model = 0;
 
@@ -24,7 +24,8 @@ bool Renderer::InitializeSet()
 
 bool Renderer::InitializeRef()
 {
-	RenderManager::GetInstance().RegisterRenderer(this);
+	gameObject->root->GetRenderManager()->RegisterRenderer(this);
+	//RenderManager::GetInstance().RegisterRenderer(this);
 	return true;
 }
 

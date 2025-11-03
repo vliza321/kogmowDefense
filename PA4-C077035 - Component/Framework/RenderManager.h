@@ -15,16 +15,14 @@
 
 #include "CameraObject.h"
 
-
 class RenderManager {
 private:
     std::vector<Renderer*> renderers;
 
 public:
-    static RenderManager& GetInstance() {
-        static RenderManager instance;
-        return instance;
-    }
+
+    RenderManager();
+    ~RenderManager();
 
     bool InitializeRender(ID3D11Device* device);
 
@@ -34,6 +32,8 @@ public:
 
     bool RenderAll(LightShaderClass* LightShader, D3DClass* D3D, CameraObject* mainCamera, LightManager* lightManager, XMFLOAT4*, XMFLOAT4*);
     bool RenderAll(TextureShaderClass* TextureShader, D3DClass* D3D, XMMATRIX vMatrix);
+
+    bool Shutdown();
 };
 
 #endif

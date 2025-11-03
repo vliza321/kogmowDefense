@@ -1,24 +1,22 @@
-#ifndef GUI_RENDER_MANAGER_H
-#define GUI_RENDER_MANAGER_H
+#ifndef WORLD_SPACE_UI_RENDER_MANAGER_H
+#define WORLD_SPACE_UI_RENDER_MANAGER_H
 
 #pragma once
 #include <vector>
 #include <algorithm>
 #include <memory>
 #include "d3dclass.h"
-#include "GUIRenderer.h"
+#include "WorldSpaceUIRenderer.h"
 #include "textureshaderclass.h"
 #include "Transform.h"
 
-class GUIRenderManager {
+class WorldSpaceUIRenderManager {
 private:
-    std::vector<GUIRenderer*> renderers;
+    std::vector<WorldSpaceUIRenderer*> renderers;
 
 public:
-    static GUIRenderManager& GetInstance() {
-        static GUIRenderManager instance;
-        return instance;
-    }
+    WorldSpaceUIRenderManager();
+    ~WorldSpaceUIRenderManager();
 
     bool InitializeRender(ID3D11Device* Device)
     {
@@ -33,15 +31,17 @@ public:
         return true;
     }
 
-    void RegisterRenderer(GUIRenderer* Renderer) {
+    void RegisterRenderer(WorldSpaceUIRenderer* Renderer) {
         renderers.emplace_back(Renderer);
     }
 
-    void UnregisterRenderer(GUIRenderer* Renderer) {
+    void UnregisterRenderer(WorldSpaceUIRenderer* Renderer) {
         renderers.erase(std::remove(renderers.begin(), renderers.end(), Renderer), renderers.end());
     }
 
     bool RenderAll(TextureShaderClass* TextureShader, D3DClass* D3D, XMMATRIX viewMatrix);
+
+    bool Shutdown();
 };
 
 #endif

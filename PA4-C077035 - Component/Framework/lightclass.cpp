@@ -2,7 +2,8 @@
 // Filename: lightclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "lightclass.h"
-
+#include "LightManager.h"
+#include "ObjectClass.h"
 
 LightClass::LightClass()
 {
@@ -39,6 +40,19 @@ LightClass::LightClass(const LightClass& other)
 
 LightClass::~LightClass()
 {
+}
+
+bool LightClass::InitializeRef()
+{
+	if (this->gameObject->tag == Tag::DirectionalLight)
+	{
+		this->gameObject->Root().Find("LightManager")->GetComponent<LightManager>()->SetDirectionalLight(this);
+	}
+	else
+	{
+		this->gameObject->Root().Find("LightManager")->GetComponent<LightManager>()->AddLight(this);
+	}
+	return true;
 }
 
 void LightClass::TurnOnOffAmbientColor()

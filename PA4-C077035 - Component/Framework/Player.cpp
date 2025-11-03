@@ -1,7 +1,6 @@
 #include "Player.h"
 #include "algorithm"
 #include "ObjectClass.h"
-#include "Canvas.h"
 
 Player::Player()
 	: Component()

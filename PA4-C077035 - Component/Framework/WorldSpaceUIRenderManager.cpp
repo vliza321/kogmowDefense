@@ -1,6 +1,14 @@
-#include "GUIRenderManager.h"
+#include "WorldSpaceUIRenderManager.h"
 
-bool GUIRenderManager::RenderAll(TextureShaderClass* TextureShader, D3DClass* D3D, XMMATRIX viewMatrix)
+WorldSpaceUIRenderManager::WorldSpaceUIRenderManager()
+{
+}
+
+WorldSpaceUIRenderManager::~WorldSpaceUIRenderManager()
+{
+}
+
+bool WorldSpaceUIRenderManager::RenderAll(TextureShaderClass* TextureShader, D3DClass* D3D, XMMATRIX viewMatrix)
 {
     bool result = true;
     XMMATRIX rotationMatrix, worldMatrix, projectionMatrix;
@@ -24,5 +32,16 @@ bool GUIRenderManager::RenderAll(TextureShaderClass* TextureShader, D3DClass* D3
             if (!result) return result;
         }
     }
+    return result;
+}
+
+bool WorldSpaceUIRenderManager::Shutdown()
+{
+    bool result = true;
+    for (auto& renderer : renderers) {
+        if (!renderer->Shutdown())
+            return false;
+    }
+    renderers.clear();
     return result;
 }

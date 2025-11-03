@@ -274,9 +274,9 @@ void GameObject::SetActive(bool active)
 	else OnDisable();
 }
 
-#include "ObjectClass.h"
+#include "Scene.h"
 
-void GameObject::SetRoot(ObjectClass* objectClass)
+void GameObject::SetRoot(Scene* scene)
 {
-	root = objectClass;
+	root = scene;
 }
