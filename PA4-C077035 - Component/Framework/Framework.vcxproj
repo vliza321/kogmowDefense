@@ -162,6 +162,7 @@
     <ClCompile Include="ColliderType.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="DummyScene.cpp" />
     <ClCompile Include="FirstPersonCamera.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="ColliderType.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="DummyScene.h" />
     <ClInclude Include="FirstPersonCamera.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />

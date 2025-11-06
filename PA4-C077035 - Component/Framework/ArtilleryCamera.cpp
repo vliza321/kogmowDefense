@@ -129,8 +129,8 @@ void ArtilleryCamera::Execute()
 	//viewMatrix »ý¼º
 	m_viewMatrix = XMMatrixLookAtLH(position, lookAt, up);
 
-	m_moveLeftRight = 0.0f;
-	m_moveBackForward = 0.0f;
+	m_moveLeftRight = 0;
+	m_moveBackForward = 0;
 }
 
 void ArtilleryCamera::CameraStart()

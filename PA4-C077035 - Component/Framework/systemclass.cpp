@@ -10,12 +10,15 @@ SystemClass::SystemClass()
 	m_Graphics = 0;
 	m_Fps = 0;
 	m_Cpu = 0;
-	m_SceneCount = 0;
 }
 
 
 SystemClass::SystemClass(const SystemClass& other)
 {
+	m_Input = other.m_Input;
+	m_Graphics = other.m_Graphics;
+	m_Fps = other.m_Fps;
+	m_Cpu = other.m_Cpu;
 }
 
 
@@ -60,7 +63,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, m_Input,m_SceneCount);
+	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, m_Input);
 	if(!result)
 	{
 		return false;

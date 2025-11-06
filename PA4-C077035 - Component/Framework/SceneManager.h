@@ -5,6 +5,7 @@
 
 #include "Scene.h"
 #include "ObjectClass.h"
+#include "DummyScene.h"
 
 using namespace std;
 
@@ -14,15 +15,20 @@ public:
 	SceneManager();
 	~SceneManager();
 private:
+	HWND m_hwnd;
+	int m_screenWidth;
+	int m_screenHeight;
+private:
 	unordered_map<int, shared_ptr<Scene>> m_sceneMap;
 	std::shared_ptr<Scene> m_currentScene;
 	std::shared_ptr<Scene> m_waitingScene;
-
-	HWND& m_hwnd;
+	std::shared_ptr<Scene> m_dummyScene;
 
 	bool AddScene(int, const std::shared_ptr<Scene>& scene);
-	bool LoadScene(shared_ptr<Scene>&);
-	void ChangeScene(const shared_ptr<Scene>&);
+	bool InitScene(shared_ptr<Scene>&);
+	void ChangeScene(shared_ptr<Scene>&);
+	bool LoadScene(shared_ptr<Scene>& scene);
+
 public:
 	bool LoadScene(int);
 	bool LoadScene(string);
@@ -31,19 +37,20 @@ public:
 	void StartScene(int count);
 	void StartScene(string sceneName);
 
+	void ChangeScene();
 public:
-	bool Initialize(HWND);
+	bool Initialize(int, int, HWND);
 	void Shutdown();
 public:
 	void CreateBaseObject();
 	void CreateGameObject();
 
-	bool InitializeSet(HWND, ID3D11Device*);
-	bool Initialize(HWND, ID3D11Device*);
-	bool InitializeRef(HWND, ID3D11Device*);
-	bool InitializeRender(HWND, ID3D11Device*);
-	bool InitializeSynchronization(HWND, ID3D11Device*);
-	bool PostInitialize(HWND, ID3D11Device*);
+	bool InitializeSet();
+	bool Initialize();
+	bool InitializeRef();
+	bool InitializeRender();
+	bool InitializeSynchronization();
+	bool PostInitialize();
 
 	void CollisionDetection();
 
@@ -52,12 +59,19 @@ public:
 	void LateExecute();
 	void PostExecute();
 
-	bool WorldSpaceUIRender(TextureShaderClass*, D3DClass*, int);
-	bool Render(LightShaderClass*, D3DClass*, int);
-	bool Render(TextureShaderClass*, D3DClass*, int);
-	bool UIRender(TextureShaderClass*, D3DClass*, int);
+	bool WorldSpaceUIRender();
+	bool Render();
+	bool LightRender();
+	bool UIRender();
+
+	void BeginRender();
+	void EndRender();
+	void TurnZBufferOn();
+	void TurnZBufferOff();
+	void TurnOffAlphaBlending();
+	void TurnOnAlphaBlending();
+	void TurnOnCullBackMode();
+	void TurnOnCullNoneMode();
 };
 
-#endif // !_SCENEMANAGER_H
-
-
+#endif 

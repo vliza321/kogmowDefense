@@ -36,23 +36,31 @@ class Scene
 public:
 	Scene(std::string sceneName);
 	~Scene();
-	void SceneStart();
-	void SceneEnd();
+
+protected:
+	unordered_map<Tag, vector<GameObject*>> m_gameObjects;
+
+public:
+	bool SceneLoadStart(int, int, HWND);
+	bool SceneStart();
+	bool SceneEnd();
 
 	SceneState GetSceneState()
 	{
 		return m_sceneState;
 	}
+
+	bool SceneInitialize(int, int, HWND);
 public:
 	virtual void CreateBaseObject() = 0;
 	virtual void CreateGameObject() = 0;
 
-	bool InitializeSet(HWND, ID3D11Device*);
-	bool Initialize(HWND, ID3D11Device*);
-	bool InitializeRef(HWND, ID3D11Device*);
-	bool InitializeRender(HWND, ID3D11Device*);
-	bool InitializeSynchronization(HWND, ID3D11Device*);
-	bool PostInitialize(HWND, ID3D11Device*);
+	bool InitializeSet(HWND);
+	bool Initialize(HWND);
+	bool InitializeRef(HWND);
+	bool InitializeRender(HWND);
+	bool InitializeSynchronization(HWND);
+	bool PostInitialize(HWND);
 
 	void CollisionDetection();
 
@@ -61,15 +69,13 @@ public:
 	void LateExecute();
 	void PostExecute();
 
-	bool WorldSpaceUIRender(TextureShaderClass*, D3DClass*, int);
-	bool Render(LightShaderClass*, D3DClass*, int);
-	bool Render(TextureShaderClass*, D3DClass*, int);
-	bool UIRender(TextureShaderClass*, D3DClass*, int);
+	bool WorldSpaceUIRender();
+	bool Render();
+	bool LightRender();
+	bool UIRender();
 
 	void Shutdown();
 
-protected:
-	unordered_map<Tag, vector<GameObject*>> m_gameObjects;
 public:
 	GameObject* Find(std::string);
 	GameObject* FindObjectWithTag(Tag);
@@ -86,6 +92,9 @@ protected:
 	WorldSpaceUIRenderManager* m_worldSpaceUIRenderManager;
 	CanvasRenderManager* m_canvasRenderManager;
 
+	D3DClass* m_d3d;
+	TextureShaderClass* m_textureShader;
+	LightShaderClass* m_lightShader;
 private:
 	string m_sceneName;
 	SceneState m_sceneState;
@@ -93,23 +102,32 @@ private:
 public:
 	const string GetSceneName() const {	return m_sceneName;	}
 
-	const CameraManager* GetCameraManager() const { return m_cameraManager; }
+	//const CameraManager* GetCameraManager() const { return m_cameraManager; }
 	CameraManager* GetCameraManager() { return m_cameraManager; }
 
-	const LightManager* GetLightManager() const { return m_lightManager; }
+	//const LightManager* GetLightManager() const { return m_lightManager; }
 	LightManager* GetLightManager() { return m_lightManager; }
 
-	const Collision* GetCollision() const { return m_collisionDetecter; }
+	//const Collision* GetCollision() const { return m_collisionDetecter; }
 	Collision* GetCollision() { return m_collisionDetecter; }
 
-	const RenderManager* GetRenderManager() const { return m_renderManager; }
+	//const RenderManager* GetRenderManager() const { return m_renderManager; }
 	RenderManager* GetRenderManager() { return m_renderManager; }
 
-	const WorldSpaceUIRenderManager* GetWorldSpaceUIRenderManager() const { return m_worldSpaceUIRenderManager; }
+	//const WorldSpaceUIRenderManager* GetWorldSpaceUIRenderManager() const { return m_worldSpaceUIRenderManager; }
 	WorldSpaceUIRenderManager* GetWorldSpaceUIRenderManager() { return m_worldSpaceUIRenderManager; }
 
-	const CanvasRenderManager* GetCanvasRenderManager() const { return m_canvasRenderManager; }
+	//const CanvasRenderManager* GetCanvasRenderManager() const { return m_canvasRenderManager; }
 	CanvasRenderManager* GetCanvasRenderManager() { return m_canvasRenderManager; }
+
+	//const D3DClass* GetD3DClass() const { return m_d3d; }
+	D3DClass* GetD3DClass() { return m_d3d; }
+
+	//const TextureShaderClass* GetTextureShaderClass() const { return m_textureShader; }
+	TextureShaderClass* GetTextureShaderClass() { return m_textureShader; }
+
+	//const LightShaderClass* GetLightShaderClass() const { return m_lightShader; }
+	LightShaderClass* GetLightShaderClass() { return m_lightShader; }
 
 };
 

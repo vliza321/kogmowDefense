@@ -4,7 +4,11 @@ SceneManager::SceneManager()
 {
 	m_currentScene = 0;
 	m_waitingScene = 0;
+	m_dummyScene = 0;
+
 	m_hwnd = 0;
+	m_screenWidth = 0;
+	m_screenHeight = 0;
 }
 
 SceneManager::~SceneManager()
@@ -13,15 +17,47 @@ SceneManager::~SceneManager()
 }
 
 /*=================================================================================*/
-
-void SceneManager::ChangeScene(const std::shared_ptr<Scene>& scene)
+void SceneManager::ChangeScene()
 {
+	if (true) // 씬 교체 요청이 있는가 && 교체 대상 씬의 로드가 종료 되었는가 && shutdown이 종료 되었는가
+	{
+		m_currentScene = m_waitingScene;
+		m_waitingScene = m_sceneMap[-1];
+	}
+}
+
+void SceneManager::ChangeScene(std::shared_ptr<Scene>& scene)
+{
+	// 기존씬 할당 해제
 	if (m_currentScene != nullptr)
 	{
 		m_currentScene->SceneEnd();
 	}
-	m_currentScene = scene;
-	m_currentScene->SceneStart();
+	// 완전 로드 전
+	if (scene->GetSceneState() == SceneState::Unloaded)
+	{
+		m_currentScene = m_sceneMap[-1];
+		LoadScene(scene);
+	}
+	// 로드 중
+	if (scene->GetSceneState() == SceneState::Unloading)
+	{
+		m_currentScene = m_sceneMap[-1];
+		// 로드 완료까지 대기 
+		if (scene->GetSceneState() == SceneState::Loaded)
+		{
+			// 로드 완료시 씬 시작
+			scene->SceneStart();
+			m_currentScene = scene;
+		}
+	}
+	// 로드 완료 
+	if (scene->GetSceneState() == SceneState::Loaded)
+	{
+		// 바로 씬 시작
+		scene->SceneStart();
+		m_currentScene = scene;
+	}
 }
 
 /*=================================================================================*/
@@ -36,14 +72,28 @@ bool SceneManager::AddScene(int count, const std::shared_ptr<Scene>& scene)
 	return true;
 }
 
-bool SceneManager::LoadScene(shared_ptr<Scene>& scene)
+bool SceneManager::InitScene(shared_ptr<Scene>& scene)
 {
-	scene->InitializeSet(m_hwnd, );
+	scene->SceneLoadStart(m_screenWidth, m_screenHeight, m_hwnd);
+	scene->CreateBaseObject();
+	scene->CreateGameObject();
+	scene->InitializeSet(m_hwnd);
+	scene->Initialize(m_hwnd);
+	scene->InitializeRef(m_hwnd);
+	scene->InitializeRender(m_hwnd);
+	scene->InitializeSynchronization(m_hwnd);
+	scene->PostInitialize(m_hwnd);
 
 	return true;
 }
  
 /*=================================================================================*/
+
+bool SceneManager::LoadScene(shared_ptr<Scene>& scene)
+{
+	m_waitingScene = scene;
+	return InitScene(m_waitingScene);
+}
 
 bool SceneManager::LoadScene(int count)
 {
@@ -66,6 +116,7 @@ bool SceneManager::LoadScene(string sceneName)
 	return false;
 }
 
+/*=================================================================================*/
 
 void SceneManager::StartScene()
 {
@@ -90,11 +141,20 @@ void SceneManager::StartScene(string sceneName)
 
 /*=================================================================================*/
 
-bool SceneManager::Initialize(HWND hwnd)
+bool SceneManager::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result = true;
-	
+
 	m_hwnd = hwnd;
+	m_screenWidth = screenWidth;
+	m_screenHeight = screenHeight;
+
+	shared_ptr<DummyScene> dummyScene = std::make_shared<DummyScene>();
+	result = AddScene(-1, dummyScene);
+	if (!result)
+	{
+		return result;
+	}
 
 	shared_ptr<ObjectClass> objectClass = std::make_shared<ObjectClass>();
 	result = AddScene(0, objectClass);
@@ -102,6 +162,9 @@ bool SceneManager::Initialize(HWND hwnd)
 	{
 		return result;
 	}
+	StartScene(0);
+
+	/*
 	shared_ptr<ObjectClass> objectClass1 = std::make_shared<ObjectClass>();
 	result = AddScene(1, objectClass1);
 	if (!result)
@@ -109,13 +172,17 @@ bool SceneManager::Initialize(HWND hwnd)
 		return result;
 	}
 
-	StartScene(0);
-
+	*/
 	return result;
 }
 
 void SceneManager::Shutdown()
 {
+	if (m_dummyScene != 0)
+	{
+		m_dummyScene->Shutdown();
+		m_dummyScene = 0;
+	}
 	if (m_waitingScene != 0)
 	{
 		m_waitingScene->Shutdown();
@@ -139,89 +206,121 @@ void SceneManager::CreateGameObject()
 	m_currentScene->CreateGameObject();
 }
 
-bool SceneManager::InitializeSet(HWND hwnd, ID3D11Device* device)
+bool SceneManager::InitializeSet()
 {
-	return m_currentScene->InitializeSet(hwnd, device);
+	return m_currentScene->InitializeSet(m_hwnd);
 }
 
-bool SceneManager::Initialize(HWND hwnd, ID3D11Device* device)
+bool SceneManager::Initialize()
 {
-	return m_currentScene->Initialize(hwnd, device);
+	return m_currentScene->Initialize(m_hwnd);
 }
 
-bool SceneManager::InitializeRef(HWND hwnd, ID3D11Device* device)
+bool SceneManager::InitializeRef()
 {
-	return m_currentScene->InitializeRef(hwnd, device);
+	return m_currentScene->InitializeRef(m_hwnd);
 }
 
-bool SceneManager::InitializeRender(HWND hwnd, ID3D11Device* device)
+bool SceneManager::InitializeRender( )
 {
-	return m_currentScene->InitializeRender(hwnd, device);
+	return m_currentScene->InitializeRender(m_hwnd);
 }
 
-bool SceneManager::InitializeSynchronization(HWND hwnd, ID3D11Device* device)
+bool SceneManager::InitializeSynchronization()
 {
-	return m_currentScene->InitializeSynchronization(hwnd, device);
+	return m_currentScene->InitializeSynchronization(m_hwnd);
 }
 
-bool SceneManager::PostInitialize(HWND hwnd, ID3D11Device* device)
+bool SceneManager::PostInitialize()
 {
-	return m_currentScene->PostInitialize(hwnd, device);
+	return m_currentScene->PostInitialize(m_hwnd);
 }
 
 void SceneManager::CollisionDetection()
 {
-	if (m_currentScene->GetLoadDone()) m_currentScene->CollisionDetection();
+	if (m_currentScene->GetSceneState() == SceneState::Running) m_currentScene->CollisionDetection();
 }
 
 void SceneManager::FixedExecute()
 {
-	if (m_currentScene->GetLoadDone()) m_currentScene->FixedExecute();
+	if (m_currentScene->GetSceneState() == SceneState::Running) m_currentScene->FixedExecute();
 }
 
 void SceneManager::Execute()
 {
-	if (m_currentScene->GetLoadDone()) m_currentScene->Execute();
+	if (m_currentScene->GetSceneState() == SceneState::Running) m_currentScene->Execute();
 }
 
 void SceneManager::LateExecute()
 {
-	if (m_currentScene->GetLoadDone()) m_currentScene->LateExecute();
+	if (m_currentScene->GetSceneState() == SceneState::Running) m_currentScene->LateExecute();
 }
 
 void SceneManager::PostExecute()
 {
-	if (m_currentScene->GetLoadDone()) m_currentScene->PostExecute();
+	if (m_currentScene->GetSceneState() == SceneState::Running) m_currentScene->PostExecute();
 }
 
-bool SceneManager::WorldSpaceUIRender(TextureShaderClass* textureShaderClass, D3DClass* d3dClass, int count)
+bool SceneManager::WorldSpaceUIRender()
 {
-	if (m_currentScene->GetLoadDone()) {
-		return m_currentScene->WorldSpaceUIRender(textureShaderClass, d3dClass, count);
-	}
+	if (m_currentScene->GetSceneState() == SceneState::Running) { return m_currentScene->WorldSpaceUIRender(); }
 	return true;
 }
 
-bool SceneManager::Render(LightShaderClass* LightShaderClass, D3DClass* d3dClass, int count)
+bool SceneManager::Render()
 {
-	if (m_currentScene->GetLoadDone()) {
-		return m_currentScene->Render(LightShaderClass, d3dClass, count);
-	}
+	if (m_currentScene->GetSceneState() == SceneState::Running) { return m_currentScene->Render(); }
 	return true;
 }
 
-bool SceneManager::Render(TextureShaderClass* textureShaderClass, D3DClass* d3dClass, int count)
+bool SceneManager::LightRender()
 {
-	if (m_currentScene->GetLoadDone()) {
-		return m_currentScene->Render(textureShaderClass, d3dClass, count);
-	}
+	if (m_currentScene->GetSceneState() == SceneState::Running) { return m_currentScene->Render(); }
 	return true;
 }
 
-bool SceneManager::UIRender(TextureShaderClass* textureShaderClass, D3DClass* d3dClass, int count)
+bool SceneManager::UIRender()
 {
-	if (m_currentScene->GetLoadDone()) {
-		return m_currentScene->UIRender(textureShaderClass, d3dClass, count);
-	}
+	if (m_currentScene->GetSceneState() == SceneState::Running) { return m_currentScene->UIRender(); }
 	return true;
+}
+
+void SceneManager::BeginRender()
+{
+	m_currentScene->GetD3DClass()->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+void SceneManager::EndRender()
+{
+	m_currentScene->GetD3DClass()->EndScene();
+}
+
+void SceneManager::TurnZBufferOn()
+{
+	m_currentScene->GetD3DClass()->TurnZBufferOn();
+}
+
+void SceneManager::TurnZBufferOff()
+{
+	m_currentScene->GetD3DClass()->TurnZBufferOff();
+}
+
+void SceneManager::TurnOffAlphaBlending()
+{
+	m_currentScene->GetD3DClass()->TurnOffAlphaBlending();
+}
+
+void SceneManager::TurnOnAlphaBlending()
+{
+	m_currentScene->GetD3DClass()->TurnOnAlphaBlending();
+}
+
+void SceneManager::TurnOnCullBackMode()
+{
+	m_currentScene->GetD3DClass()->TurnOnCullBackMode();
+}
+
+void SceneManager::TurnOnCullNoneMode()
+{
+	m_currentScene->GetD3DClass()->TurnOnCullNoneMode();
 }

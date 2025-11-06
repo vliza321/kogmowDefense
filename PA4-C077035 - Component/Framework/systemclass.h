@@ -56,7 +56,6 @@ private:
 	GraphicsClass* m_Graphics;
 	FpsClass* m_Fps;
 	CpuClass* m_Cpu;
-	unsigned int m_SceneCount;
 };
 
 

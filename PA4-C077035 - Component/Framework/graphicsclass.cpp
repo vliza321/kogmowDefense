@@ -6,13 +6,8 @@
 
 GraphicsClass::GraphicsClass()
 {
-	m_D3D = 0;
 	m_Input = 0;
-	m_TextureShader = 0;
 	m_sceneManager = 0;
-
-	m_LightShader = 0;
-	SceneCount = 0;
 }
 
 
@@ -26,27 +21,13 @@ GraphicsClass::~GraphicsClass()
 }
 
 
-bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, InputClass* input,int SceneCount)
+bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, InputClass* input)
 {
 	bool result;
-
-	this->SceneCount = SceneCount;
 
 	m_Input = input;
 	if (!m_Input)
 	{
-		return false;
-	}
-
-	m_D3D = new D3DClass;
-	if(!m_D3D)
-	{
-		return false;
-	}
-	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if(!result)
-	{
-		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -55,46 +36,22 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Inp
 	{
 		return false;
 	}
-	result = m_sceneManager->Initialize(hwnd, );
+	result = m_sceneManager->Initialize(screenWidth, screenHeight, hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the SceneManager object.", L"Error", MB_OK);
 		return false;
 	}
 
-	m_TextureShader = new TextureShaderClass;
-	if(!m_TextureShader)
-	{
-		return false;
-	}
-	result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if(!result)
-	{
-
-		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
-		return false;
-	}
-
-	m_LightShader = new LightShaderClass;
-	if (!m_LightShader)
-	{
-		return false;
-	}
-	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
-		return false;
-	}
 	m_sceneManager->CreateBaseObject();
 	m_sceneManager->CreateGameObject();
 
-	m_sceneManager->InitializeSet(hwnd, m_D3D->GetDevice());
-	m_sceneManager->Initialize(hwnd, m_D3D->GetDevice());
-	m_sceneManager->InitializeRef(hwnd, m_D3D->GetDevice());
-	m_sceneManager->InitializeRender(hwnd, m_D3D->GetDevice());
-	m_sceneManager->InitializeSynchronization(hwnd, m_D3D->GetDevice());
-	m_sceneManager->PostInitialize(hwnd, m_D3D->GetDevice());
+	m_sceneManager->InitializeSet();
+	m_sceneManager->Initialize();
+	m_sceneManager->InitializeRef();
+	m_sceneManager->InitializeRender();
+	m_sceneManager->InitializeSynchronization();
+	m_sceneManager->PostInitialize();
 	return true;
 }
 
@@ -106,29 +63,6 @@ void GraphicsClass::Shutdown()
 		m_sceneManager->Shutdown();
 		delete m_sceneManager;
 		m_sceneManager = 0;
-	}
-
-	// Release the texture shader object.
-	if(m_TextureShader)
-	{
-		m_TextureShader->Shutdown();
-		delete m_TextureShader;
-		m_TextureShader = 0;
-	}
-
-	// Release the D3D object.
-	if(m_D3D)
-	{
-		m_D3D->Shutdown();
-		delete m_D3D;
-		m_D3D = 0;
-	}
-
-	if (m_LightShader)
-	{
-		m_LightShader->Shutdown();
-		delete m_LightShader;
-		m_LightShader = 0;
 	}
 
 	return;
@@ -158,38 +92,39 @@ bool GraphicsClass::Render()
 	bool result = true;
 
 	// Clear the buffers to begin the scene.
-	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	m_sceneManager->BeginRender();
 	
-	m_D3D->TurnZBufferOn();
-	m_D3D->TurnOffAlphaBlending();
-	m_D3D->TurnOnCullBackMode();
+	m_sceneManager->TurnZBufferOn();
+	m_sceneManager->TurnOffAlphaBlending();
+	m_sceneManager->TurnOnCullBackMode();
 
-	result = m_sceneManager->Render(m_LightShader, m_D3D, SceneCount);
+	result = m_sceneManager->LightRender();
+	result = m_sceneManager->Render();
 	if (!result)
 	{
 		return false;
 	}
 
-	m_D3D->TurnOnAlphaBlending();
-	m_D3D->TurnOnCullNoneMode();
+	m_sceneManager->TurnOnAlphaBlending();
+	m_sceneManager->TurnOnCullNoneMode();
 
-	result = m_sceneManager->WorldSpaceUIRender(m_TextureShader, m_D3D, SceneCount);
+	result = m_sceneManager->WorldSpaceUIRender();
 	if (!result)
 	{
 		return false;
 	}
 
-	m_D3D->TurnZBufferOff();
-	m_D3D->TurnOnCullNoneMode();
+	m_sceneManager->TurnZBufferOff();
+	m_sceneManager->TurnOnCullNoneMode();
 
-	result = m_sceneManager->UIRender(m_TextureShader, m_D3D, SceneCount);
+	result = m_sceneManager->UIRender();
 	if (!result)
 	{
 		return false;
 	}
 
 	// Present the rendered scene to the screen.
-	m_D3D->EndScene();
+	m_sceneManager->EndRender();
 
 	return true;
-}
+} 

@@ -1,6 +1,7 @@
 #include "Scene.h"
+#include "graphicsclass.h"
 
-Scene::Scene(string sceneName)
+Scene::Scene(string sceneName) : m_sceneState(SceneState::Unloaded), m_sceneName(sceneName)
 {
 	m_renderManager = 0;
 	m_worldSpaceUIRenderManager = 0;
@@ -11,42 +12,153 @@ Scene::Scene(string sceneName)
 
 	m_collisionDetecter = 0;
 
-	m_sceneName = sceneName;
-	m_sceneState = SceneState::Unloaded;
+	m_d3d = 0;
+	m_textureShader = 0;
+	m_lightShader = 0;
 }
 
 Scene::~Scene()
 {
+	m_renderManager = 0;
+	m_worldSpaceUIRenderManager = 0;
+	m_canvasRenderManager = 0;
 
+	m_cameraManager = 0;
+	m_lightManager = 0;
+
+	m_collisionDetecter = 0;
+
+	m_d3d = 0;
+	m_textureShader = 0;
+	m_lightShader = 0;
 }
 
-void Scene::SceneStart()
+
+bool Scene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
 {
+	bool result = true;
+
+	m_sceneState = SceneState::Loading;
+
 	m_renderManager = new RenderManager();
+	if (!m_renderManager)
+	{
+		return false;
+	}
+
 	m_worldSpaceUIRenderManager = new WorldSpaceUIRenderManager();
+	if (!m_worldSpaceUIRenderManager)
+	{
+		return false;
+	}
+
 	m_canvasRenderManager = new CanvasRenderManager();
+	if (!m_canvasRenderManager)
+	{
+		return false;
+	}
 
 	m_collisionDetecter = new Collision();
+	if (!m_collisionDetecter)
+	{
+		return false;
+	}
+
+	m_d3d = new D3DClass();
+	if (!m_d3d)
+	{
+		return false;
+	}
+
+	m_textureShader = new TextureShaderClass;
+	if (!m_textureShader)
+	{
+		return false;
+	}
+
+	m_lightShader = new LightShaderClass;
+	if (!m_lightShader)
+	{
+		return false;
+	}
+
+	result = m_renderManager->InitializeRender(m_d3d->GetDevice());
+	if(!result)
+	{
+		MessageBox(hwnd, L"Could not Scene initialize Render.", L"Error", MB_OK);
+		return false;
+	}
+
+	result = m_worldSpaceUIRenderManager->InitializeRender(m_d3d->GetDevice());
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not Scene initialize worldSpaceUIRender.", L"Error", MB_OK);
+		return false;
+	}
+
+	result = m_canvasRenderManager->InitializeRender(m_d3d->GetDevice());
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not Scene initialize canvasRender.", L"Error", MB_OK);
+		return false;
+	}
+
+	result = m_d3d->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not Scene initialize Direct3D.", L"Error", MB_OK);
+		return false;
+	}
+
+	result = m_textureShader->Initialize(m_d3d->GetDevice(), hwnd);
+	if (!result)
+	{
+
+		MessageBox(hwnd, L"Could not Scene initialize the texture shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	result = m_lightShader->Initialize(m_d3d->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not Scene initialize the light shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	return false;
 }
 
-void Scene::SceneEnd()
+bool Scene::SceneLoadStart(int screenWidth, int screenHeight, HWND hwnd)
 {
+	SceneInitialize(screenWidth, screenHeight, hwnd);
+	return true;
+}
+
+bool Scene::SceneStart()
+{
+	if (m_sceneState == SceneState::Loaded) m_sceneState = SceneState::Running;
+	else return false;
+	return true;
+}
+
+bool Scene::SceneEnd()
+{
+	m_sceneState = SceneState::Unloading;
 	Shutdown();
+	return true;
 }
 
-bool Scene::Render(TextureShaderClass* textureShader, D3DClass* d3d, int)
+bool Scene::Render()
 {
-	return m_renderManager->RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix());
-	//return m_renderManager::GetInstance().RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix());
+	return m_renderManager->RenderAll(m_textureShader, m_d3d, m_cameraManager->GetViewMatrix());
 }
 
-bool Scene::WorldSpaceUIRender(TextureShaderClass* textureShader, D3DClass* d3d, int sceneCounter)
+bool Scene::WorldSpaceUIRender()
 {
-	return m_worldSpaceUIRenderManager->RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix());
-	//return m_worldSpaceUIRenderManager::GetInstance().RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix());
+	return m_worldSpaceUIRenderManager->RenderAll(m_textureShader, m_d3d, m_cameraManager->GetViewMatrix());
 }
 
-bool Scene::Render(LightShaderClass* lightShader, D3DClass* d3d, int)
+bool Scene::LightRender()
 {
 	XMFLOAT4 diffuseColor[8];
 	XMFLOAT4 lightPosition[8];
@@ -56,14 +168,12 @@ bool Scene::Render(LightShaderClass* lightShader, D3DClass* d3d, int)
 		lightPosition[i] = GetLights(i).position;
 	}
 
-	return m_renderManager->RenderAll(lightShader, d3d, m_cameraManager->GetCamera(), m_lightManager, diffuseColor, lightPosition);
-	//return m_renderManager::GetInstance().RenderAll(lightShader, d3d, m_cameraManager->GetCamera(), m_lightManager, diffuseColor, lightPosition);
+	return m_renderManager->RenderAll(m_lightShader, m_d3d, m_cameraManager->GetCamera(), m_lightManager, diffuseColor, lightPosition);
 }
 
-bool Scene::UIRender(TextureShaderClass* textureShader, D3DClass* d3d, int)
+bool Scene::UIRender()
 {
-	return m_canvasRenderManager->RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix() );
-	//return m_canvasRenderManager::GetInstance().RenderAll(textureShader, d3d, m_cameraManager->GetViewMatrix());
+	return m_canvasRenderManager->RenderAll(m_textureShader, m_d3d, m_cameraManager->GetViewMatrix() );
 }
 
 
@@ -104,8 +214,7 @@ LightClass& Scene::GetLights(int i)
 	return m_lightManager->GetLights(i);
 }
 
-
-bool Scene::InitializeSet(HWND hwnd, ID3D11Device* device)
+bool Scene::InitializeSet(HWND hwnd)
 {
 	for (auto& v : m_gameObjects)
 	{
@@ -121,7 +230,7 @@ bool Scene::InitializeSet(HWND hwnd, ID3D11Device* device)
 	return true;
 }
 
-bool Scene::Initialize(HWND hwnd, ID3D11Device* device)
+bool Scene::Initialize(HWND hwnd)
 {
 	for (auto& v : m_gameObjects)
 	{
@@ -137,7 +246,7 @@ bool Scene::Initialize(HWND hwnd, ID3D11Device* device)
 	return true;
 }
 
-bool Scene::InitializeRef(HWND hwnd, ID3D11Device* device)
+bool Scene::InitializeRef(HWND hwnd)
 {
 	for (auto& v : m_gameObjects)
 	{
@@ -153,19 +262,19 @@ bool Scene::InitializeRef(HWND hwnd, ID3D11Device* device)
 	return true;
 }
 
-bool Scene::InitializeRender(HWND hwnd, ID3D11Device* device)
+bool Scene::InitializeRender(HWND hwnd)
 {
-	if (!(m_worldSpaceUIRenderManager->InitializeRender(device)))
+	if (!(m_worldSpaceUIRenderManager->InitializeRender(m_d3d->GetDevice())))
 	{
 		MessageBox(hwnd, L"Could not GUI InitializeRender GameObjects.", L"Error", MB_OK);
 		return false;
 	}
-	if (!(m_canvasRenderManager->InitializeRender(device)))
+	if (!(m_canvasRenderManager->InitializeRender(m_d3d->GetDevice())))
 	{
 		MessageBox(hwnd, L"Could not Canvas InitializeRender GameObjects.", L"Error", MB_OK);
 		return false;
 	}
-	if (!(m_renderManager->InitializeRender(device)))
+	if (!(m_renderManager->InitializeRender(m_d3d->GetDevice())))
 	{
 		MessageBox(hwnd, L"Could not Render InitializeRender GameObjects.", L"Error", MB_OK);
 		return false;
@@ -173,7 +282,7 @@ bool Scene::InitializeRender(HWND hwnd, ID3D11Device* device)
 	return true;
 }
 
-bool Scene::InitializeSynchronization(HWND hwnd, ID3D11Device* device)
+bool Scene::InitializeSynchronization(HWND hwnd)
 {
 	for (auto& v : m_gameObjects)
 	{
@@ -189,7 +298,7 @@ bool Scene::InitializeSynchronization(HWND hwnd, ID3D11Device* device)
 	return true;
 }
 
-bool Scene::PostInitialize(HWND hwnd, ID3D11Device* device)
+bool Scene::PostInitialize(HWND hwnd)
 {
 	for (auto& v : m_gameObjects)
 	{
@@ -231,10 +340,7 @@ void Scene::Execute()
 	{
 		for (auto& gameObject : v.second)
 		{
-			if (gameObject->active)
-			{
-				gameObject->Execute();
-			}
+			if (gameObject->active) gameObject->Execute();
 		}
 	}
 }
@@ -295,30 +401,44 @@ void Scene::Shutdown()
 	{
 		m_renderManager->Shutdown();
 		delete m_renderManager;
+		m_renderManager = 0;
 	}
 	if (m_worldSpaceUIRenderManager != 0)
 	{
 		m_worldSpaceUIRenderManager->Shutdown();
 		delete m_worldSpaceUIRenderManager;
+		m_worldSpaceUIRenderManager = 0;
 	}
 	if (m_canvasRenderManager != 0)
 	{
 		m_canvasRenderManager->Shutdown();
 		delete m_canvasRenderManager;
+		m_canvasRenderManager = 0;
 	}
 	if (m_cameraManager != 0)
 	{
 		m_cameraManager->Shutdown();
 		delete m_cameraManager;
+		m_lightManager = 0;
 	}
 	if (m_lightManager != 0)
 	{
 		m_lightManager->Shutdown();
 		delete m_lightManager;
+		m_lightManager = 0;
 	}
 	if (m_collisionDetecter != 0)
 	{
 		m_collisionDetecter->Shutdown();
 		delete m_collisionDetecter;
+		m_collisionDetecter = 0;
 	}
+	if (m_d3d != 0)
+	{
+		m_d3d->Shutdown();
+		delete m_d3d;
+		m_d3d = 0;
+	}
+
+	m_sceneState == SceneState::Unloaded;
 }
