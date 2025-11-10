@@ -55,7 +55,7 @@ bool Bullet::PostInitialize()
 void Bullet::FixedExecute()
 {
 	// 장약으로 인한 변위
-	XMVECTOR tv = { 0.0f, 0, speed * GetDeltaTime() * 0.07f, 0 };
+	XMVECTOR tv = { 0.0f, 0, speed * DeltaTime() * 0.07f, 0 };
 	// 중력으로 인한 변위
 	XMVECTOR tg = { 0.0f, -0.0001f * timer , 0, 0 };
 	auto tf = transform.lock();
@@ -96,7 +96,7 @@ void Bullet::FixedExecute()
 		this->gameObject->active = false;
 	}
 
-	timer += GetDeltaTime();
+	timer += DeltaTime();
 }
 
 void Bullet::Execute()

@@ -38,7 +38,6 @@ bool Scene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result = true;
 
-	m_sceneState = SceneState::Loading;
 
 	m_renderManager = new RenderManager();
 	if (!m_renderManager)
@@ -64,24 +63,6 @@ bool Scene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	m_d3d = new D3DClass();
-	if (!m_d3d)
-	{
-		return false;
-	}
-
-	m_textureShader = new TextureShaderClass;
-	if (!m_textureShader)
-	{
-		return false;
-	}
-
-	m_lightShader = new LightShaderClass;
-	if (!m_lightShader)
-	{
-		return false;
-	}
-
 	result = m_renderManager->InitializeRender(m_d3d->GetDevice());
 	if(!result)
 	{
@@ -103,40 +84,29 @@ bool Scene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	result = m_d3d->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not Scene initialize Direct3D.", L"Error", MB_OK);
-		return false;
-	}
-
-	result = m_textureShader->Initialize(m_d3d->GetDevice(), hwnd);
-	if (!result)
-	{
-
-		MessageBox(hwnd, L"Could not Scene initialize the texture shader object.", L"Error", MB_OK);
-		return false;
-	}
-
-	result = m_lightShader->Initialize(m_d3d->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not Scene initialize the light shader object.", L"Error", MB_OK);
-		return false;
-	}
-
 	return false;
+}
+
+void Scene::AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass)
+{
+	m_d3d = d3dclass;
+	m_lightShader = lightshaderclass;
+	m_textureShader = textureshaderclass;
 }
 
 bool Scene::SceneLoadStart(int screenWidth, int screenHeight, HWND hwnd)
 {
+	m_sceneState = SceneState::Loading;
 	SceneInitialize(screenWidth, screenHeight, hwnd);
 	return true;
 }
 
 bool Scene::SceneStart()
 {
-	if (m_sceneState == SceneState::Loaded) m_sceneState = SceneState::Running;
+	if (m_sceneState == SceneState::Loaded)
+	{
+		m_sceneState = SceneState::Running;
+	}
 	else return false;
 	return true;
 }
@@ -419,7 +389,7 @@ void Scene::Shutdown()
 	{
 		m_cameraManager->Shutdown();
 		delete m_cameraManager;
-		m_lightManager = 0;
+		m_cameraManager = 0;
 	}
 	if (m_lightManager != 0)
 	{
@@ -433,12 +403,6 @@ void Scene::Shutdown()
 		delete m_collisionDetecter;
 		m_collisionDetecter = 0;
 	}
-	if (m_d3d != 0)
-	{
-		m_d3d->Shutdown();
-		delete m_d3d;
-		m_d3d = 0;
-	}
 
-	m_sceneState == SceneState::Unloaded;
+	m_sceneState = SceneState::Unloaded;
 }

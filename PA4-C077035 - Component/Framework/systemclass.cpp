@@ -6,7 +6,6 @@
 
 SystemClass::SystemClass()
 {
-	m_Input = 0;
 	m_Graphics = 0;
 	m_Fps = 0;
 	m_Cpu = 0;
@@ -15,7 +14,6 @@ SystemClass::SystemClass()
 
 SystemClass::SystemClass(const SystemClass& other)
 {
-	m_Input = other.m_Input;
 	m_Graphics = other.m_Graphics;
 	m_Fps = other.m_Fps;
 	m_Cpu = other.m_Cpu;
@@ -42,15 +40,9 @@ bool SystemClass::Initialize()
 	// Initialize the windows api.
 	InitializeWindows(screenWidth, screenHeight);
 
-	// Create the input object.  This object will be used to handle reading the keyboard input from the user.
-	m_Input = new InputClass;
-	if(!m_Input)
-	{
-		return false;
-	}
 
-	// Initialize the input object.
-	result = m_Input->GetInstance().Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
+	// initialize the input object.
+	result = InputClass::GetInstance().Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
 	if (!result)
 	{
 		return false;
@@ -63,7 +55,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, m_Input);
+	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
 	if(!result)
 	{
 		return false;
@@ -99,13 +91,6 @@ void SystemClass::Shutdown()
 		m_Graphics->Shutdown();
 		delete m_Graphics;
 		m_Graphics = 0;
-	}
-
-	// Release the input object.
-	if(m_Input)
-	{
-		delete m_Input;
-		m_Input = 0;
 	}
 
 	// Release the cpu object.
@@ -166,7 +151,7 @@ void SystemClass::Run()
 		}
 
 		// Check if the user pressed escape and wants to quit.
-		if (m_Input->GetInstance().IsEscapePressed() == true)
+		if (InputClass::GetInstance().IsEscapePressed() == true)
 		{
 			done = true;
 		}
@@ -185,14 +170,14 @@ bool SystemClass::Frame()
 	m_Cpu->Frame();
 
 	// Do the input frame processing.
-	result = m_Input->GetInstance().Frame();
+	result = InputClass::GetInstance().Frame();
 	if (!result)
 	{
 		return false;
 	}
 
 	// Get the location of the mouse from the input object,
-	m_Input->GetInstance().GetMouseLocation(mouseX, mouseY);
+	InputClass::GetInstance().GetMouseLocation(mouseX, mouseY);
 
 	// Do the frame processing for the graphics object.
 	result = m_Graphics->Frame();// m_Cpu->GetCpuPercentage());
@@ -201,7 +186,7 @@ bool SystemClass::Frame()
 		return false;
 	}
 
-	result = m_Input->GetInstance().PostFrame();
+	result = InputClass::GetInstance().PostFrame();
 	return true;
 }
 

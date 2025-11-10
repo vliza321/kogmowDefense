@@ -58,10 +58,15 @@ public:
 
 	void TurnOnCullBackMode();
 	void TurnOnCullNoneMode();
-
-	bool UpdateDevice();
 private:
 	bool m_vsync_enabled;
+	int m_screenWidth ;
+	int m_screenHeight ;
+	HWND m_hwnd;
+	bool m_fullscreen;
+	float m_screenDepth;
+	float m_screenNear;
+
 	int m_videoCardMemory;
 	char m_videoCardDescription[128];
 	IDXGISwapChain* m_swapChain;
@@ -73,6 +78,7 @@ private:
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterStateBack;
 	ID3D11RasterizerState* m_rasterStateFront;
+	D3D11_VIEWPORT m_viewport;
 
 	XMMATRIX m_projectionMatrix;
 	XMMATRIX m_worldMatrix;

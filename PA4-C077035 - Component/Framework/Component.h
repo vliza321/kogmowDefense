@@ -6,6 +6,7 @@
 #include "GameObject.h"
 
 class Collider;
+class SceneManager;
 
 class Component
 {
@@ -39,12 +40,14 @@ public:
 	GameObject* gameObject;
 	bool active;
 protected:
-	float GetDeltaTime() const {
+	float DeltaTime() const {
 		return TimerClass::GetInstance().DeltaTime;
 	}
 
-	const InputClass& GetInput() const	{
+	InputClass& Input() const	{
 		return InputClass::GetInstance();
 	}
+
+	SceneManager& SceneManager() const;
 };
 #endif

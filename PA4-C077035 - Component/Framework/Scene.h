@@ -45,13 +45,24 @@ public:
 	bool SceneStart();
 	bool SceneEnd();
 
-	SceneState GetSceneState()
+	const SceneState GetSceneState() const
 	{
 		return m_sceneState;
 	}
 
+	const int GetSceneID() const
+	{
+		return ID;
+	}
+
+	void SetSceneID(int id)
+	{
+		ID = id;
+	}
+private:
 	bool SceneInitialize(int, int, HWND);
 public:
+	void AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass);
 	virtual void CreateBaseObject() = 0;
 	virtual void CreateGameObject() = 0;
 
@@ -98,6 +109,7 @@ protected:
 private:
 	string m_sceneName;
 	SceneState m_sceneState;
+	int ID;
 
 public:
 	const string GetSceneName() const {	return m_sceneName;	}

@@ -59,6 +59,7 @@ public:
 
 private:
 	unordered_map<type_index, deque<shared_ptr<Component>>>components;
+
 public:
 	template<typename T>
 	void AddComponent(std::shared_ptr<T> component);
@@ -77,6 +78,7 @@ public:
 
 	template<typename T>
 	std::vector<std::shared_ptr<T>> GetComponents();
+
 public:
 	bool CompareTag(Tag Tag) const
 	{
@@ -86,10 +88,12 @@ public:
 		}
 		return false;
 	}
+
 	Scene& Root() const
 	{
 		return *root;
 	}
+
 	void Destroy();
 	void Destory(shared_ptr<Component>);
 	void SetActive(bool active);

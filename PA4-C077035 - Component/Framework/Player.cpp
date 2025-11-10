@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "algorithm"
 #include "ObjectClass.h"
+#include "SceneManager.h"
 
 Player::Player()
 	: Component()
@@ -92,9 +93,9 @@ void Player::FixedExecute()
 
 	MoveVector = XMVector3Normalize(MoveVector);
 
-	temt.x = XMVectorGetX(MoveVector) * speed * GetDeltaTime();
-	temt.y = XMVectorGetY(MoveVector) * speed * GetDeltaTime();
-	temt.z = XMVectorGetZ(MoveVector) * speed * GetDeltaTime();
+	temt.x = XMVectorGetX(MoveVector) * speed * DeltaTime();
+	temt.y = XMVectorGetY(MoveVector) * speed * DeltaTime();
+	temt.z = XMVectorGetZ(MoveVector) * speed * DeltaTime();
 
 	tf->Translate(temt);
 	m_moveBackForward = 0;
@@ -104,9 +105,14 @@ void Player::FixedExecute()
 void Player::Execute() 
 {
 	auto tf = transform.lock();
-	auto& input = InputClass::GetInstance();
+	auto& input = Input();
+	auto& sceneManager = SceneManager();
 	auto cm = m_cameraManager.lock();
-
+	if (input.IsKey(DIK_0))
+	{
+		if(!sceneManager.StartScene(1))
+			m_moveBackForward = 1;
+	}
 	if (input.IsKey(DIK_W))
 	{
 		m_moveBackForward = 1;
@@ -212,7 +218,7 @@ bool Player::Shutdown()
 
 void Player::ChangePovCul()
 {
-	if (!canChangePov) PoVTimer -= GetDeltaTime();
+	if (!canChangePov) PoVTimer -= DeltaTime();
 	(PoVTimer < 0) ? canChangePov = true : canChangePov = false;
 }
 
@@ -255,7 +261,7 @@ ShootType* Player::GetShootType()
 
 void Player::AutomaticFeeding()
 {
-	FeedingTimer -= GetDeltaTime();
+	FeedingTimer -= DeltaTime();
 
 	if (FeedingTimer < 0.0f)
 	{
@@ -267,22 +273,22 @@ void Player::ReboundCul()
 {
 	auto tf = transform.lock();
 
-	ReboundTimer += GetDeltaTime();
+	ReboundTimer += DeltaTime();
 	switch (m_currentShootType)
 	{
 	case ShootType::Title:
 		break;
 	case ShootType::FPC:
-		tf->eulerRotation.y += (double)((ReBoundConst % 160) - 80) * 0.0000174533 * GetDeltaTime();
-		tf->eulerRotation.x -= (double)((ReBoundConst % 30) + 30) * 0.0000174533 * GetDeltaTime();
+		tf->eulerRotation.y += (double)((ReBoundConst % 160) - 80) * 0.0000174533 * DeltaTime();
+		tf->eulerRotation.x -= (double)((ReBoundConst % 30) + 30) * 0.0000174533 * DeltaTime();
 		break;
 	case ShootType::TPC:
-		tf->eulerRotation.y += (double)((ReBoundConst % 160) - 80) * 0.0000174533 * GetDeltaTime();
-		tf->eulerRotation.x -= (double)((ReBoundConst % 30) + 30) * 0.0000174533 * GetDeltaTime();
+		tf->eulerRotation.y += (double)((ReBoundConst % 160) - 80) * 0.0000174533 * DeltaTime();
+		tf->eulerRotation.x -= (double)((ReBoundConst % 30) + 30) * 0.0000174533 * DeltaTime();
 		break;
 	case ShootType::Scope:
-		tf->eulerRotation.y += (double)((ReBoundConst % 100) - 50) * 0.00000174533 * GetDeltaTime();
-		tf->eulerRotation.x -= (double)((ReBoundConst % 50) + 150) * 0.0000174533 * GetDeltaTime();
+		tf->eulerRotation.y += (double)((ReBoundConst % 100) - 50) * 0.00000174533 * DeltaTime();
+		tf->eulerRotation.x -= (double)((ReBoundConst % 50) + 150) * 0.0000174533 * DeltaTime();
 		break;
 	case ShootType::Artillery:
 		break;

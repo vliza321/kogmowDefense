@@ -207,8 +207,10 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const W
     numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
 	// Create the vertex input layout.
-	result = device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), 
-		                               &m_layout);
+	result = device->CreateInputLayout(polygonLayout, numElements, 
+		vertexShaderBuffer->GetBufferPointer(), 
+		vertexShaderBuffer->GetBufferSize(),
+		&m_layout);
 	if(FAILED(result))
 	{
 		MessageBox(hwnd, fileName, L"Missing CreateInputLayout", MB_OK);

@@ -60,7 +60,7 @@ void ArtilleryBullet::FixedExecute()
 	if (m_moveUp)
 	{
 		// 중력 + 장약으로 인한 변위
-		XMFLOAT3 tv = { 0.0f, speed * GetDeltaTime() * 4, 0 };
+		XMFLOAT3 tv = { 0.0f, speed * DeltaTime() * 4, 0 };
 
 		tf->Translate(tv);
 
@@ -80,7 +80,7 @@ void ArtilleryBullet::FixedExecute()
 	else
 	{
 		// 중력 + 장약으로 인한 변위
-		XMFLOAT3 tv = { 0.0f, -0.0000980f * timer - speed * GetDeltaTime(), 0 };
+		XMFLOAT3 tv = { 0.0f, -0.0000980f * timer - speed * DeltaTime(), 0 };
 
 		// 실질적 좌표 이동
 		tf->Translate(tv);
@@ -94,7 +94,7 @@ void ArtilleryBullet::FixedExecute()
 		}
 	}
 
-	timer += GetDeltaTime();
+	timer += DeltaTime();
 }
 
 void ArtilleryBullet::Execute()
@@ -188,7 +188,7 @@ void ArtilleryBullet::Execute(XMFLOAT3 pos)//bullet update
 	if (m_MoveUp)
 	{
 		// 중력 + 장약으로 인한 변위
-		XMFLOAT3 tv = { 0.0f, speed * GetDeltaTime(), 0};
+		XMFLOAT3 tv = { 0.0f, speed * DeltaTime(), 0};
 
 		Translate(tv);
 
@@ -205,7 +205,7 @@ void ArtilleryBullet::Execute(XMFLOAT3 pos)//bullet update
 	else
 	{
 		// 중력 + 장약으로 인한 변위
-		XMFLOAT3 tv = { 0.0f, -0.0000980f * timer - speed * GetDeltaTime(), 0};
+		XMFLOAT3 tv = { 0.0f, -0.0000980f * timer - speed * DeltaTime(), 0};
 
 		// 실질적 좌표 이동
 		Translate(tv);
@@ -216,5 +216,5 @@ void ArtilleryBullet::Execute(XMFLOAT3 pos)//bullet update
 		}
 	}
 
-	timer += GetDeltaTime();
+	timer += DeltaTime();
 }*/

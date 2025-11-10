@@ -52,7 +52,6 @@ private:
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
 
-	InputClass* m_Input;
 	GraphicsClass* m_Graphics;
 	FpsClass* m_Fps;
 	CpuClass* m_Cpu;

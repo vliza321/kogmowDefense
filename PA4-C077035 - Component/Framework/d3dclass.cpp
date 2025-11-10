@@ -60,7 +60,13 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	D3D11_BLEND_DESC blendStateDescription1;
 
 	// Store the vsync setting.
+	m_screenWidth = screenWidth;
+	m_screenHeight = screenHeight;
 	m_vsync_enabled = vsync;
+	m_hwnd = hwnd;
+	m_fullscreen = fullscreen;
+	m_screenDepth = screenDepth;
+	m_screenNear = screenNear;
 
 	// Create a DirectX graphics interface factory.
 	result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
@@ -359,6 +365,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
     viewport.MaxDepth = 1.0f;
     viewport.TopLeftX = 0.0f;
     viewport.TopLeftY = 0.0f;
+
+	m_viewport = viewport;
 
 	// Create the viewport.
 	m_deviceContext->RSSetViewports(1, &viewport);
@@ -670,9 +678,4 @@ void D3DClass::TurnOnCullNoneMode()
 {
 	// Now set the rasterizer state.
 	m_deviceContext->RSSetState(m_rasterStateFront);
-}
-
-bool D3DClass::UpdateDevice()
-{
-	return true;
 }

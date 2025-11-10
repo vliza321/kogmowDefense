@@ -1,4 +1,5 @@
 #include "Component.h"
+#include "SceneManager.h"
 
 Component::Component()
 {
@@ -93,4 +94,9 @@ void Component::OnEnable()
 void Component::OnDisable()
 {
 
+}
+
+SceneManager& Component::SceneManager() const
+{
+	return SceneManager::GetInstance();
 }

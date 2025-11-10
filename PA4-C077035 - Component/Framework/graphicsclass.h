@@ -45,7 +45,7 @@ public:
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 
-	bool Initialize(int, int, HWND, InputClass*);
+	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Frame();
 	int a = 0;
@@ -55,6 +55,9 @@ private:
 
 	InputClass* m_Input;
 
+	D3DClass* m_d3d;
+	TextureShaderClass* m_textureShader;
+	LightShaderClass* m_lightShader;
 private:
 	SceneManager* m_sceneManager;
 };

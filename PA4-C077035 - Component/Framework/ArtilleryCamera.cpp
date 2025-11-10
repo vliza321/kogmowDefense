@@ -108,9 +108,9 @@ void ArtilleryCamera::Execute()
 	temt.y = XMVectorGetY(MoveVector);
 	temt.z = XMVectorGetZ(MoveVector);
 	
-	temt.x = temt.x * speed * GetDeltaTime() * 0.35f;
-	temt.y = temt.y * speed * GetDeltaTime() * 0.35f;
-	temt.z = temt.z * speed * GetDeltaTime() * 0.35f;
+	temt.x = temt.x * speed * DeltaTime() * 0.35f;
+	temt.y = temt.y * speed * DeltaTime() * 0.35f;
+	temt.z = temt.z * speed * DeltaTime() * 0.35f;
 
 	tf->ApplyTranslate(temt);
 

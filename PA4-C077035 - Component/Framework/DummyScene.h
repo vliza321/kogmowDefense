@@ -5,7 +5,7 @@ class DummyScene : public Scene
 public:
 	DummyScene() : Scene("Dummy")
 	{
-
+		
 	}
 	~DummyScene()
 	{
