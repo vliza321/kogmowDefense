@@ -9,7 +9,7 @@ class BaseCamera :
 {
 public:
 	BaseCamera();
-	~BaseCamera();
+	virtual ~BaseCamera();
 
 	virtual bool InitializeRef() override;
 	virtual bool PostInitialize() override;

@@ -41,8 +41,8 @@ bool SceneManager::AddScene(int id, const std::shared_ptr<Scene>& scene)
 //내부에서 씬 로드  
 bool SceneManager::SceneLoader(shared_ptr<Scene>& scene)
 {
-	//비동기로 변경
-	scene->SceneLoadStart(m_screenWidth, m_screenHeight, m_hwnd);
+	scene->LockScene();
+	scene->SceneInitialize(m_screenWidth, m_screenHeight, m_hwnd);
 	scene->CreateBaseObject();
 	scene->CreateGameObject();
 	scene->InitializeSet(m_hwnd);
@@ -51,6 +51,7 @@ bool SceneManager::SceneLoader(shared_ptr<Scene>& scene)
 	scene->InitializeRender(m_hwnd);
 	scene->InitializeSynchronization(m_hwnd);
 	scene->PostInitialize(m_hwnd);
+	scene->UnlockScne();
 
 	return true;
 }
@@ -184,7 +185,6 @@ bool SceneManager::LoadScene(shared_ptr<Scene>& scene)
 	return true;
 }
 
-
 /*=================================================================================*/
 //씬 교체 동작을 Frame 맨 앞에서 씬 교체 동작이 필요한지 검색
 void SceneManager::SceneChange()
@@ -226,7 +226,7 @@ void SceneManager::SceneChange()
 			MessageBox(m_hwnd, L"Could not SceneChange, WaitingScene was in the Unloading or Running.", L"Error", MB_OK);
 			break;
 	}
-	
+
 	while(!m_shutdownQueue.empty())
 	{
 		auto& shutdownTarget = m_shutdownQueue.front();

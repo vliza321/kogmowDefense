@@ -30,7 +30,7 @@ public:
 
 	LightClass(XMFLOAT3,XMFLOAT4,XMFLOAT4,XMFLOAT4,XMFLOAT4,float);
 	LightClass(const LightClass&);
-	~LightClass();
+	virtual ~LightClass();
 
 	virtual bool InitializeRef() override;
 public:

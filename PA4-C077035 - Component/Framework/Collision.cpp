@@ -258,7 +258,7 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 
 void Collision::AddCollider(Collider* colliderObject)
 {
-	switch (colliderObject->type)
+	switch (colliderObject->GetColliderType())
 	{
 	case ColliderType::Box:
 	{
@@ -280,7 +280,7 @@ void Collision::AddCollider(Collider* colliderObject)
 
 bool Collision::RemoveCollider(Collider* colliderObject)
 {
-	switch (colliderObject->type)
+	switch (colliderObject->GetColliderType())
 	{
 	case ColliderType::Box:
 	{
@@ -384,7 +384,7 @@ void Collision::ProcessCollision()
 		if (cp.second != nullptr)
 		{
 			//충돌 검사한 대상이 직전에 충돌 전적이 있으면
-			if (cp.first->trackingCollider != nullptr)
+			if (cp.first->GetTrackingCollider() != nullptr)
 			{
 				if (cp.first->isCollision) cp.first->gameObject->OnCollisionStay(cp.second);
 				else cp.first->gameObject->OnTriggerStay(cp.second);
@@ -395,7 +395,7 @@ void Collision::ProcessCollision()
 				else cp.first->gameObject->OnTriggerEnter(cp.second);
 			}
 			//충돌 당한 대상이 직전에 충돌 전적이 있으면
-			if (cp.second->trackingCollider != nullptr)
+			if (cp.second->GetTrackingCollider() != nullptr)
 			{
 				if (cp.second->isCollision) cp.second->gameObject->OnCollisionStay(cp.first);
 				else cp.second->gameObject->OnTriggerStay(cp.first);
@@ -406,8 +406,8 @@ void Collision::ProcessCollision()
 				else cp.second->gameObject->OnTriggerEnter(cp.first);
 			}
 			//충돌한 대상을 기억
-			cp.first->trackingCollider = cp.second;
-			cp.second->trackingCollider = cp.first;
+			cp.first->SetTrackingCollider(cp.second);
+			cp.second->SetTrackingCollider(cp.first);
 		}
 
 		//추적중인 콜라이더에서 제외
@@ -417,14 +417,14 @@ void Collision::ProcessCollision()
 	//추적 중이던 대상 중 충돌이 일어나지 않은 대상
 	for (auto& tc : m_trackingCollider)
 	{
-		tc->trackingCollider = nullptr;
+		tc->SetTrackingCollider(nullptr);
 		if (tc->isCollision)
 		{
-			tc->gameObject->OnCollisionExit(tc->trackingCollider);
+			tc->gameObject->OnCollisionExit(tc->GetTrackingCollider());
 		}
 		else
 		{
-			tc->gameObject->OnTriggerExit(tc->trackingCollider);
+			tc->gameObject->OnTriggerExit(tc->GetTrackingCollider());
 		}
 	}
 	m_trackingCollider.clear();

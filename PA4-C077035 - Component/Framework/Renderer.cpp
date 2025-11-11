@@ -25,7 +25,6 @@ bool Renderer::InitializeSet()
 bool Renderer::InitializeRef()
 {
 	gameObject->root->GetRenderManager()->RegisterRenderer(this);
-	//RenderManager::GetInstance().RegisterRenderer(this);
 	return true;
 }
 

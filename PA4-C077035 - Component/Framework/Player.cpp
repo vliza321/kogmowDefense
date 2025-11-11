@@ -213,6 +213,10 @@ void Player::PostExecute()
 
 bool Player::Shutdown()
 {
+	m_cameraManager.reset();
+	m_uiCanvasManager.reset();
+	m_bulletManager.reset();
+	transform.reset();
 	return true;
 }
 

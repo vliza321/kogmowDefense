@@ -22,7 +22,9 @@ GameObject::GameObject(bool Active, Tag Tag, string Name)
 
 GameObject::~GameObject()
 {
+	ApplyDestroy();
 	name.clear();
+	root = nullptr;
 }
 
 bool GameObject::InitializeSet()
@@ -222,7 +224,7 @@ void GameObject::OnDisable()
 
 bool GameObject::Shutdown()
 {
-	Destroy();
+	ApplyDestroy();
 	return true;
 }
 

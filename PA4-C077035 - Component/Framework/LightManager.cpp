@@ -155,6 +155,7 @@ bool LightManager::Shutdown()
 	}
 
 	m_allLights.clear();
+
 	for (int i = 7; i >= 0; --i)
 	{
 		m_lights[i]->Shutdown();
@@ -162,6 +163,8 @@ bool LightManager::Shutdown()
 		m_lights[i] = nullptr;
 	}
 	
+	m_cameraManager.reset();
+
 	return true;
 }
 

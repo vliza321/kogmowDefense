@@ -144,7 +144,6 @@
   <ItemGroup>
     <ClCompile Include="ArtilleryBullet.cpp" />
     <ClCompile Include="ArtilleryCamera.cpp" />
-    <ClCompile Include="AsyncD3DClass.cpp" />
     <ClCompile Include="BaseBullet.cpp" />
     <ClCompile Include="BaseCamera.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
@@ -155,7 +154,6 @@
     <ClCompile Include="Canvas.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="CanvasObject.cpp" />
     <ClCompile Include="CanvasRenderer.cpp" />
     <ClCompile Include="CanvasRenderManager.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -207,7 +205,6 @@
     <ClInclude Include="AlignedAllocationPolicy.h" />
     <ClInclude Include="ArtilleryBullet.h" />
     <ClInclude Include="ArtilleryCamera.h" />
-    <ClInclude Include="AsyncD3DClass.h" />
     <ClInclude Include="BaseBullet.h" />
     <ClInclude Include="BaseCamera.h" />
     <ClInclude Include="BoxCollider.h" />
@@ -241,7 +238,6 @@
     <ClInclude Include="Canvas.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="CanvasObject.h" />
     <ClInclude Include="cpuclass.h" />
     <ClInclude Include="d3dclass.h" />
     <ClInclude Include="DDSTextureLoader.h" />

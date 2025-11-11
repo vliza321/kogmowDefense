@@ -7,7 +7,7 @@ Collider::Collider()
 	:Component()
 {
 	this->isCollision = true;
-	this->type = ColliderType::Sphere;
+	this->type = ColliderType::None;
 	trackingCollider = nullptr;
 }
 
@@ -21,7 +21,8 @@ Collider::Collider(bool isCollision, ColliderType type)
 
 Collider::~Collider()
 {
-
+	this->type = ColliderType::None;
+	trackingCollider = nullptr;
 }
 
 bool Collider::Shutdown()

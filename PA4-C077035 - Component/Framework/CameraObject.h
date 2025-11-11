@@ -12,7 +12,7 @@ class CameraObject : public Component
 {
 public:
 	CameraObject();
-	~CameraObject();
+	virtual ~CameraObject();
 
 	virtual bool InitializeRef() override;
 	virtual bool PostInitialize() override;

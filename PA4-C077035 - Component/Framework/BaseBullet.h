@@ -11,7 +11,7 @@ class BaseBullet : public Component
 {
 public:
 	BaseBullet(ShootType);
-	~BaseBullet();
+	virtual ~BaseBullet();
 
 	virtual bool InitializeSet() override;
 	virtual bool Initialize() override;

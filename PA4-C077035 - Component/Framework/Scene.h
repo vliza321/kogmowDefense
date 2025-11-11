@@ -6,6 +6,7 @@
 #include <map>
 #include <d3d11.h>
 #include <directxmath.h>
+#include <mutex>
 
 #include "d3dclass.h"
 
@@ -35,13 +36,43 @@ class Scene
 {
 public:
 	Scene(std::string sceneName);
-	~Scene();
+	virtual ~Scene();
 
 protected:
 	unordered_map<Tag, vector<GameObject*>> m_gameObjects;
+protected:
+	CameraManager* m_cameraManager;
+	LightManager* m_lightManager;
+protected:
+	Collision* m_collisionDetecter;
+	RenderManager* m_renderManager;
+	WorldSpaceUIRenderManager* m_worldSpaceUIRenderManager;
+	CanvasRenderManager* m_canvasRenderManager;
+
+	D3DClass* m_d3d;
+	TextureShaderClass* m_textureShader;
+	LightShaderClass* m_lightShader;
+private:
+	string m_sceneName;
+	SceneState m_sceneState;
+	int ID;
+
+	mutex m_sceneMutex;
+	unique_ptr<unique_lock<mutex>> m_sceneLock;
 
 public:
-	bool SceneLoadStart(int, int, HWND);
+	void LockScene()
+	{
+		m_sceneLock = make_unique<unique_lock<mutex>>(m_sceneMutex);
+	}
+
+	void UnlockScne()
+	{
+		m_sceneLock.reset();
+	}
+
+public:
+	bool SceneInitialize(int, int, HWND);
 	bool SceneStart();
 	bool SceneEnd();
 
@@ -59,8 +90,9 @@ public:
 	{
 		ID = id;
 	}
-private:
-	bool SceneInitialize(int, int, HWND);
+protected:
+	void RegistGameObject(GameObject*);
+	LightClass& GetLights(int i);
 public:
 	void AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass);
 	virtual void CreateBaseObject() = 0;
@@ -91,25 +123,7 @@ public:
 	GameObject* Find(std::string);
 	GameObject* FindObjectWithTag(Tag);
 	vector<GameObject*> FindObjectsWithTag(Tag);
-protected:
-	void RegistGameObject(GameObject*);
-	LightClass& GetLights(int i);
-protected:
-	CameraManager* m_cameraManager;
-	LightManager* m_lightManager;
-protected:
-	Collision* m_collisionDetecter;
-	RenderManager* m_renderManager;
-	WorldSpaceUIRenderManager* m_worldSpaceUIRenderManager;
-	CanvasRenderManager* m_canvasRenderManager;
 
-	D3DClass* m_d3d;
-	TextureShaderClass* m_textureShader;
-	LightShaderClass* m_lightShader;
-private:
-	string m_sceneName;
-	SceneState m_sceneState;
-	int ID;
 
 public:
 	const string GetSceneName() const {	return m_sceneName;	}

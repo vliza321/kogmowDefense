@@ -14,16 +14,31 @@ class Collider : public Component
 public:
 	Collider();
 	Collider(bool isCollision, ColliderType type);
-	~Collider();
+	virtual ~Collider();
 
 public:
 	virtual bool Shutdown() override;
 	virtual bool InitializeRef() override;
-
-public:
-	bool isCollision;
+private:
 	ColliderType type;
 	Collider* trackingCollider;
+public:
+	ColliderType GetColliderType()
+	{
+		return type;
+	}
+
+	Collider* GetTrackingCollider()
+	{
+		return trackingCollider;
+	}
+
+	void SetTrackingCollider(Collider* other)
+	{
+		trackingCollider = other;
+	}
+public:
+	bool isCollision;
 };
 
 #endif 

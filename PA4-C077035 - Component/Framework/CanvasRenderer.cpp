@@ -67,6 +67,12 @@ bool CanvasRenderer::Shutdown()
 		delete m_model;
 		m_model = 0;
 	}
+	if (m_rectTransform != 0)
+	{
+		m_rectTransform->Shutdown();
+		m_rectTransform.reset();
+		m_rectTransform = 0;
+	}
 	return true;
 }
 

@@ -19,6 +19,7 @@ Scene::Scene(string sceneName) : m_sceneState(SceneState::Unloaded), m_sceneName
 
 Scene::~Scene()
 {
+	this->Shutdown();
 	m_renderManager = 0;
 	m_worldSpaceUIRenderManager = 0;
 	m_canvasRenderManager = 0;
@@ -31,6 +32,9 @@ Scene::~Scene()
 	m_d3d = 0;
 	m_textureShader = 0;
 	m_lightShader = 0;
+
+	m_sceneLock.reset();
+	
 }
 
 
@@ -38,6 +42,7 @@ bool Scene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result = true;
 
+	m_sceneState = SceneState::Loading;
 
 	m_renderManager = new RenderManager();
 	if (!m_renderManager)
@@ -84,7 +89,7 @@ bool Scene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	return false;
+	return true;
 }
 
 void Scene::AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass)
@@ -92,13 +97,6 @@ void Scene::AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, 
 	m_d3d = d3dclass;
 	m_lightShader = lightshaderclass;
 	m_textureShader = textureshaderclass;
-}
-
-bool Scene::SceneLoadStart(int screenWidth, int screenHeight, HWND hwnd)
-{
-	m_sceneState = SceneState::Loading;
-	SceneInitialize(screenWidth, screenHeight, hwnd);
-	return true;
 }
 
 bool Scene::SceneStart()
@@ -114,7 +112,9 @@ bool Scene::SceneStart()
 bool Scene::SceneEnd()
 {
 	m_sceneState = SceneState::Unloading;
+	LockScene();
 	Shutdown();
+	UnlockScne();
 	return true;
 }
 
@@ -367,24 +367,6 @@ void Scene::Shutdown()
 	}
 	m_gameObjects.clear();
 
-	if (m_renderManager != 0)
-	{
-		m_renderManager->Shutdown();
-		delete m_renderManager;
-		m_renderManager = 0;
-	}
-	if (m_worldSpaceUIRenderManager != 0)
-	{
-		m_worldSpaceUIRenderManager->Shutdown();
-		delete m_worldSpaceUIRenderManager;
-		m_worldSpaceUIRenderManager = 0;
-	}
-	if (m_canvasRenderManager != 0)
-	{
-		m_canvasRenderManager->Shutdown();
-		delete m_canvasRenderManager;
-		m_canvasRenderManager = 0;
-	}
 	if (m_cameraManager != 0)
 	{
 		m_cameraManager->Shutdown();
@@ -402,6 +384,24 @@ void Scene::Shutdown()
 		m_collisionDetecter->Shutdown();
 		delete m_collisionDetecter;
 		m_collisionDetecter = 0;
+	}
+	if (m_renderManager != 0)
+	{
+		m_renderManager->Shutdown();
+		delete m_renderManager;
+		m_renderManager = 0;
+	}
+	if (m_worldSpaceUIRenderManager != 0)
+	{
+		m_worldSpaceUIRenderManager->Shutdown();
+		delete m_worldSpaceUIRenderManager;
+		m_worldSpaceUIRenderManager = 0;
+	}
+	if (m_canvasRenderManager != 0)
+	{
+		m_canvasRenderManager->Shutdown();
+		delete m_canvasRenderManager;
+		m_canvasRenderManager = 0;
 	}
 
 	m_sceneState = SceneState::Unloaded;

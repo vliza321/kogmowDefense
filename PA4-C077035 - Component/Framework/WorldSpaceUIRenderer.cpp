@@ -75,6 +75,10 @@ bool WorldSpaceUIRenderer::Shutdown()
 		delete m_model;
 		m_model = 0;
 	}
+	m_rectTransform.reset();
+	m_transform.reset();
+	m_cameraManager.reset();
+
 	return true;
 }
 

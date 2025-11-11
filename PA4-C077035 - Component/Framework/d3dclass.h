@@ -21,7 +21,6 @@
 #include <directxmath.h>
 
 #include "AlignedAllocationPolicy.h"
-#include "AsyncD3DClass.h"
 
 using namespace DirectX;
 
