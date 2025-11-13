@@ -164,6 +164,7 @@
     <ClCompile Include="FirstPersonCamera.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="WorldSpaceUIRenderer.cpp" />
     <ClCompile Include="WorldSpaceUIRenderManager.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="FirstPersonCamera.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SceneSystem.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="WorldSpaceUIRenderer.h" />
     <ClInclude Include="WorldSpaceUIRenderManager.h" />
