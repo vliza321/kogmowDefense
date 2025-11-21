@@ -1,6 +1,6 @@
 #include "WorldSpaceUIRenderer.h"
 #include "WorldSpaceUIRenderManager.h"
-#include "Scene.h"
+#include "GameScene.h"
 #include "GameObject.h"
 
 WorldSpaceUIRenderer::WorldSpaceUIRenderer(const WCHAR* TextureFilename, int InstanceCoutner)

@@ -1,5 +1,5 @@
-#ifndef _Scene_H
-#define _Scene_H
+#ifndef _SCENE_H
+#define _SCENE_H
 
 #include <string>
 #include <vector>
@@ -32,14 +32,14 @@ enum class SceneState
 	Unloading       // 언로드 중
 };
 
-class Scene
+class BaseScene
 {
 public:
-	Scene(std::string sceneName);
-	virtual ~Scene();
+	BaseScene(std::string sceneName);
+	virtual ~BaseScene();
 
 protected:
-	unordered_map<Tag, vector<GameObject*>> m_gameObjects;
+	vector<GameObject*> m_vGameObjects;
 protected:
 	CameraManager* m_cameraManager;
 	LightManager* m_lightManager;
@@ -91,7 +91,6 @@ public:
 		ID = id;
 	}
 protected:
-	void RegistGameObject(GameObject*);
 	LightClass& GetLights(int i);
 public:
 	void AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass);
@@ -118,12 +117,6 @@ public:
 	bool UIRender();
 
 	void Shutdown();
-
-public:
-	GameObject* Find(std::string);
-	GameObject* FindObjectWithTag(Tag);
-	vector<GameObject*> FindObjectsWithTag(Tag);
-
 
 public:
 	const string GetSceneName() const {	return m_sceneName;	}

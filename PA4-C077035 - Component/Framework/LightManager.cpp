@@ -1,6 +1,6 @@
 #include "LightManager.h"
 #include "GameObject.h"
-#include "Scene.h"
+#include "GameScene.h"
 
 LightManager::LightManager()
 {
@@ -29,7 +29,7 @@ bool LightManager::InitializeSet()
 bool LightManager::InitializeRef()
 {
 	bool result = true;
-	m_cameraManager = this->gameObject->Root().Find("CameraManager")->GetComponentIncludingBase<CameraManager>();
+	m_cameraManager = Find("CameraManager")->GetComponentIncludingBase<CameraManager>();
 	return result;
 }
 

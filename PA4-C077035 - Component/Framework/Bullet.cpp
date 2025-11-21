@@ -38,7 +38,7 @@ bool Bullet::InitializeRef()
 		transform = newTransform;
 	}
 
-	targetTransform = this->gameObject->root->FindObjectWithTag(Tag::Player)->GetComponentIncludingBase<Transform>();
+	targetTransform = FindObjectWithTag(Tag::Player)->GetComponentIncludingBase<Transform>();
 	return true;
 }
 

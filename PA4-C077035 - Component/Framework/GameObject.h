@@ -10,13 +10,14 @@
 #include <typeindex>
 #include <unordered_map>
 #include <deque>
+
 #include "algorithm"
 #include "Tag.h"
 
 using namespace std;
 using namespace DirectX;
 
-class Scene;
+class GameScene;
 class Component;
 class Collider;
 
@@ -50,16 +51,20 @@ public:
 	void OnDisable();
 	bool Shutdown();
 	void ApplyDestroy();
+
 public:
 	bool active;
 	Tag tag;
 	string name;
 	bool isDestroy;
-	Scene* root;
+	GameScene* root;
 
 private:
 	unordered_map<type_index, deque<shared_ptr<Component>>>components;
 
+public:
+	vector<GameObject*> child;
+	GameObject* parent;
 public:
 	template<typename T>
 	void AddComponent(std::shared_ptr<T> component);
@@ -77,6 +82,15 @@ public:
 	std::shared_ptr<T> GetComponentIncludingBase();
 
 	template<typename T>
+	std::shared_ptr<T> GetComponentInChild(bool);
+
+	template<typename T>
+	std::shared_ptr<T> GetComponentInParent(bool);
+
+	template<typename T>
+	std::vector<shared_ptr<T>> GetComponentsInChild(bool includeSelf);
+
+	template<typename T>
 	std::vector<std::shared_ptr<T>> GetComponents();
 
 public:
@@ -89,7 +103,7 @@ public:
 		return false;
 	}
 
-	Scene& Root() const
+	GameScene& Root() const
 	{
 		return *root;
 	}
@@ -97,7 +111,54 @@ public:
 	void Destroy();
 	void Destory(shared_ptr<Component>);
 	void SetActive(bool active);
-	void SetRoot(Scene*);
+	void SetRoot(GameScene*);
+	void SetParent(GameObject*);
+
+	GameObject* Find(const string& name)
+	{
+		if (this->name == name)
+		{
+			return this;
+		}
+		for (auto& c : child)
+		{
+			auto n = c->Find(name);
+			if (n != nullptr) return n;
+		}
+		return nullptr;
+	}
+
+	GameObject* Find(const Tag& tag)
+	{
+		if (CompareTag(tag))
+		{
+			return this;
+		}
+		for (auto& c : child)
+		{
+			auto n = c->Find(tag);
+			if (n != nullptr) return n;
+		}
+		return nullptr;
+	}
+
+	void Find(const Tag& tag, vector<GameObject*>& out)
+	{
+		if (CompareTag(tag))
+		{
+			out.push_back(this);
+		}
+		for (auto& c : child)
+		{
+			c->Find(tag,out);
+		}
+	}
+
+public:
+	int ChildCount() const
+	{
+		return child.size();
+	}
 };
 
 #include "Component.h"
@@ -207,6 +268,66 @@ std::vector<std::shared_ptr<T>> GameObject::GetComponents()
 	return result;
 }
 
+template<typename T>
+std::shared_ptr<T> GameObject::GetComponentInChild(bool includeSelf)
+{
+	// 나 자신을 포함해 찾는다면 시작하는 게임 오브젝트도 서칭
+	if (includeSelf)
+	{
+		auto component = GetComponent<T>();
+		if (component) return component;
+	}
+	// 아무튼 리턴 못했으면 자식을 서칭(DFS) : 자식은 무조건 자신을 봐야하기에 true
+	for (const auto& c : child)
+	{
+		auto component = c->GetComponentInChild<T>(true);
+		if (component) return component;
+	}
+	// 자식도 리턴 못했으면 nullptr 리턴
+	return nullptr;
+}
 
+template<typename T>
+std::shared_ptr<T> GameObject::GetComponentInParent(bool includeSelf)
+{
+	// 나 자신을 포함해 찾는다면 시작하는 게임 오브젝트도 서칭
+	if (includeSelf)
+	{
+		auto component = GetComponent<T>();
+		if (component) return component;
+	}
+
+	// 아무튼 리턴 못했으면 부모를 서칭(Climbing) : 부모는 무조건 자신을 봐야하기에 true
+	if (parent != nullptr)
+	{
+		auto component = parent->GetComponentInParent<T>(true);
+		if (component) return component;
+	}
+	// 부모도 리턴 못했으면 nullptr 리턴
+	return nullptr;
+}
+
+template<typename T>
+vector<shared_ptr<T>> GameObject::GetComponentsInChild(bool includeSelf)
+{
+	static_assert(std::is_base_of<Component, T>::value, "T must inherit from Component");
+
+	std::vector<std::shared_ptr<T>> result;
+
+	// 나 자신을 포함해 찾는다면 시작하는 게임 오브젝트도 서칭
+	if (includeSelf)
+	{
+		auto comps = GetComponents<T>();
+		result.insert(result.end(), comps.begin(), comps.end());
+	}
+	// 아무튼 리턴 못했으면 자식을 서칭(DFS) : 자식은 무조건 자신을 봐야하기에 true
+	for (const auto& c : child)
+	{
+		auto comps = c->GetComponentsInChild<T>(true);
+		result.insert(result.end(), comps.begin(), comps.end());
+	}
+
+	return result;
+}
 
 #endif

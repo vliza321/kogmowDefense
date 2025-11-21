@@ -1,7 +1,7 @@
-#ifndef OBJECTCLASS_H
-#define OBJECTCLASS_H
+#ifndef _OBJECTCLASS_H
+#define _OBJECTCLASS_H
 
-#include "Scene.h"
+#include "GameScene.h"
 
 #include "CameraObject.h"
 
@@ -15,7 +15,7 @@
 
 #include "BulletManager.h"
 
-class ObjectClass : public Scene
+class ObjectClass : public GameScene
 {
 public:
 	ObjectClass();

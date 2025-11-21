@@ -49,5 +49,8 @@ protected:
 	}
 
 	SceneManager& SceneManager() const;
+	GameObject* Find(const string& name);
+	GameObject* FindObjectWithTag(Tag tag);
+	vector<GameObject*> FindObjectsWithTag(Tag tag);
 };
 #endif

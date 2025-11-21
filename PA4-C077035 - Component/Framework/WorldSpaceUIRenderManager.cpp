@@ -21,7 +21,7 @@ bool WorldSpaceUIRenderManager::RenderAll(TextureShaderClass* TextureShader, D3D
             if (!RenderTransform) continue;
             rotationMatrix = XMMatrixIdentity();
 
-            worldMatrix = RenderTransform->WorldMatrix;
+            worldMatrix = RenderTransform->LocalMatrix;
 
             renderer->Render(D3D->GetDeviceContext());
             result = TextureShader->Render(D3D->GetDeviceContext(),

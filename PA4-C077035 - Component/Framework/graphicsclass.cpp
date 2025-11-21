@@ -75,6 +75,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	
 	m_sceneManager = &SceneManager::GetInstance();
 	result = m_sceneManager->Initialize(screenWidth, screenHeight, hwnd, m_d3d,m_lightShader,m_textureShader);
 	if (!result)
@@ -82,6 +83,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the SceneManager object.", L"Error", MB_OK);
 		return false;
 	}
+
+	SceneManager::GetInstance().StartScene(0);
 	return true;
 }
 

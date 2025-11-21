@@ -9,6 +9,7 @@ GameObject::GameObject()
 	name = "GameObject";
 	isDestroy = false;
 	root = nullptr;
+	parent = nullptr;
 }
 
 GameObject::GameObject(bool Active, Tag Tag, string Name)
@@ -18,6 +19,7 @@ GameObject::GameObject(bool Active, Tag Tag, string Name)
 	name = Name;
 	isDestroy = false;
 	root = nullptr;
+	parent = nullptr;
 }
 
 GameObject::~GameObject()
@@ -36,6 +38,10 @@ bool GameObject::InitializeSet()
 			if (!v->InitializeSet()) return false;
 		}
 	}
+	for (auto& c : child)
+	{
+		if(!c->InitializeSet()) return false;
+	}
 	return true;
 }
 
@@ -47,6 +53,10 @@ bool GameObject::Initialize()
 		{
 			if (!v->Initialize()) return false;
 		}
+	}
+	for (auto& c : child)
+	{
+		if (!c->Initialize()) return false;
 	}
 	return true;
 }
@@ -60,6 +70,10 @@ bool GameObject::InitializeRef()
 			if (!v->InitializeRef()) return false;
 		}
 	}
+	for (auto& c : child)
+	{
+		if (!c->InitializeRef()) return false;
+	}
 	return true;
 }
 
@@ -71,6 +85,10 @@ bool GameObject::InitializeSynchronization()
 		{
 			if (!v->InitializeSynchronization()) return false;
 		}
+	}
+	for (auto& c : child)
+	{
+		if (!c->InitializeSynchronization()) return false;
 	}
 	return true;
 }
@@ -84,6 +102,10 @@ bool GameObject::PostInitialize()
 			if (!v->PostInitialize()) return false;
 		}
 	}
+	for (auto& c : child)
+	{
+		if (!c->PostInitialize()) return false;
+	}
 	return true;
 }
 
@@ -94,8 +116,12 @@ void GameObject::OnCollisionEnter(Collider* other)
 	{
 		for (auto& v : c.second)
 		{
-			v->OnCollisionEnter(other);
+			if (v->active) v->OnCollisionEnter(other);
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->OnCollisionEnter(other);
 	}
 }
 
@@ -105,8 +131,12 @@ void GameObject::OnCollisionStay(Collider* other)
 	{
 		for (auto& v : c.second)
 		{
-			v->OnCollisionStay(other);
+			if (v->active) v->OnCollisionStay(other);
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->OnCollisionStay(other);
 	}
 }
 
@@ -116,8 +146,12 @@ void GameObject::OnCollisionExit(Collider* other)
 	{
 		for (auto& v : c.second)
 		{
-			v->OnCollisionExit(other);
+			if (v->active) v->OnCollisionExit(other);
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->OnCollisionExit(other);
 	}
 }
 
@@ -127,8 +161,12 @@ void GameObject::OnTriggerEnter(Collider* other)
 	{
 		for (auto& v : c.second)
 		{
-			v->OnTriggerEnter(other);
+			if (v->active) v->OnTriggerEnter(other);
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->OnTriggerEnter(other);
 	}
 }
 
@@ -138,8 +176,12 @@ void GameObject::OnTriggerStay(Collider* other)
 	{
 		for (auto& v : c.second)
 		{
-			v->OnTriggerStay(other);
+			if (v->active) v->OnTriggerStay(other);
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->OnTriggerStay(other);
 	}
 }
 
@@ -149,8 +191,12 @@ void GameObject::OnTriggerExit(Collider* other)
 	{
 		for (auto& v : c.second)
 		{
-			v->OnTriggerExit(other);
+			if (v->active) v->OnTriggerExit(other);
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->OnTriggerExit(other);
 	}
 }
 
@@ -160,8 +206,12 @@ void GameObject::FixedExecute()
 	{
 		for (auto& v : c.second) 
 		{
-			v->FixedExecute(); 
+			if (v->active) v->FixedExecute();
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->FixedExecute();
 	}
 }
 
@@ -171,8 +221,12 @@ void GameObject::Execute()
 	{
 		for (auto& v : c.second) 
 		{
-			v->Execute();
+			if (v->active) v->Execute();
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->Execute();
 	}
 }
 
@@ -182,8 +236,12 @@ void GameObject::LateExecute()
 	{
 		for (auto& v : c.second) 
 		{
-			v->LateExecute();
+			if (v->active) v->LateExecute();
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->LateExecute();
 	}
 }
 
@@ -193,8 +251,12 @@ void GameObject::PostExecute()
 	{
 		for (auto& v : c.second)
 		{
-			v->PostExecute();
+			if (v->active) v->PostExecute();
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->PostExecute();
 	}
 }
 
@@ -204,8 +266,12 @@ void GameObject::OnEnable()
 	{
 		for (auto& v : c.second)
 		{
-			v->OnEnable();
+			if(v->active) v->OnEnable();
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->OnEnable();
 	}
 	active = true;
 }
@@ -216,8 +282,12 @@ void GameObject::OnDisable()
 	{
 		for (auto& v : c.second)
 		{
-			v->OnDisable();
+			if(v->active) v->OnDisable();
 		}
+	}
+	for (auto& c : child)
+	{
+		if (c->active) c->OnDisable();
 	}
 	active = false;
 }
@@ -236,12 +306,14 @@ void GameObject::ApplyDestroy()
 
 		for (int i = vec.size() - 1; i >= 0; --i)
 		{
+			vec[i]->OnDisable();
 			vec[i].reset();  
 		}
 
 		vec.clear();
 	}
 	components.clear();
+	parent = nullptr;
 }
 
 void GameObject::Destroy()
@@ -276,9 +348,15 @@ void GameObject::SetActive(bool active)
 	else OnDisable();
 }
 
-#include "Scene.h"
+#include "GameScene.h"
 
-void GameObject::SetRoot(Scene* scene)
+void GameObject::SetRoot(GameScene* scene)
 {
 	root = scene;
+}
+
+void GameObject::SetParent(GameObject* parent)
+{
+	this->parent = parent;
+	if(parent != nullptr) parent->child.push_back(this);
 }

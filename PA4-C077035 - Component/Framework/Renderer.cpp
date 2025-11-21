@@ -1,5 +1,5 @@
 #include "Renderer.h"
-#include "Scene.h"
+#include "GameScene.h"
 #include "RenderManager.h"
 
 Renderer::Renderer(const WCHAR* ModelFilename, const WCHAR* TextureFilename, int InstanceCoutner)

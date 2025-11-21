@@ -1,7 +1,7 @@
-#include "Scene.h"
+#include "BaseScene.h"
 #include "graphicsclass.h"
 
-Scene::Scene(string sceneName) : m_sceneState(SceneState::Unloaded), m_sceneName(sceneName)
+BaseScene::BaseScene(string sceneName) : m_sceneState(SceneState::Unloaded), m_sceneName(sceneName)
 {
 	m_renderManager = 0;
 	m_worldSpaceUIRenderManager = 0;
@@ -17,7 +17,7 @@ Scene::Scene(string sceneName) : m_sceneState(SceneState::Unloaded), m_sceneName
 	m_lightShader = 0;
 }
 
-Scene::~Scene()
+BaseScene::~BaseScene()
 {
 	this->Shutdown();
 	m_renderManager = 0;
@@ -38,7 +38,7 @@ Scene::~Scene()
 }
 
 
-bool Scene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
+bool BaseScene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result = true;
 
@@ -92,14 +92,14 @@ bool Scene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
 	return true;
 }
 
-void Scene::AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass)
+void BaseScene::AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass)
 {
 	m_d3d = d3dclass;
 	m_lightShader = lightshaderclass;
 	m_textureShader = textureshaderclass;
 }
 
-bool Scene::SceneStart()
+bool BaseScene::SceneStart()
 {
 	if (m_sceneState == SceneState::Loaded)
 	{
@@ -109,7 +109,7 @@ bool Scene::SceneStart()
 	return true;
 }
 
-bool Scene::SceneEnd()
+bool BaseScene::SceneEnd()
 {
 	m_sceneState = SceneState::Unloading;
 	LockScene();
@@ -118,17 +118,17 @@ bool Scene::SceneEnd()
 	return true;
 }
 
-bool Scene::Render()
+bool BaseScene::Render()
 {
 	return m_renderManager->RenderAll(m_textureShader, m_d3d, m_cameraManager->GetViewMatrix());
 }
 
-bool Scene::WorldSpaceUIRender()
+bool BaseScene::WorldSpaceUIRender()
 {
 	return m_worldSpaceUIRenderManager->RenderAll(m_textureShader, m_d3d, m_cameraManager->GetViewMatrix());
 }
 
-bool Scene::LightRender()
+bool BaseScene::LightRender()
 {
 	XMFLOAT4 diffuseColor[8];
 	XMFLOAT4 lightPosition[8];
@@ -141,98 +141,48 @@ bool Scene::LightRender()
 	return m_renderManager->RenderAll(m_lightShader, m_d3d, m_cameraManager->GetCamera(), m_lightManager, diffuseColor, lightPosition);
 }
 
-bool Scene::UIRender()
+bool BaseScene::UIRender()
 {
 	return m_canvasRenderManager->RenderAll(m_textureShader, m_d3d, m_cameraManager->GetViewMatrix() );
 }
 
-
-GameObject* Scene::Find(string name)
-{
-	for (auto& v : m_gameObjects)
-	{
-		for (auto& gameObject : v.second)
-		{
-			if (gameObject->name == name)
-			{
-				return gameObject;
-			}
-		}
-	}
-	return nullptr;
-}
-
-GameObject* Scene::FindObjectWithTag(Tag tag)
-{
-	if (m_gameObjects[tag].size() != 0) return m_gameObjects[tag].front();
-	return nullptr;
-}
-
-vector<GameObject*> Scene::FindObjectsWithTag(Tag tag)
-{
-	return m_gameObjects[tag];
-}
-
-void Scene::RegistGameObject(GameObject* Entity)
-{
-	m_gameObjects[Entity->tag].push_back(Entity);
-	Entity->SetRoot(this);
-}
-
-LightClass& Scene::GetLights(int i)
+LightClass& BaseScene::GetLights(int i)
 {
 	return m_lightManager->GetLights(i);
 }
 
-bool Scene::InitializeSet(HWND hwnd)
+bool BaseScene::InitializeSet(HWND hwnd)
 {
-	for (auto& v : m_gameObjects)
+	for (auto& v : m_vGameObjects)
 	{
-		for (auto& gameObject : v.second)
-		{
-			if (!gameObject->InitializeSet())
-			{
-				MessageBox(hwnd, L"Could not InitializeSet GameObjects.", L"Error", MB_OK);
-				return false;
-			}
-		}
+		v->InitializeSet();
 	}
+
 	return true;
 }
 
-bool Scene::Initialize(HWND hwnd)
+bool BaseScene::Initialize(HWND hwnd)
 {
-	for (auto& v : m_gameObjects)
+	for (auto& v : m_vGameObjects)
 	{
-		for (auto& gameObject : v.second)
-		{
-			if (!gameObject->Initialize())
-			{
-				MessageBox(hwnd, L"Could not Initialize GameObjects.", L"Error", MB_OK);
-				return false;
-			}
-		}
+		v->Initialize();
 	}
+
+
 	return true;
 }
 
-bool Scene::InitializeRef(HWND hwnd)
+bool BaseScene::InitializeRef(HWND hwnd)
 {
-	for (auto& v : m_gameObjects)
+	for (auto& v : m_vGameObjects)
 	{
-		for (auto& gameObject : v.second)
-		{
-			if (!gameObject->InitializeRef())
-			{
-				MessageBox(hwnd, L"Could not InitializeRef GameObjects.", L"Error", MB_OK);
-				return false;
-			}
-		}
+		v->InitializeRef();
 	}
+
 	return true;
 }
 
-bool Scene::InitializeRender(HWND hwnd)
+bool BaseScene::InitializeRender(HWND hwnd)
 {
 	if (!(m_worldSpaceUIRenderManager->InitializeRender(m_d3d->GetDevice())))
 	{
@@ -252,120 +202,84 @@ bool Scene::InitializeRender(HWND hwnd)
 	return true;
 }
 
-bool Scene::InitializeSynchronization(HWND hwnd)
+bool BaseScene::InitializeSynchronization(HWND hwnd)
 {
-	for (auto& v : m_gameObjects)
+	for (auto& v : m_vGameObjects)
 	{
-		for (auto& gameObject : v.second)
-		{
-			if (!gameObject->InitializeSynchronization())
-			{
-				MessageBox(hwnd, L"Could not InitializeSynchronization GameObjects.", L"Error", MB_OK);
-				return false;
-			}
-		}
+		v->InitializeSynchronization();
 	}
+
 	return true;
 }
 
-bool Scene::PostInitialize(HWND hwnd)
+bool BaseScene::PostInitialize(HWND hwnd)
 {
-	for (auto& v : m_gameObjects)
+	for (auto& v : m_vGameObjects)
 	{
-		for (auto& gameObject : v.second)
-		{
-			if (!gameObject->PostInitialize())
-			{
-				MessageBox(hwnd, L"Could not PostInitialize GameObjects.", L"Error", MB_OK);
-				return false;
-			}
-		}
+		v->PostInitialize();
 	}
+
 	m_sceneState = SceneState::Loaded;
 	return true;
 }
 
-void Scene::CollisionDetection()
+void BaseScene::CollisionDetection()
 {
 	m_collisionDetecter->ProcessCollision();
 }
 
-void Scene::FixedExecute()
+void BaseScene::FixedExecute()
 {
-	for (auto& v : m_gameObjects)
+	for (auto& v : m_vGameObjects)
 	{
-		for (auto& gameObject : v.second)
+		if(v->active) v->FixedExecute();
+	}
+}
+
+void BaseScene::Execute()
+{
+	for (auto& v : m_vGameObjects)
+	{
+		if (v->active) v->Execute();
+	}
+}
+
+void BaseScene::LateExecute()
+{
+	for (auto& v : m_vGameObjects)
+	{
+		if (v->active) v->LateExecute();
+	}
+}
+
+void BaseScene::PostExecute()
+{
+	for (auto& v : m_vGameObjects)
+	{
+		if (v->active) v->PostExecute();
+	}
+	for (int i = (int)m_vGameObjects.size() - 1; i >= 0; i--)
+	{
+		GameObject* obj = m_vGameObjects[i];
+
+		if (obj->isDestroy)
 		{
-			if (gameObject->active)
-			{
-				gameObject->FixedExecute();
-			}
+			obj->ApplyDestroy();
+			delete obj;
+
+			// 벡터에서 제거
+			m_vGameObjects.erase(m_vGameObjects.begin() + i);
 		}
 	}
 }
 
-void Scene::Execute()
+void BaseScene::Shutdown()
 {
-	for (auto& v : m_gameObjects)
+	for (auto& v : m_vGameObjects)
 	{
-		for (auto& gameObject : v.second)
-		{
-			if (gameObject->active) gameObject->Execute();
-		}
+		v->Shutdown();
 	}
-}
-
-void Scene::LateExecute()
-{
-	for (auto& v : m_gameObjects)
-	{
-		for (auto& gameObject : v.second)
-		{
-			if (gameObject->active)
-			{
-				gameObject->LateExecute();
-			}
-		}
-	}
-}
-
-void Scene::PostExecute()
-{
-	for (auto& v : m_gameObjects)
-	{
-		for (auto& gameObject : v.second)
-		{
-			if (gameObject->active)
-			{
-				gameObject->PostExecute();
-			}
-		}
-	}
-	for (auto& v : m_gameObjects)
-	{
-		for (auto gameObject = v.second.end() - 1; gameObject != v.second.begin(); gameObject--)
-		{
-			if ((*gameObject)->isDestroy)
-			{
-				(*gameObject)->ApplyDestroy();
-			}
-		}
-	}
-}
-
-void Scene::Shutdown()
-{
-	for (auto& v : m_gameObjects)
-	{
-		for (auto& gameObject : v.second)
-		{
-			if (gameObject->active)
-			{
-				gameObject->Shutdown();
-			}
-		}
-	}
-	m_gameObjects.clear();
+	m_vGameObjects.clear();
 
 	if (m_cameraManager != 0)
 	{

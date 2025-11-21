@@ -45,7 +45,7 @@ bool BulletManager::InitializeRef()
 
 	bool result = true;
 	m_CurrentShootType = (this->gameObject->GetComponent<Player>()->GetShootType());
-	auto bullets = this->gameObject->Root().FindObjectsWithTag(Tag::NormalBullet);
+	auto bullets = FindObjectsWithTag(Tag::NormalBullet);
 	for (auto& b : bullets)
 	{
 		auto bb = b->GetComponentIncludingBase<BaseBullet>().get();
@@ -56,7 +56,7 @@ bool BulletManager::InitializeRef()
 			continue;
 		}
 	}
-	auto sBullets = this->gameObject->Root().FindObjectsWithTag(Tag::ScopeBullet);
+	auto sBullets = FindObjectsWithTag(Tag::ScopeBullet);
 	for (auto& sb : sBullets)
 	{
 		auto sbb = sb->GetComponentIncludingBase<BaseBullet>().get();
@@ -67,7 +67,7 @@ bool BulletManager::InitializeRef()
 			continue;
 		}
 	}
-	auto aBullets = this->gameObject->Root().FindObjectsWithTag(Tag::ArtilleryBullet);
+	auto aBullets = FindObjectsWithTag(Tag::ArtilleryBullet);
 	for (auto& ab : aBullets)
 	{
 		auto abb = ab->GetComponentIncludingBase<BaseBullet>().get();

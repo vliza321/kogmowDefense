@@ -1,7 +1,7 @@
 #include "Collider.h"
 #include "Collision.h"
 
-#include "Scene.h"
+#include "GameScene.h"
 
 Collider::Collider()
 	:Component()

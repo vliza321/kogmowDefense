@@ -1,7 +1,7 @@
 #include "ObjectClass.h"
 
 ObjectClass::ObjectClass()
-	: Scene(std::string("PlayScene"))
+	: GameScene(std::string("PlayScene"))
 {
 	m_cameraManager = 0;
 	m_lightManager = 0;

@@ -46,11 +46,11 @@ bool LightClass::InitializeRef()
 {
 	if (this->gameObject->tag == Tag::DirectionalLight)
 	{
-		this->gameObject->Root().Find("LightManager")->GetComponent<LightManager>()->SetDirectionalLight(this);
+		Find("LightManager")->GetComponent<LightManager>()->SetDirectionalLight(this);
 	}
 	else
 	{
-		this->gameObject->Root().Find("LightManager")->GetComponent<LightManager>()->AddLight(this);
+		Find("LightManager")->GetComponent<LightManager>()->AddLight(this);
 	}
 	return true;
 }

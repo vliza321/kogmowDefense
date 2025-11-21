@@ -20,7 +20,7 @@ bool FirstPersonCamera::InitializeRef()
 		transform = newTransform;
 	}
 
-	auto player = this->gameObject->root->FindObjectWithTag(Tag::Player);
+	auto player = FindObjectWithTag(Tag::Player);
 	targetTransform = player->GetComponentIncludingBase<Transform>();
 	return true;
 }

@@ -2,7 +2,7 @@
 #include "Collision.h"
 #include "MoveEvent.h"
 
-#include "Scene.h"
+#include "GameScene.h"
 #define epsilon 0.0001f
 
 Transform::Transform()
@@ -12,11 +12,13 @@ Transform::Transform()
 	scale = XMFLOAT3(1, 1, 1);
 	eulerRotation = XMFLOAT3(0, 0, 0);
 
+	prevPosition = XMFLOAT3(0, 0, 0);
 	prevRotation = XMFLOAT3(0, 0, 0);
 	prevScale = XMFLOAT3(1, 1, 1);
 	prevEulerRotation = XMFLOAT3(0, 0, 0);
 
 	WorldMatrix = XMMatrixIdentity();
+	LocalMatrix = XMMatrixIdentity();
 
 	moveVector = XMFLOAT3(0, 0, 0);
 	DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -31,6 +33,7 @@ Transform::Transform()
 	pad6 = 0;
 	pad7 = 0;
 	pad8 = 0;
+	pad9 = 0;
 }
 
 Transform::Transform(XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, XMFLOAT3 eulerRot)
@@ -40,8 +43,6 @@ Transform::Transform(XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, XMFLOAT3 eulerR
 	DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	DefaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	DefaultUp = XMVectorSet(0.0f, 01.0f, 0.0f, 0.0f);
-
-	SetWorldMatrix();
 
 	pad1 = 0;
 	pad2 = 0;
@@ -55,6 +56,12 @@ Transform::Transform(XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, XMFLOAT3 eulerR
 
 Transform::~Transform()
 {
+}
+
+bool Transform::PostInitialize()
+{
+	SetLocalMatrix();
+	return true;
 }
 
 void Transform::Translate(XMFLOAT3 t)
@@ -72,24 +79,49 @@ void Transform::ApplyTranslate(XMFLOAT3 t)
 	position.y += t.y;
 	position.z += t.z;
 
-	SetWorldMatrix();
-
 	moveVector = XMFLOAT3(0, 0, 0);
 }
 
-void Transform::SetWorldMatrix()
+void Transform::SetLocalMatrix()
 {
-	WorldMatrix = XMMatrixScaling(scale.x, scale.y, scale.z)
+	LocalMatrix = XMMatrixScaling(scale.x, scale.y, scale.z)
 		* XMMatrixRotationX(rotation.x)
 		* XMMatrixRotationY(rotation.y)
 		* XMMatrixRotationZ(rotation.z)
 		* XMMatrixRotationRollPitchYaw(eulerRotation.x, eulerRotation.y, eulerRotation.z)
 		* XMMatrixTranslation(position.x, position.y, position.z);
+
+	auto parent = this->gameObject->parent;
+	while (parent != nullptr)
+	{
+		auto pt = parent->GetComponent<Transform>();
+		if (pt != nullptr)
+		{
+			SetWorldMatrix(pt->WorldMatrix);
+			return;
+		}
+		parent = parent->parent;
+	}
+	SetWorldMatrix(XMMatrixIdentity());
+}
+
+void Transform::SetWorldMatrix(XMMATRIX parentWorldMatrix)
+{
+	WorldMatrix = LocalMatrix * parentWorldMatrix;
+	vector<shared_ptr<Transform>> allTransform = this->gameObject->GetComponentsInChild<Transform>(false);
+	for (auto& at : allTransform)
+	{
+		at->SetWorldMatrix(WorldMatrix);
+	}
 }
 
 void Transform::PostExecute()
 {
-	
+	bool positionChanged = 
+		fabs(position.x - prevPosition.x) > epsilon ||
+		fabs(position.y - prevPosition.y) > epsilon ||
+		fabs(position.z - prevPosition.z) > epsilon;
+
 	bool rotationChanged =
 		fabs(rotation.x - prevRotation.x) > epsilon ||
 		fabs(rotation.y - prevRotation.y) > epsilon ||
@@ -105,8 +137,9 @@ void Transform::PostExecute()
 		fabs(eulerRotation.y - prevEulerRotation.y) > epsilon ||
 		fabs(eulerRotation.z - prevEulerRotation.z) > epsilon;
 
-	if (rotationChanged || scaleChanged || eulerChanged) {
-		SetWorldMatrix();
+	if (positionChanged || rotationChanged || scaleChanged || eulerChanged) {
+		SetLocalMatrix();
+		prevPosition = position;
 		prevRotation = rotation;
 		prevScale = scale;
 		prevEulerRotation = eulerRotation;

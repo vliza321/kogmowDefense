@@ -1,6 +1,6 @@
 #include "CanvasRenderer.h"
 #include "CanvasRenderManager.h"
-#include "Scene.h"
+#include "GameScene.h"
 
 
 CanvasRenderer::CanvasRenderer(const WCHAR* TextureFilename, XMFLOAT4 PanelRect)

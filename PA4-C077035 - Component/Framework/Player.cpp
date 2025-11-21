@@ -46,8 +46,8 @@ bool Player::InitializeRef()
 		this->gameObject->AddComponent(newTransform);
 		transform = newTransform;
 	}
-	m_cameraManager = gameObject->Root().Find("CameraManager")->GetComponent<CameraManager>();
-	m_uiCanvasManager = gameObject->Root().Find("Canvas")->GetComponent<Canvas>();
+	m_cameraManager = Find("CameraManager")->GetComponent<CameraManager>();
+	m_uiCanvasManager = Find("Canvas")->GetComponent<Canvas>();
 	m_bulletManager = gameObject->GetComponent<BulletManager>();
 	return true;
 }

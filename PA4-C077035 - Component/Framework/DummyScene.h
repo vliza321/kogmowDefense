@@ -1,9 +1,10 @@
 #pragma once
-#include "Scene.h"
-class DummyScene : public Scene
+#include "GameScene.h"
+
+class DummyScene : public GameScene
 {
 public:
-	DummyScene() : Scene("Dummy")
+	DummyScene() : GameScene("Dummy")
 	{
 		
 	}

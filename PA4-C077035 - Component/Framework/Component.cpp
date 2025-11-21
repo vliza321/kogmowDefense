@@ -1,4 +1,5 @@
 #include "Component.h"
+#include "GameScene.h"
 #include "SceneManager.h"
 
 Component::Component()
@@ -99,4 +100,20 @@ void Component::OnDisable()
 SceneManager& Component::SceneManager() const
 {
 	return SceneManager::GetInstance();
+}
+
+
+GameObject* Component::Find(const string& name)
+{
+	return gameObject->root->Find(name);
+}
+
+GameObject* Component::FindObjectWithTag(Tag tag)
+{
+	return gameObject->root->FindObjectWithTag(tag);
+}
+
+vector<GameObject*> Component::FindObjectsWithTag(Tag tag)
+{
+	return gameObject->root->FindObjectsWithTag(tag);
 }

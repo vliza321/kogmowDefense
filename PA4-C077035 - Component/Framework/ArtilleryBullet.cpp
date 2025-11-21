@@ -38,7 +38,7 @@ bool ArtilleryBullet::InitializeRef()
 		transform = newTransform;
 	}
 
-	targetTransform = this->gameObject->root->FindObjectWithTag(Tag::Player)->GetComponent<Transform>();
+	targetTransform = FindObjectWithTag(Tag::Player)->GetComponent<Transform>();
 
 	m_collider = this->gameObject->GetComponentIncludingBase<Collider>();
 	return true;

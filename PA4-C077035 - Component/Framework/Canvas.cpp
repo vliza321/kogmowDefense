@@ -1,4 +1,4 @@
-#include "Scene.h"
+#include "GameScene.h"
 #include "Canvas.h"
 
 Canvas::Canvas()

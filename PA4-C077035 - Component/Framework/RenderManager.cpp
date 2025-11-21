@@ -1,6 +1,6 @@
 #include "RenderManager.h"
 #include "Renderer.h"
-#include "Scene.h"
+#include "GameScene.h"
 
 RenderManager::RenderManager()
 {
