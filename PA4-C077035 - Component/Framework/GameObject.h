@@ -60,6 +60,9 @@ public:
 	GameScene* root;
 
 private:
+	unsigned int id;
+
+private:
 	unordered_map<type_index, deque<shared_ptr<Component>>>components;
 
 public:
@@ -79,6 +82,9 @@ public:
 	std::shared_ptr<T> GetComponent();
 
 	template<typename T>
+	std::vector<std::shared_ptr<T>> GetComponents();
+
+	template<typename T>
 	std::shared_ptr<T> GetComponentIncludingBase();
 
 	template<typename T>
@@ -91,7 +97,11 @@ public:
 	std::vector<shared_ptr<T>> GetComponentsInChild(bool includeSelf);
 
 	template<typename T>
-	std::vector<std::shared_ptr<T>> GetComponents();
+	std::vector<std::shared_ptr<T>> GetComponentsIncludingBase();
+
+	template<typename T>
+	std::vector<shared_ptr<T>> GetComponentsInChildIncludingBase(bool includeSelf);
+
 
 public:
 	bool CompareTag(Tag Tag) const
@@ -106,6 +116,16 @@ public:
 	GameScene& Root() const
 	{
 		return *root;
+	}
+
+	void SetObjectID(unsigned int objid)
+	{
+		this->id = objid;
+	}
+
+	int GetObjectID()
+	{
+		return id;
 	}
 
 	void Destroy();
@@ -210,8 +230,8 @@ void GameObject::AddComponent(Args && ...args)
 	}
 	components[typeid(T)].push_back(ptr);
 	ptr->gameObject = this;
-}
 
+}
 
 template<typename T>
 std::shared_ptr<T> GameObject::GetComponent()
@@ -330,4 +350,48 @@ vector<shared_ptr<T>> GameObject::GetComponentsInChild(bool includeSelf)
 	return result;
 }
 
+/*=====================================================================================*/
+
+template<typename T>
+std::vector<std::shared_ptr<T>> GameObject::GetComponentsIncludingBase()
+{
+	std::vector<std::shared_ptr<T>> result;
+
+	for (auto it = components.begin(); it != components.end(); ++it)
+	{
+		auto& componentDeque = it->second;
+
+		for (const auto& component : componentDeque)
+		{
+			auto casted = std::dynamic_pointer_cast<T>(component);
+			if (casted) result.push_back(casted);
+		}
+	}
+	return result;
+}
+
+template<typename T>
+vector<shared_ptr<T>> GameObject::GetComponentsInChildIncludingBase(bool includeSelf)
+{
+	std::vector<std::shared_ptr<T>> result;
+
+	// 나 자신을 포함해 찾는다면 시작하는 게임 오브젝트도 서칭
+	if (includeSelf)
+	{
+		auto comps = GetComponentsIncludingBase<T>();
+		result.insert(result.end(), comps.begin(), comps.end());
+	}
+
+	// 아무튼 리턴 못했으면 자식을 서칭(DFS) : 자식은 무조건 자신을 봐야하기에 true
+	for (const auto& c : child)
+	{
+		auto comps = c->GetComponentsInChildIncludingBase<T>(true);
+		if (!comps.empty())
+		{
+			result.insert(result.end(), comps.begin(), comps.end());
+		}
+	}
+
+	return result;
+}
 #endif

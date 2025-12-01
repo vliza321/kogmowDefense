@@ -41,12 +41,12 @@ bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, Came
     viewMatrix = mainCamera->GetViewMatrix();
     D3D->GetProjectionMatrix(projectionMatrix);
 
-    auto ct = mainCamera->gameObject->GetComponentIncludingBase<Transform>().get();
+    auto cameraPosition = mainCamera->GetPosition();
 
     for (auto& renderer : renderers) {
         if (renderer->gameObject->active)
         {
-            auto RenderTransform = renderer->gameObject->GetComponentIncludingBase<Transform>().get();
+            auto RenderTransform = renderer->gameObject->GetComponent<Transform>().get();
             if (!RenderTransform) break;
 
             worldMatrix = RenderTransform->WorldMatrix;
@@ -57,7 +57,7 @@ bool RenderManager::RenderAll(LightShaderClass* LightShader, D3DClass* D3D, Came
                 worldMatrix, viewMatrix, projectionMatrix,
                 renderer->GetModelTextureArray(),
                 lightManager->GetDirectionalLight()->direction, lightManager->GetDirectionalLight()->ambientColor, lightManager->GetDirectionalLight()->diffuseColor,
-                ct->position,
+                cameraPosition,
                 lightManager->GetDirectionalLight()->specularColor, lightManager->GetDirectionalLight()->specularPower,
                 lightDiffuserColor,lightPosition);
 

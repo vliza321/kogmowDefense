@@ -97,11 +97,6 @@ void Component::OnDisable()
 
 }
 
-SceneManager& Component::SceneManager() const
-{
-	return SceneManager::GetInstance();
-}
-
 
 GameObject* Component::Find(const string& name)
 {

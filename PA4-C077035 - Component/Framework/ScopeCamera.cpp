@@ -44,7 +44,7 @@ bool ScopeCamera::PostInitialize()
 
 void ScopeCamera::SetCameraInfo()
 {
-	transform = targetTransform;
+	//transform = targetTransform;
 }
 
 void ScopeCamera::Execute()
@@ -54,17 +54,19 @@ void ScopeCamera::Execute()
 	XMVECTOR CameraOffSet = XMVectorSet(0, 0.75f, 2.50f, 0);
 
 	//회전 행렬 계산
-	camRotationMatrix = XMMatrixRotationRollPitchYaw(tf->eulerRotation.x, tf->eulerRotation.y, 0);
+	camRotationMatrix = XMMatrixRotationRollPitchYaw(target->eulerRotation.x, target->eulerRotation.y, 0);
 
 	//카메라 위치 계산
-	position = XMLoadFloat3(&tf->position);
+	position = XMLoadFloat3(&target->position);
 
 	position += XMVector3TransformCoord(CameraOffSet, camRotationMatrix);
+
+	XMStoreFloat3(&tf->position, position);
 
 	//바라볼 좌표 계산
 	camForward = XMVector3TransformCoord(DefaultForward, camRotationMatrix);
 
-	lookAt = XMLoadFloat3(&tf->position);
+	lookAt = XMLoadFloat3(&target->position);
 
 	lookAt += 5 * camForward;
 

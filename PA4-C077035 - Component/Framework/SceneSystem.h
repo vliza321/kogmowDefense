@@ -17,6 +17,13 @@ public:
 	virtual ~SceneSystem();
 
 protected:
+	unordered_map<int, shared_ptr<BaseScene>> m_sceneMap;
+	shared_ptr<BaseScene> m_currentScene;
+	shared_ptr<BaseScene> m_waitingScene;
+private:
+	shared_ptr<BaseScene> m_dummyScene;
+	queue<int> m_shutdownQueue;
+
 	HWND m_hwnd;
 	int m_screenWidth;
 	int m_screenHeight;
@@ -25,18 +32,13 @@ protected:
 	TextureShaderClass* m_textureShader;
 	LightShaderClass* m_lightShader;
 
-	unordered_map<int, shared_ptr<BaseScene>> m_sceneMap;
-	shared_ptr<BaseScene> m_currentScene;
-	shared_ptr<BaseScene> m_waitingScene;
-	shared_ptr<BaseScene> m_dummyScene;
-	queue<shared_ptr<BaseScene>> m_shutdownQueue;
-
-protected:
+private:
 	bool AddScene(int, const std::shared_ptr<BaseScene>& scene);
 	bool SceneLoader(shared_ptr<BaseScene>&);
 
+protected:
 	bool SceneStart(shared_ptr<BaseScene>&);
-	bool SceneLoad(shared_ptr<BaseScene>& scene);
+	bool SceneLoad(shared_ptr<BaseScene>&);
 
 private:
 	ThreadPool* m_threadPool;
@@ -67,6 +69,7 @@ public:
 	bool Render();
 	bool LightRender();
 	bool UIRender();
+	void PrevRender();
 };
 
 #endif 

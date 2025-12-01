@@ -3,7 +3,7 @@
 
 CameraManager::CameraManager()
 {
-	m_CurrentCameraType = ShootType::Debug;
+	m_currentCameraType = ShootType::FPC;
 }
 
 CameraManager::~CameraManager()
@@ -13,94 +13,101 @@ CameraManager::~CameraManager()
 
 bool CameraManager::InitializeSet()
 {
-	m_CameraMapSet[ShootType::Debug] = new BaseCamera();
-	m_CameraMapSet[ShootType::TPC] = new ThirdPersonCamera();
-	m_CameraMapSet[ShootType::FPC] = new FirstPersonCamera();
-	m_CameraMapSet[ShootType::Scope] = new ScopeCamera();
-	m_CameraMapSet[ShootType::Artillery] = new ArtilleryCamera();
-
-	m_CameraMapSet[ShootType::Debug]->gameObject = this->gameObject;
-	m_CameraMapSet[ShootType::TPC]->gameObject = this->gameObject;
-	m_CameraMapSet[ShootType::FPC]->gameObject = this->gameObject;
-	m_CameraMapSet[ShootType::Scope]->gameObject = this->gameObject;
-	m_CameraMapSet[ShootType::Artillery]->gameObject = this->gameObject;
+	m_cameraMapSet.clear();
 	return true;
 }
 
 bool CameraManager::Initialize()
 {
-	if (!m_CameraMapSet[ShootType::Debug]->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::TPC]->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::FPC]->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::Scope]->Initialize()) return false;
-	if (!m_CameraMapSet[ShootType::Artillery]->Initialize()) return false;
 	return true;
 }
 
 bool CameraManager::InitializeRef()
 {
-	if (!m_CameraMapSet[ShootType::Debug]->InitializeRef()) return false;
-	if (!m_CameraMapSet[ShootType::TPC]->InitializeRef()) return false;
-	if (!m_CameraMapSet[ShootType::FPC]->InitializeRef()) return false;
-	if (!m_CameraMapSet[ShootType::Scope]->InitializeRef()) return false;
-	if (!m_CameraMapSet[ShootType::Artillery]->InitializeRef()) return false;
-	if (!m_CameraMapSet[ShootType::Artillery]->InitializeRef()) return false;
+	auto tpc = GetComponent<ThirdPersonCamera>().get();
+	if (tpc)
+	{
+		m_cameraMapSet[ShootType::TPC] = tpc;
+	}
 
+	auto fpc = GetComponent<FirstPersonCamera>().get();
+	if (fpc)
+	{
+		m_cameraMapSet[ShootType::FPC] = fpc;
+	}
+
+	auto sc = GetComponent<ScopeCamera>().get();
+	if (sc)
+	{
+		m_cameraMapSet[ShootType::Scope] = sc;
+	}
+
+	auto ac = GetComponent<ArtilleryCamera>().get();
+	if (ac)
+	{
+		m_cameraMapSet[ShootType::Artillery] = ac;
+	}
 	return true;
 }
 
 bool CameraManager::InitializeSynchronization()
 {
+	for (auto cms : m_cameraMapSet)
+	{
+		cms.second->active = false;
+	}
 	return true;
 }
 
 bool CameraManager::PostInitialize()
 {
+	SetCamera(ShootType::TPC);
 	return true;
 }
 
 void CameraManager::Execute()
 {
-	m_CameraMapSet[m_CurrentCameraType]->Execute();
+	m_cameraMapSet[m_currentCameraType]->Execute();
 }
 
 bool CameraManager::Shutdown()
 {
-	m_CameraMapSet[ShootType::TPC]->Shutdown();
-	m_CameraMapSet[ShootType::FPC]->Shutdown();
-	m_CameraMapSet[ShootType::Scope]->Shutdown();
-	m_CameraMapSet[ShootType::Artillery]->Shutdown();
-	m_CameraMapSet[ShootType::Debug]->Shutdown();
-
-	m_CameraMapSet.clear();
+	for (auto cms : m_cameraMapSet)
+	{
+		cms.second->Shutdown();
+	}
+	m_cameraMapSet.clear();
 	return true;
-}
-
-void CameraManager::SetCameraInfo()
-{
-	m_CameraMapSet[m_CurrentCameraType]->SetCameraInfo();
 }
 
 void CameraManager::SetCamera(ShootType type)
 {
-	if (m_CurrentCameraType == type) return;
+	if (m_currentCameraType == type) return;
 
-	m_CameraMapSet[m_CurrentCameraType]->CameraEnd();
-	m_CurrentCameraType = type;
-	m_CameraMapSet[m_CurrentCameraType]->CameraStart();
+	if (m_cameraMapSet[m_currentCameraType] != nullptr)
+	{
+		m_cameraMapSet[m_currentCameraType]->CameraEnd();
+		m_cameraMapSet[m_currentCameraType]->active = false;
+	}
+	m_currentCameraType = type;
+	if (m_cameraMapSet[m_currentCameraType] != nullptr)
+	{
+		m_cameraMapSet[m_currentCameraType]->CameraStart();
+		m_cameraMapSet[m_currentCameraType]->active = true;
+	}
 }
 
 XMMATRIX CameraManager::GetViewMatrix()
 {
-	return  m_CameraMapSet[m_CurrentCameraType]->GetViewMatrix();
+	return  m_cameraMapSet[m_currentCameraType]->GetViewMatrix();
 }
 
 XMVECTOR CameraManager::GetLookAt()
 {
-	return m_CameraMapSet[m_CurrentCameraType]->GetLookAt();
+	return m_cameraMapSet[m_currentCameraType]->GetLookAt();
 }
 
 CameraObject* CameraManager::GetCamera()
 {
-	return m_CameraMapSet[m_CurrentCameraType];
+	return m_cameraMapSet[m_currentCameraType];
 }

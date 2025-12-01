@@ -46,20 +46,28 @@ bool Player::InitializeRef()
 		this->gameObject->AddComponent(newTransform);
 		transform = newTransform;
 	}
-	m_cameraManager = Find("CameraManager")->GetComponent<CameraManager>();
-	m_uiCanvasManager = Find("Canvas")->GetComponent<Canvas>();
+	auto cm = Find("CameraManager");
+	if (cm != nullptr)
+	{
+		m_cameraManager = cm->GetComponent<CameraManager>();
+	}
+	auto um = Find("Canvas");
+	if (um != nullptr)
+	{
+		m_uiCanvasManager = um->GetComponent<Canvas>();
+	}
 	m_bulletManager = gameObject->GetComponent<BulletManager>();
 	return true;
 }
 
 bool Player::InitializeSynchronization()
 {
-	SetPov(ShootType::TPC);
 	return true;
 }
 
 bool Player::PostInitialize()
 {
+	SetPov(ShootType::TPC);
 	return true;
 }
 
@@ -106,13 +114,8 @@ void Player::Execute()
 {
 	auto tf = transform.lock();
 	auto& input = Input();
-	auto& sceneManager = SceneManager();
 	auto cm = m_cameraManager.lock();
-	if (input.IsKey(DIK_0))
-	{
-		if(!sceneManager.StartScene(1))
-			m_moveBackForward = 1;
-	}
+
 	if (input.IsKey(DIK_W))
 	{
 		m_moveBackForward = 1;
@@ -160,10 +163,6 @@ void Player::Execute()
 
 	if (canChangePov)
 	{
-		if (input.IsKeyDown(DIK_B))
-		{
-			SetPov(ShootType::Debug);
-		}
 		if (input.IsKeyDown(DIK_V))
 		{
 			if (m_currentShootType != ShootType::TPC)

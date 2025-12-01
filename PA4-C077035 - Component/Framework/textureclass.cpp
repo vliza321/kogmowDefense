@@ -100,7 +100,7 @@ bool TextureClass::Initialize(ID3D11Device* device, const WCHAR* filename)
 	result = CreateDDSTextureFromFile(device, BumpFilename.c_str(), nullptr, &m_textures[5]);
 	if (FAILED(result))
 	{
-		result = CreateDDSTextureFromFile(device, L"./data/Default.dds", nullptr, &m_textures[5]);
+		result = CreateDDSTextureFromFile(device, L"./data/DefaultBumpMap.dds", nullptr, &m_textures[5]);
 		if (FAILED(result)) return false;
 	}
 

@@ -1,7 +1,6 @@
 #include "BaseCamera.h"
 #include "ObjectClass.h"
 #include "GameObject.h"
-#include "Transform.h"
 
 BaseCamera::BaseCamera()
 	: CameraObject()
@@ -12,45 +11,24 @@ BaseCamera::~BaseCamera()
 {
 }
 
-bool BaseCamera::InitializeRef()
+bool BaseCamera::Initialize()
 {
-	transform = this->gameObject->GetComponentIncludingBase<Transform>();
-	auto tf = transform.lock();
-	if (tf == nullptr)
-	{
-		auto newTransform = std::make_shared<Transform>(XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT3(1,1,1), XMFLOAT3(0,0,0));
-		this->gameObject->AddComponent(newTransform);
-		transform = newTransform;
-	}
-
-	auto player = FindObjectWithTag(Tag::Player);
-	targetTransform = player->GetComponentIncludingBase<Transform>();
-
+	lookAt = XMVectorSet(0, 0, 0, 0);
+	position = XMVectorSet(0, 0, 0, 0);
+	m_viewMatrix = XMMatrixLookAtLH(position, lookAt, DefaultUp);
 	return true;
 }
 
 bool BaseCamera::PostInitialize()
 {
-	auto l_transform = transform.lock();
-	if (!l_transform) {
-		std::cerr << "Transform no longer exists!\n";
-		return false;
-	}
-	lookAt = XMVectorSet(0, 0, 0, 0);
-	position = XMLoadFloat3(&l_transform->position);
+	lookAt = XMVectorSet(10, 4, 0, 0);
+	position = XMVectorSet(0, 8, 0, 0);
 	m_viewMatrix = XMMatrixLookAtLH(position, lookAt, DefaultUp);
 	return true;
 }
 
 void BaseCamera::Execute()
 {
-	auto l_transform = transform.lock();
-	if (!l_transform) {
-		return ;
-	}
-	lookAt = XMVectorSet(0, 0, 0, 0);
-	position = XMLoadFloat3(&l_transform->position);
-	m_viewMatrix = XMMatrixLookAtLH(position, lookAt, DefaultUp);
 }
 
 void BaseCamera::SetCameraInfo()

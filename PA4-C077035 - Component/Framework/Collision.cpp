@@ -21,6 +21,10 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 {
 	auto MoveEventTransform = moveEvent->transform;
 	if (!MoveEventTransform) return nullptr;
+	
+	//이벤트가 발생한 오브젝트의 transform 중 position 정보 받아오기
+	XMVECTOR sphereCenter = XMVector4Transform(XMVectorSet(0, 0, 0, 1), MoveEventTransform->WorldMatrix) + XMLoadFloat3(&moveEvent->MoveVector);
+
 	float dist;
 	float dist2;
 	for (auto& other : m_sphereCollider)
@@ -30,14 +34,13 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
 		if (!targetTransform) continue;
 
-		XMVECTOR posA = XMLoadFloat3(&MoveEventTransform->position);
-		XMVECTOR posB = XMLoadFloat3(&targetTransform->position);
+		XMVECTOR posB = XMVector4Transform(XMVectorSet(0,0,0,1), targetTransform->WorldMatrix);
 
 		// 방향 벡터
-		XMVECTOR dir = posB - posA;
+		XMVECTOR dir = posB - sphereCenter;
 
 		// 실제 거리
-		dist = XMVectorGetX(posA - posB) * XMVectorGetX(posA - posB) + XMVectorGetY(posA - posB) * XMVectorGetY(posA - posB) + XMVectorGetZ(posA - posB) * XMVectorGetZ(posA - posB);
+		dist = XMVectorGetX(sphereCenter - posB) * XMVectorGetX(sphereCenter - posB) + XMVectorGetY(sphereCenter - posB) * XMVectorGetY(sphereCenter - posB) + XMVectorGetZ(sphereCenter - posB) * XMVectorGetZ(sphereCenter - posB);
 		dist2 = moveEventCollider->radius + other->radius;
 		dist2 = dist2 * dist2;
 		if (dist < dist2)
@@ -65,17 +68,15 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 	}
 	for (auto& other : m_boxCollider)
 	{
-		auto targetTransform = other->gameObject->GetComponentIncludingBase<Transform>().get();
+		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
 		if (!targetTransform || !other->active) continue;
 
-		//이벤트가 발생한 오브젝트의 transform 중 position 정보 받아오기
-		XMVECTOR sphereCenter = XMLoadFloat3(&MoveEventTransform->position) + XMLoadFloat3(&moveEvent->MoveVector);
-		//박스 콜라이더의 transform 중 position 정보 받아오기
+		//박스 콜라이더의 transform 중 position 정보 받아오기 => 이거 자체는 박스 콜라이더에 바인딩된 좌표, 실제 transform정보가 아님
 		XMVECTOR boxCenter = XMLoadFloat3(&other->Box.pos);
 		//두 중점을 잇는 벡터
 		XMVECTOR d = XMVectorSubtract(sphereCenter, boxCenter);
 
-		float dist = 0.0f;
+		dist = 0.0f;
 		XMVECTOR closest = boxCenter;
 
 		//박스 콜라이더의 수직벡터 가져오기
@@ -123,16 +124,17 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 {
 	auto MoveEventTransform = moveEvent->transform;
 	if (!MoveEventTransform) return nullptr;
+	
+	// DirectXMath 벡터 변환
+	XMVECTOR origin = XMVector4Transform(XMVectorSet(0, 0, 0, 1), MoveEventTransform->WorldMatrix);// Ray 시작점
+	XMVECTOR dir = XMLoadFloat3(&moveEvent->MoveVector);// Ray 방향 (정규화)
 
 	for (auto& other : m_sphereCollider)
 	{
-		auto targetTransform = other->gameObject->GetComponentIncludingBase<Transform>().get();
+		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
 		if (!targetTransform || !other->active) continue;
 
-		// DirectXMath 벡터 변환
-		XMVECTOR origin = XMLoadFloat3(&MoveEventTransform->position);// Ray 시작점
-		XMVECTOR dir = XMLoadFloat3(&MoveEventTransform->moveVector);// Ray 방향 (정규화)
-		XMVECTOR sphereCenter = XMLoadFloat3(&targetTransform->position);// Sphere 중심
+		XMVECTOR sphereCenter = XMVector4Transform(XMVectorSet(0, 0, 0, 1), targetTransform->WorldMatrix);// Sphere 중심
 
 		// Ray 시작점에서 Sphere 중심까지의 벡터
 		XMVECTOR length = XMVectorSubtract(sphereCenter, origin);
@@ -162,17 +164,13 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 	for (auto& other : m_boxCollider)
 	{
 		bool hit = true;
-		auto targetTransform = other->gameObject->GetComponentIncludingBase<Transform>().get();
+		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
 		if (!targetTransform || !other->active) continue;
 
 		constexpr float EPSILON = 1e-6f;
 
-		//ray의 시작점
-		XMVECTOR origin = XMLoadFloat3(&MoveEventTransform->position);
-		//ray의 방향벡터
-		XMVECTOR dir = XMVector3Normalize(XMLoadFloat3(&MoveEventTransform->moveVector));
 		//ray의 방향벡터의 크기
-		float length = XMVectorGetX(XMVector3Length(XMLoadFloat3(&MoveEventTransform->moveVector)));
+		float length = XMVectorGetX(XMVector3Length(XMLoadFloat3(&moveEvent->MoveVector)));
 		//box 콜라이더의 중점
 		XMVECTOR boxCenter = XMLoadFloat3(&other->Box.pos);
 

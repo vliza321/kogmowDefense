@@ -7,7 +7,7 @@
 GraphicsClass::GraphicsClass()
 {
 	m_Input = 0;
-	m_sceneManager = 0;
+	m_sceneConverter = 0;
 
 	m_d3d = 0;
 	m_textureShader = 0;
@@ -76,15 +76,20 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	
-	m_sceneManager = &SceneManager::GetInstance();
-	result = m_sceneManager->Initialize(screenWidth, screenHeight, hwnd, m_d3d,m_lightShader,m_textureShader);
+	m_sceneConverter = &SceneManager::GetInstance();
+	result = m_sceneConverter->Initialize(
+		screenWidth, screenHeight, hwnd,
+		m_d3d, m_lightShader,m_textureShader);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the SceneManager object.", L"Error", MB_OK);
+		MessageBox(
+			hwnd, 
+			L"Could not initialize the SceneManager object.",
+			L"Error",
+			MB_OK);
 		return false;
 	}
 
-	SceneManager::GetInstance().StartScene(0);
 	return true;
 }
 
@@ -117,13 +122,15 @@ void GraphicsClass::Shutdown()
 bool GraphicsClass::Frame()
 {
 	bool result = true;
+
 	TimerClass::GetInstance().Execute();
-	m_sceneManager->SceneChange();
-	m_sceneManager->FixedExecute();
-	m_sceneManager->CollisionDetection();
-	m_sceneManager->Execute();
-	m_sceneManager->LateExecute();
-	m_sceneManager->PostExecute();
+
+	m_sceneConverter->SceneChange();
+	m_sceneConverter->FixedExecute();
+	m_sceneConverter->CollisionDetection();
+	m_sceneConverter->Execute();
+	m_sceneConverter->LateExecute();
+	m_sceneConverter->PostExecute();
 
 	result = Render();
 	if (!result)
@@ -136,6 +143,8 @@ bool GraphicsClass::Frame()
 bool GraphicsClass::Render()
 {
 	bool result = true;
+	
+	m_sceneConverter->PrevRender();
 
 	// Clear the buffers to begin the scene.
 	m_d3d->BeginScene(0.0f, 0.0f, 0.0f, 0.0f);
@@ -144,8 +153,8 @@ bool GraphicsClass::Render()
 	m_d3d->TurnOffAlphaBlending();
 	m_d3d->TurnOnCullBackMode();
 
-	result = m_sceneManager->LightRender();
-	result = m_sceneManager->Render();
+	result = m_sceneConverter->LightRender();
+	result = m_sceneConverter->Render();
 	if (!result)
 	{
 		return false;
@@ -154,7 +163,7 @@ bool GraphicsClass::Render()
 	m_d3d->TurnOnAlphaBlending();
 	m_d3d->TurnOnCullNoneMode();
 
-	result = m_sceneManager->WorldSpaceUIRender();
+	result = m_sceneConverter->WorldSpaceUIRender();
 	if (!result)
 	{
 		return false;
@@ -163,7 +172,7 @@ bool GraphicsClass::Render()
 	m_d3d->TurnZBufferOff();
 	m_d3d->TurnOnCullNoneMode();
 
-	result = m_sceneManager->UIRender();
+	result = m_sceneConverter->UIRender();
 	if (!result)
 	{
 		return false;

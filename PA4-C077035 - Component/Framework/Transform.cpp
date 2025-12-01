@@ -37,12 +37,15 @@ Transform::Transform()
 }
 
 Transform::Transform(XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, XMFLOAT3 eulerRot)
-	:position(pos), rotation(rot), scale(scale), eulerRotation(eulerRot), prevRotation(rot), prevEulerRotation(eulerRot), prevScale(scale)
+	:position(pos), rotation(rot), scale(scale), eulerRotation(eulerRot), prevRotation(rot), prevEulerRotation(eulerRot), prevScale(scale), prevPosition(pos)
 {
 	moveVector = XMFLOAT3(0, 0, 0);
 	DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	DefaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	DefaultUp = XMVectorSet(0.0f, 01.0f, 0.0f, 0.0f);
+
+	WorldMatrix = XMMatrixIdentity();
+	LocalMatrix = XMMatrixIdentity();
 
 	pad1 = 0;
 	pad2 = 0;
@@ -52,6 +55,7 @@ Transform::Transform(XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, XMFLOAT3 eulerR
 	pad6 = 0;
 	pad7 = 0;
 	pad8 = 0;
+	pad9 = 0;
 }
 
 Transform::~Transform()
@@ -66,7 +70,6 @@ bool Transform::PostInitialize()
 
 void Transform::Translate(XMFLOAT3 t)
 {
-	moveVector = t;
 	MoveEvent* moveEvent = new MoveEvent;
 	moveEvent->transform = this;
 	moveEvent->MoveVector = t;
@@ -79,7 +82,7 @@ void Transform::ApplyTranslate(XMFLOAT3 t)
 	position.y += t.y;
 	position.z += t.z;
 
-	moveVector = XMFLOAT3(0, 0, 0);
+	SetLocalMatrix();
 }
 
 void Transform::SetLocalMatrix()
@@ -90,6 +93,11 @@ void Transform::SetLocalMatrix()
 		* XMMatrixRotationZ(rotation.z)
 		* XMMatrixRotationRollPitchYaw(eulerRotation.x, eulerRotation.y, eulerRotation.z)
 		* XMMatrixTranslation(position.x, position.y, position.z);
+
+	prevPosition = position;
+	prevRotation = rotation;
+	prevScale = scale;
+	prevEulerRotation = eulerRotation;
 
 	auto parent = this->gameObject->parent;
 	while (parent != nullptr)

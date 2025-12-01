@@ -104,6 +104,7 @@ PixelInputType LightVertexShader(VertexInputType input)
     output.normal = mul(input.normal, (float3x3)worldMatrix);
     output.normal = normalize(output.normal);
 
+    
     // 월드 행렬에 대해서만 접선 벡터를 계산 한 다음 최종 값을 정규화합니다.
     output.tangent = mul(input.tangent, (float3x3) worldMatrix);
     output.tangent = normalize(output.tangent);
@@ -111,7 +112,6 @@ PixelInputType LightVertexShader(VertexInputType input)
     // 세계 행렬에 대해서만 비 유효 벡터를 계산 한 다음 최종 값을 정규화합니다.
     output.binormal = mul(input.binormal, (float3x3) worldMatrix);
     output.binormal = normalize(output.binormal);
-    
     
 
     // Determine the viewing direction based on the position of the camera and the position of the vertex in the world.
@@ -167,19 +167,21 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
     // Initialize the specular color.
     specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-    bumpColor = ((bumpColor * 2.0f) - 1.0f) * 0.5f;
+    
+    //[-1,1]
+    bumpColor = ((float4(0, 0, 0, 0) * 2.0f) - 1.0f);
     
     bumpNormal = (bumpColor.x * input.tangent) + (bumpColor.y * input.binormal) + (bumpColor.z * input.normal);
     
-    bumpNormal = normalize(bumpNormal);
+    input.normal = normalize(-1 * bumpNormal);
+    
+
     
     // Invert the light direction for calculations.
     lightDir = -lightDirection;
 
     // Calculate the amount of light on this pixel.
     lightIntensity = dot(lightDir, input.normal);
-    //lightIntensity = saturate(dot(lightDir, bumpNormal));
     
     inputPLDir[0] = input.lightDir0;
     inputPLDir[1] = input.lightDir1;
@@ -196,20 +198,18 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     for (int i = 0; i < 8; ++i)
     {
         PLD[i] = dot(inputPLDir[i], inputPLDir[i]);
-        PLC[i] = diffuseColor[i] / (PLD[i] * 2.0f + 0.5f);
-        //PLI[i] = max(dot(normalize(inputPLDir[i]), bumpNormal), 0.0f);
+        PLC[i] = diffuseColor[i] / (PLD[i] * 2.0f + 0.35f);
         PLI[i] = max(dot(normalize(inputPLDir[i]), input.normal), 0.0f);
         PLC[i] = saturate(PLC[i] * PLI[i]);
         
         pointLightColor += PLC[i];
         
-        //PLR[i] = normalize(2 * PLI[i] * bumpNormal - inputPLDir[i]);
         PLR[i] = normalize(2 * PLI[i] * input.normal - inputPLDir[i]);
-        PLS[i] = PLC[i] * pow(saturate(dot(PLR[i], input.viewDirection)), specularPower / 2);
+        PLS[i] = PLC[i] * pow(saturate(dot(PLR[i], input.viewDirection)), specularPower / 4);
         pointLightSpecular += PLS[i];
     }
     
-    float4 minColor = float4(0.1f, 0.1f, 0.1f, 0.1f) * 5;
+    float4 minColor = float4(0.1f, 0.1f, 0.1f, 0.1f) * 4;
     color = ambientColor + minColor;
     
     if (lightIntensity > 0.0f)
@@ -221,7 +221,6 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         color = saturate(color);
 
         // Calculate the reflection vector based on the light intensity, normal vector, and light direction.
-        //reflection = normalize(2 * lightIntensity * bumpNormal - lightDir);
         reflection = normalize(2 * lightIntensity * input.normal - lightDir);
 
         // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
@@ -241,5 +240,5 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     // Add the specular component last to the output color.
     color = saturate(color + specular + pointLightSpecular);
     
-    return color;
+    return color ;
 }

@@ -3,8 +3,6 @@
 ObjectClass::ObjectClass()
 	: GameScene(std::string("PlayScene"))
 {
-	m_cameraManager = 0;
-	m_lightManager = 0;
 }
 
 ObjectClass::~ObjectClass()
@@ -12,19 +10,8 @@ ObjectClass::~ObjectClass()
 
 }
 
-void ObjectClass::CreateBaseObject()
+void ObjectClass::CreateGameObject()
 {
-	GameObject* CameraManagerObject = new GameObject(true, Tag::Camera, "CameraManager");
-	CameraManagerObject->AddComponent<Transform>(XMFLOAT3(0.0f, 10.0f, -10.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0, 180 * 0.0174533f, 0));
-	CameraManagerObject->AddComponent<CameraManager>();
-	m_cameraManager = CameraManagerObject->GetComponentIncludingBase<CameraManager>().get();
-	RegistGameObject(CameraManagerObject);
-
-	GameObject* LightSet = new GameObject(true, Tag::Default, "LightManager");
-	LightSet->AddComponent<LightManager>();
-	m_lightManager = LightSet->GetComponent<LightManager>().get();
-	RegistGameObject(LightSet);
-
 	GameObject* DirectionalLight = new GameObject(true, Tag::DirectionalLight, "DirectionalLight");
 	DirectionalLight->AddComponent<LightClass>(
 		XMFLOAT3(1.0f, 00.50f, 1.0f),
@@ -39,7 +26,7 @@ void ObjectClass::CreateBaseObject()
 	SkyDome->AddComponent<Transform>(XMFLOAT3(0.0f, -10.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0.0f, 0.0f, 0.0f));
 	SkyDome->AddComponent<Renderer>(L"./data/spacesphere.obj", L"./data/spacesphere.dds", 0);
 	RegistGameObject(SkyDome);
-		
+
 	GameObject* Terrain0 = new GameObject(true, Tag::Default, "Terrain0");
 	Terrain0->AddComponent<Renderer>(L"./data/1.obj", L"./data/1.dds", 0);
 	Terrain0->AddComponent<Transform>(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.2f, 0.2f, 0.2f), XMFLOAT3(0.0f, 0.0f, 0.0f));
@@ -238,13 +225,13 @@ void ObjectClass::CreateBaseObject()
 	bluetower9->AddComponent<Transform>(XMFLOAT3(-10, 0, 28), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 	bluetower9->AddComponent<SphereCollider>(0.85f, true);
 	RegistGameObject(bluetower9);
-	
+
 	GameObject* redtower1 = new GameObject(true, Tag::Default, "redtower1");
 	//redtower1->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
 	redtower1->AddComponent<Transform>(XMFLOAT3(-4.10f, 0, -4.00f), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 	redtower1->AddComponent<SphereCollider>(0.85f, true);
 	RegistGameObject(redtower1);
-	
+
 	GameObject* redtower2 = new GameObject(true, Tag::Default, "redtower2");
 	//redtower2->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
 	redtower2->AddComponent<Transform>(XMFLOAT3(-8.70f, 0, -11.750f), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -292,7 +279,7 @@ void ObjectClass::CreateBaseObject()
 	redtower9->AddComponent<Transform>(XMFLOAT3(15.250f, 0, -26.110f), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 	redtower9->AddComponent<SphereCollider>(0.85f, true);
 	RegistGameObject(redtower9);
-	
+
 	GameObject* bluenexus = new GameObject(true, Tag::Default, "bluenexus");
 	//bluenexus->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
 	bluenexus->AddComponent<Transform>(XMFLOAT3(25.880f, 0, 24.130f), XMFLOAT3(0, 0, 0), XMFLOAT3(2, 2, 2), XMFLOAT3(0, 0, 0));
@@ -304,7 +291,7 @@ void ObjectClass::CreateBaseObject()
 	rednexus->AddComponent<Transform>(XMFLOAT3(-20.50f, 0, -22.230f), XMFLOAT3(0, 0, 0), XMFLOAT3(2, 2, 2), XMFLOAT3(0, 0, 0));
 	rednexus->AddComponent<SphereCollider>(2.6f, true);
 	RegistGameObject(rednexus);
-	
+
 	GameObject* test1 = new GameObject(true, Tag::Default, "test1");
 	//test1->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
 	test1->AddComponent<Transform>(XMFLOAT3(8.20f, 0.50f, 0), XMFLOAT3(0, 40 * XM_PI / 180.0f, 0), XMFLOAT3(4, 0.40f, 1), XMFLOAT3(0, 0, 0));
@@ -338,7 +325,7 @@ void ObjectClass::CreateBaseObject()
 	GameObject* test6 = new GameObject(true, Tag::Default, "test6");
 	//test6->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
 	test6->AddComponent<Transform>(XMFLOAT3(-6.000f, 0.50f, -1.800f), XMFLOAT3(0, -70 * XM_PI / 180.0f, 0), XMFLOAT3(2.50f, 0.40f, 1.600f), XMFLOAT3(0, 0, 0));
-	test6->AddComponent<BoxCollider>(true, XMFLOAT3(-6.000f, 0.50f, -1.80f), XMFLOAT3(0, -70 * XM_PI / 180.0f, 0), XMFLOAT3(01.25f, 0.2f,0.80f));
+	test6->AddComponent<BoxCollider>(true, XMFLOAT3(-6.000f, 0.50f, -1.80f), XMFLOAT3(0, -70 * XM_PI / 180.0f, 0), XMFLOAT3(01.25f, 0.2f, 0.80f));
 	RegistGameObject(test6);
 
 	GameObject* test7 = new GameObject(true, Tag::Default, "test7");
@@ -760,7 +747,7 @@ void ObjectClass::CreateBaseObject()
 	GameObject* test76 = new GameObject(true, Tag::Default, "test76");
 	//test76->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
 	test76->AddComponent<Transform>(XMFLOAT3(22.480f, 0.50f, -14.590f), XMFLOAT3(0, 43 * XM_PI / 180.0f, 0), XMFLOAT3(4.20f, 0.40f, 0.90f), XMFLOAT3(0, 0, 0));
-	test76->AddComponent<BoxCollider>(true,XMFLOAT3(22.480f, 0.50f, -14.590f), XMFLOAT3(0, 43 * XM_PI / 180.0f, 0), XMFLOAT3(2.1f, 0.2f, 0.45f));
+	test76->AddComponent<BoxCollider>(true, XMFLOAT3(22.480f, 0.50f, -14.590f), XMFLOAT3(0, 43 * XM_PI / 180.0f, 0), XMFLOAT3(2.1f, 0.2f, 0.45f));
 	RegistGameObject(test76);
 
 	GameObject* test77 = new GameObject(true, Tag::Default, "test77");
@@ -797,7 +784,7 @@ void ObjectClass::CreateBaseObject()
 
 	GameObject* red3 = new GameObject(true, Tag::Default, "red3");
 	//red3->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
-	red3->AddComponent<Transform>(XMFLOAT3(-2.40f, 0.50f, -8.60f), XMFLOAT3(0, -42  * XM_PI / 180.0f, 0), XMFLOAT3(3.60f, 0.40f, 1), XMFLOAT3(0, 0, 0));
+	red3->AddComponent<Transform>(XMFLOAT3(-2.40f, 0.50f, -8.60f), XMFLOAT3(0, -42 * XM_PI / 180.0f, 0), XMFLOAT3(3.60f, 0.40f, 1), XMFLOAT3(0, 0, 0));
 	red3->AddComponent<BoxCollider>(true, XMFLOAT3(24.90f, 0.50f, -12.50f), XMFLOAT3(0, 88 * XM_PI / 180.0f, 0), XMFLOAT3(2.3f, 0.2f, 0.6f));
 	RegistGameObject(red3);
 
@@ -905,7 +892,7 @@ void ObjectClass::CreateBaseObject()
 
 	GameObject* red21 = new GameObject(true, Tag::Default, "red21");
 	//red21->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
-	red21->AddComponent<Transform>(XMFLOAT3(12.4f, 0.5f, -20.5f), XMFLOAT3(0, 0 * XM_PI / 180.0f, 0), XMFLOAT3( 5.3f, 0.6f, 0.8f), XMFLOAT3(0, 0, 0));
+	red21->AddComponent<Transform>(XMFLOAT3(12.4f, 0.5f, -20.5f), XMFLOAT3(0, 0 * XM_PI / 180.0f, 0), XMFLOAT3(5.3f, 0.6f, 0.8f), XMFLOAT3(0, 0, 0));
 	red21->AddComponent<BoxCollider>(true, XMFLOAT3(12.4f, 0.5f, -20.5f), XMFLOAT3(0, 0 * XM_PI / 180.0f, 0), XMFLOAT3(2.65f, 0.3f, 0.4f));
 	RegistGameObject(red21);
 
@@ -1277,7 +1264,7 @@ void ObjectClass::CreateBaseObject()
 
 	GameObject* red84 = new GameObject(true, Tag::Default, "red84");
 	//red84->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
-	red84->AddComponent<Transform>(XMFLOAT3(-9.7f, 0.5f, 1.22f ), XMFLOAT3(0, 112 * XM_PI / 180.0f, 0), XMFLOAT3(2.6f, 0.6f, 1.2f), XMFLOAT3(0, 0, 0));
+	red84->AddComponent<Transform>(XMFLOAT3(-9.7f, 0.5f, 1.22f), XMFLOAT3(0, 112 * XM_PI / 180.0f, 0), XMFLOAT3(2.6f, 0.6f, 1.2f), XMFLOAT3(0, 0, 0));
 	red84->AddComponent<BoxCollider>(true, XMFLOAT3(-9.7f, 0.5f, 1.22f), XMFLOAT3(0, 112 * XM_PI / 180.0f, 0), XMFLOAT3(1.3f, 0.3f, 0.6f));
 	RegistGameObject(red84);
 
@@ -1455,24 +1442,31 @@ void ObjectClass::CreateBaseObject()
 	fence16->AddComponent<Transform>(XMFLOAT3(-28.08f, 0.5f, -29.6f), XMFLOAT3(0, -135 * XM_PI / 180.0f, 0), XMFLOAT3(8, 0.4f, 0.8f), XMFLOAT3(0, 0, 0));
 	fence16->AddComponent<BoxCollider>(true, XMFLOAT3(-28.08f, 0.5f, -29.6f), XMFLOAT3(0, -135 * XM_PI / 180.0f, 0), XMFLOAT3(4, 0.2f, 0.4f));
 	RegistGameObject(fence16);
-}
 
-void ObjectClass::CreateGameObject()
-{
 	GameObject* player = new GameObject(true, Tag::Player, "Player");
 	player->AddComponent<Renderer>(L"./data/KogMaw.obj", L"./data/KogMaw.dds", 0);
 	player->AddComponent<Transform>
 		(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.04f, 0.04f, 0.04f), XMFLOAT3(0, 0, 0));
 	player->AddComponent<SphereCollider>(0.3f, true);
 	player->AddComponent<Player>();
+	player->AddComponent<SceneChangerController>();
 	player->AddComponent<BulletManager>();
 	RegistGameObject(player);
+
+	GameObject* CameraManagerObject = new GameObject(true, Tag::Camera, "CameraManager");
+	CameraManagerObject->AddComponent<Transform>(XMFLOAT3(0.0f, 10.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0, 180 * 0.0174533f, 0));
+	CameraManagerObject->AddComponent<CameraManager>();
+	CameraManagerObject->AddComponent<ThirdPersonCamera>();
+	CameraManagerObject->AddComponent<FirstPersonCamera>();
+	CameraManagerObject->AddComponent<ScopeCamera>();
+	CameraManagerObject->AddComponent<ArtilleryCamera>();
+	RegistGameObject(CameraManagerObject);
 
 	//GameObject* test = new GameObject(true, Tag::Default, "test");
 	//test->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
 	//test->AddComponent<Transform>(XMFLOAT3(1, 2, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 	//test->AddComponent<BoxCollider>(true, XMFLOAT3(1, 2, 1), XMFLOAT3(0, 0 * XM_PI / 180.0f, 0), XMFLOAT3(0.60f, 0.6f, 0.6f));
-	////RegistGameObject(test);
+	//RegistGameObject(test);
 
 	GameObject* monster = new GameObject(true, Tag::Default, "monster");
 	monster->AddComponent<Renderer>(L"./data/golem.obj", L"./data/golem.dds", 0);

@@ -11,20 +11,20 @@ GameScene::~GameScene()
 
 }
 
-
 GameObject* GameScene::Find(const string& name)
 {
-	for (auto& go : m_vGameObjects)
+	for (auto& go : m_gameObjects)
 	{
 		auto find = go->Find(name);
-		if (find != nullptr) return find;
+		if (find != nullptr) 
+			return find;
 	}
 	return nullptr;
 }
 
 GameObject* GameScene::FindObjectWithTag(Tag tag)
 {
-	for (auto& go : m_vGameObjects)
+	for (auto& go : m_gameObjects)
 	{
 		auto find = go->Find(tag);
 		if (find != nullptr) return find;
@@ -35,7 +35,7 @@ GameObject* GameScene::FindObjectWithTag(Tag tag)
 vector<GameObject*> GameScene::FindObjectsWithTag(Tag tag)
 {
 	vector<GameObject*> Objects;
-	for (auto& go : m_vGameObjects)
+	for (auto& go : m_gameObjects)
 	{
 		go->Find(tag, Objects);
 	}
@@ -44,14 +44,16 @@ vector<GameObject*> GameScene::FindObjectsWithTag(Tag tag)
 
 void GameScene::RegistGameObject(GameObject* Entity, GameObject* parent)
 {
-	m_vGameObjects.push_back(Entity);
+	m_gameObjects.push_back(Entity);
 	Entity->SetRoot(this);
 	Entity->SetParent(parent);
+	Entity->SetObjectID(m_gameObjects.size());
 }
 
 void GameScene::RegistGameObject(GameObject* Entity)
 {
-	m_vGameObjects.push_back(Entity);
+	m_gameObjects.push_back(Entity);
 	Entity->SetRoot(this);
 	Entity->SetParent(nullptr);
+	Entity->SetObjectID(m_gameObjects.size());
 }

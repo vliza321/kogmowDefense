@@ -11,7 +11,7 @@ ThirdPersonCamera::ThirdPersonCamera()
 
 bool ThirdPersonCamera::InitializeRef()
 {
-	transform = this->gameObject->GetComponentIncludingBase<Transform>();
+	transform = this->gameObject->GetComponent<Transform>();
 	auto tf = transform.lock();
 	if (tf == nullptr)
 	{
@@ -21,13 +21,13 @@ bool ThirdPersonCamera::InitializeRef()
 	}
 
 	auto player = FindObjectWithTag(Tag::Player);
-	targetTransform = player->GetComponentIncludingBase<Transform>();
+	targetTransform = player->GetComponent<Transform>();
 	return true;
 }
 
 bool ThirdPersonCamera::PostInitialize()
 {
-	auto l_transform = transform.lock();
+	auto l_transform = targetTransform.lock();
 	if (!l_transform) {
 		std::cerr << "Transform no longer exists!\n";
 		return false;
@@ -45,27 +45,29 @@ ThirdPersonCamera::~ThirdPersonCamera()
 
 void ThirdPersonCamera::SetCameraInfo()
 {
-	transform = targetTransform;
 }
 
 void ThirdPersonCamera::Execute()
 {
 	auto tf = transform.lock();
+	auto target = targetTransform.lock();
 	XMVECTOR CameraOffSet = XMVectorSet(0, 2.55f, -3.50f, 0);
 	
 	//바라볼 좌표 계산
-	camRotationMatrix = XMMatrixRotationRollPitchYaw(tf->eulerRotation.x, tf->eulerRotation.y, 0);
+	camRotationMatrix = XMMatrixRotationRollPitchYaw(target->eulerRotation.x, target->eulerRotation.y, 0);
 
 	camForward = XMVector3TransformCoord(DefaultForward, camRotationMatrix);
 
-	lookAt = XMLoadFloat3(&tf->position);
+	lookAt = XMLoadFloat3(&target->position);
 
 	lookAt += 5 * camForward ;
 
 	//카메라 위치 계산
-	position = XMLoadFloat3(&tf->position);
+	position = XMLoadFloat3(&target->position);
 
 	position += XMVector3TransformCoord(CameraOffSet, camRotationMatrix);
+
+	XMStoreFloat3(&tf->position, position);
 
 	//viewMatrix 생성
 	m_viewMatrix = XMMatrixLookAtLH(position, lookAt, up);

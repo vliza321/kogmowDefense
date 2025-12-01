@@ -8,6 +8,8 @@
 class Collider;
 class SceneManager;
 
+#define SCENEMANAGER  SceneManager::GetInstance()
+
 class Component
 {
 public:
@@ -48,9 +50,71 @@ protected:
 		return InputClass::GetInstance();
 	}
 
-	SceneManager& SceneManager() const;
 	GameObject* Find(const string& name);
 	GameObject* FindObjectWithTag(Tag tag);
 	vector<GameObject*> FindObjectsWithTag(Tag tag);
+
+	template<typename T>
+	shared_ptr<T> GetComponent();
+
+	template<typename T>
+	shared_ptr<T> GetComponentIncludingBase();
+
+	template<typename T>
+	shared_ptr<T> GetComponentInChild(bool includeSelf);
+
+	template<typename T>
+	shared_ptr<T> GetComponentInParent(bool includeSelf);
+
+	template<typename T>
+	vector<shared_ptr<T>> GetComponentsInChild(bool includeSelf);
+
+	template<typename T>
+	vector<shared_ptr<T>> GetComponents();
+
+	//template<typename T>
+	//vector<shared_ptr<T>> GetAllComponents();
 };
+/*
+template<typename T>
+vector<shared_ptr<T>> Component::GetAllComponents()
+{
+	return gameObject->GetAllComponents<T>();
+}*/
+
+template<typename T>
+shared_ptr<T> Component::GetComponent()
+{
+	return gameObject->GetComponent<T>();
+}
+
+template<typename T>
+shared_ptr<T> Component::GetComponentIncludingBase()
+{
+	return gameObject->GetComponentIncludingBase<T>();
+}
+
+template<typename T>
+shared_ptr<T> Component::GetComponentInChild(bool includeSelf)
+{
+	return gameObject->GetComponentInChild<T>(includeSelf);
+}
+
+template<typename T>
+shared_ptr<T> Component::GetComponentInParent(bool includeSelf)
+{
+	return gameObject->GetComponentInParent<T>(includeSelf);
+}
+
+template<typename T>
+vector<shared_ptr<T>> Component::GetComponentsInChild(bool includeSelf)
+{
+	return gameObject->GetComponentsInChild<T>(includeSelf);
+}
+
+template<typename T>
+vector<shared_ptr<T>> Component::GetComponents()
+{
+	return gameObject->GetComponents<T>();
+}
 #endif

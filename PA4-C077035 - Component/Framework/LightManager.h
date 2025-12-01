@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "CameraManager.h"
+#include "CameraResolver.h"
 
 using namespace std;
 
@@ -21,23 +21,25 @@ public:
 	virtual bool InitializeSynchronization() override;
 	virtual void Execute() override;
 	virtual bool Shutdown() override;
-
+	void PrevRender();
 public:
-	void AddLight(LightClass*);
 	void SetDirectionalLight(LightClass* light);
 	LightClass** GetLights();
 	LightClass& GetLights(int);
 	LightClass* GetDirectionalLight();
 	XMFLOAT4& GetDiffusers();
 	XMFLOAT4& GetPositions();
+	void SelectLight();
 private:
-	void InsertionSort(vector<LightClass*>);
-	void InsertionSortInPlace(vector<LightClass*>& lights, size_t start, size_t end);
+	void InsertionSortInPlace(vector<weak_ptr<LightClass>> lights, size_t start, size_t end);
 private:
-	std::weak_ptr<CameraManager> m_cameraManager;
+	CameraResolver* m_cameraResolver;
+
 	LightClass* m_directionalLight;
+	LightClass* m_defaultDirectionalLight;
 	LightClass* m_lights[8];
-	vector<LightClass*> m_allLights;
+	LightClass* m_defaultLight[8];
+	vector<weak_ptr<LightClass>> m_allLights;
 	int m_frameTimer;	
 };
 

@@ -22,6 +22,10 @@
 #include "WorldSpaceUIRenderManager.h"
 #include "CanvasRenderManager.h"
 
+#include "LightManager.h"
+#include "CameraManager.h"
+#include "CameraResolver.h"
+
 #pragma once
 enum class SceneState
 {
@@ -39,19 +43,19 @@ public:
 	virtual ~BaseScene();
 
 protected:
-	vector<GameObject*> m_vGameObjects;
-protected:
-	CameraManager* m_cameraManager;
+	vector<GameObject*> m_gameObjects;
+private:
+	CameraResolver* m_cameraResolver;
 	LightManager* m_lightManager;
-protected:
 	Collision* m_collisionDetecter;
 	RenderManager* m_renderManager;
 	WorldSpaceUIRenderManager* m_worldSpaceUIRenderManager;
 	CanvasRenderManager* m_canvasRenderManager;
-
+private:
 	D3DClass* m_d3d;
 	TextureShaderClass* m_textureShader;
 	LightShaderClass* m_lightShader;
+
 private:
 	string m_sceneName;
 	SceneState m_sceneState;
@@ -59,20 +63,20 @@ private:
 
 	mutex m_sceneMutex;
 	unique_ptr<unique_lock<mutex>> m_sceneLock;
-
+	HWND m_hwnd;
 public:
 	void LockScene()
 	{
 		m_sceneLock = make_unique<unique_lock<mutex>>(m_sceneMutex);
 	}
 
-	void UnlockScne()
+	void UnlockScene()
 	{
 		m_sceneLock.reset();
 	}
 
 public:
-	bool SceneInitialize(int, int, HWND);
+	bool SceneInitialize();
 	bool SceneStart();
 	bool SceneEnd();
 
@@ -90,19 +94,20 @@ public:
 	{
 		ID = id;
 	}
-protected:
+private:
 	LightClass& GetLights(int i);
+	wstring StringToWString(const std::string& str);
 public:
-	void AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass);
-	virtual void CreateBaseObject() = 0;
+	void AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass, HWND);
+	void CreateBaseObject();
 	virtual void CreateGameObject() = 0;
 
-	bool InitializeSet(HWND);
-	bool Initialize(HWND);
-	bool InitializeRef(HWND);
-	bool InitializeRender(HWND);
-	bool InitializeSynchronization(HWND);
-	bool PostInitialize(HWND);
+	bool InitializeSet();
+	bool Initialize();
+	bool InitializeRef();
+	bool InitializeRender();
+	bool InitializeSynchronization();
+	bool PostInitialize();
 
 	void CollisionDetection();
 
@@ -111,6 +116,7 @@ public:
 	void LateExecute();
 	void PostExecute();
 
+	void PrevRender();
 	bool WorldSpaceUIRender();
 	bool Render();
 	bool LightRender();
@@ -121,8 +127,7 @@ public:
 public:
 	const string GetSceneName() const {	return m_sceneName;	}
 
-	//const CameraManager* GetCameraManager() const { return m_cameraManager; }
-	CameraManager* GetCameraManager() { return m_cameraManager; }
+	CameraResolver* GetCameraresolver() { return m_cameraResolver; }
 
 	//const LightManager* GetLightManager() const { return m_lightManager; }
 	LightManager* GetLightManager() { return m_lightManager; }
@@ -147,7 +152,6 @@ public:
 
 	//const LightShaderClass* GetLightShaderClass() const { return m_lightShader; }
 	LightShaderClass* GetLightShaderClass() { return m_lightShader; }
-
 };
 
 #endif

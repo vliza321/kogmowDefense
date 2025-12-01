@@ -11,6 +11,24 @@ LightClass::LightClass()
 	isDiffuseColor = true;
 	isAmbientColor = true;
 	distance = 0;
+
+	direction = XMFLOAT3(0,0,0);
+	ambientColor = XMFLOAT4(0, 0, 0, 0);
+	diffuseColor = XMFLOAT4(0, 0, 0, 0);
+	specularColor = XMFLOAT4(0, 0, 0, 0);
+	position = XMFLOAT4(0, 0, 0, 0);
+	specularPower = 0;
+	distance = 0;
+
+
+	isSpecularPower = true;
+	isDiffuseColor = true;
+	isAmbientColor = true;
+
+	baseDiffuseColor = diffuseColor;
+	baseAmbientColor = ambientColor;
+	baseSpecularColor = specularColor;
+	baseSpecularPower = specularPower;
 }
 LightClass::LightClass(XMFLOAT3 Direction, XMFLOAT4 AmbientColor, XMFLOAT4 DiffuseColor, XMFLOAT4 SpecularColor, XMFLOAT4 Position, float SpecularPower)
 {
@@ -44,14 +62,6 @@ LightClass::~LightClass()
 
 bool LightClass::InitializeRef()
 {
-	if (this->gameObject->tag == Tag::DirectionalLight)
-	{
-		Find("LightManager")->GetComponent<LightManager>()->SetDirectionalLight(this);
-	}
-	else
-	{
-		Find("LightManager")->GetComponent<LightManager>()->AddLight(this);
-	}
 	return true;
 }
 

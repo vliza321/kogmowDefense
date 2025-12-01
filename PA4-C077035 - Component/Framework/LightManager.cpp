@@ -1,111 +1,174 @@
 #include "LightManager.h"
-#include "GameObject.h"
 #include "GameScene.h"
 
 LightManager::LightManager()
 {
 	m_allLights.clear();
 	m_frameTimer = 0;
+	m_directionalLight = 0;
+	m_defaultDirectionalLight = 0;
 }
 
 LightManager::LightManager(const LightManager& other)
 {
 	m_allLights.clear();
 	m_frameTimer = 0;
+
+	m_directionalLight = 0;
+	m_defaultDirectionalLight = 0;
 }
 
 LightManager::~LightManager()
 {
-
+	
 }
 
 bool LightManager::InitializeSet()
 {
 	XMFLOAT3 PlayerPos = XMFLOAT3(0, 0, 0);
 	bool result = true;
+	for (int i = 0; i < 8; i++)
+	{
+		m_defaultLight[i] = new LightClass();
+	}
+	m_defaultDirectionalLight = new LightClass();
+	m_allLights.clear();
 	return result;
 }
 
 bool LightManager::InitializeRef()
 {
 	bool result = true;
-	m_cameraManager = Find("CameraManager")->GetComponentIncludingBase<CameraManager>();
+	m_cameraResolver = this->gameObject->root->GetCameraresolver();
+	auto DL = FindObjectWithTag(Tag::DirectionalLight);
+	if (DL != nullptr)
+	{
+		auto DLC = DL->GetComponent<LightClass>();
+		if (DLC != nullptr) m_directionalLight = DLC.get();
+	}
+	vector<shared_ptr<LightClass>> allLight = this->gameObject->root->GetAllComponents<LightClass>();
+	for (auto& al : allLight)
+	{
+		if(!al->gameObject->CompareTag(Tag::DirectionalLight)) m_allLights.push_back(al);
+	}
 	return result;
 }
 
 bool LightManager::InitializeSynchronization()
 {
-	auto cm = m_cameraManager.lock();
+	auto cm = m_cameraResolver;
 	XMFLOAT3 targetPos = cm->GetCamera()->GetPosition();
 
-	for (auto l = m_allLights.begin(); l != m_allLights.end(); l++)
+	for (int i = m_allLights.size() - 1; i >= 0; i--)
 	{
-		XMVECTOR tpv = XMLoadFloat3(&targetPos) - XMLoadFloat4(&((*l)->position));
-		float distnace = XMVectorGetX(XMVector3Dot(tpv, tpv));
-		(*l)->distance = distnace;
+		if (auto light = m_allLights[i].lock())
+		{
+			XMVECTOR tpv = XMLoadFloat3(&targetPos) - XMLoadFloat4(&(light->position));
+			light->distance = XMVectorGetX(XMVector3LengthSq(tpv));
+		}
 	}
-	sort(m_allLights.begin(), m_allLights.end(), [](LightClass* a, LightClass* b) {
-		return (*a).distance > (*b).distance; }
+	for (int i = m_allLights.size() - 1; i >= 0; --i)
+	{
+		if (m_allLights[i].expired())
+		{
+			m_allLights.erase(m_allLights.begin() + i);
+		}
+	}
+	sort(m_allLights.begin(), m_allLights.end(), [](weak_ptr<LightClass> a, weak_ptr<LightClass> b) {
+		return a.lock()->distance > b.lock()->distance; }
 	);
-	int i = 0;
-	for (auto l = m_allLights.end() - 8; l != m_allLights.end(); l++)
-	{
-		m_lights[i] = (*l);
-		i++;
-	}
+	SelectLight();
 	return true;
 }
+
+//버전2. 카메라 앞에 있는 라이트를 거리 계산
+void LightManager::Execute()
+{
+	auto cm = m_cameraResolver;
+	XMFLOAT3 targetPos = cm->GetCamera()->GetPosition();
+	XMVECTOR vCamPos = XMLoadFloat3(&targetPos);
+	XMVECTOR vCamForward = XMVector3Normalize( cm->GetCamera()->GetLookAt() - vCamPos);
+
+	for (int i = m_allLights.size() - 1; i >= 0; i--)
+	{
+		if (auto light = m_allLights[i].lock())
+		{
+			XMVECTOR vLight = XMLoadFloat4(&(light->position));
+			XMVECTOR diff = vLight - vCamPos;
+
+			light->distance = XMVectorGetX(XMVector3LengthSq(diff));
+
+			// 내적 계산
+			float dot = XMVectorGetX(XMVector3Dot(diff, vCamForward));
+			
+			light->distance /= dot;
+		}
+	}
+
+	auto mid = stable_partition(m_allLights.begin(), m_allLights.end(),
+		[](const auto& pl) { return pl.lock()->distance < 0.0f; });
+
+	sort(mid, m_allLights.end(),
+		[](const auto& a, const auto& b) {
+			return a.lock()->distance > b.lock()->distance;
+		}
+	);
+}
+
+//버전1. 단순 거리 기반 계산
+/*
 
 void LightManager::Execute()
 {
 	// CameraManager의 현재 카메라 포지션을 가져옴
-	auto cm = m_cameraManager.lock();
+	auto cm = m_cameraResolver;
 	XMFLOAT3 targetPos = cm->GetCamera()->GetPosition();
 
 	// 모든 라이트의 거리(distance) 값을 업데이트
-	for (auto& light : m_allLights)
+	for (int i = m_allLights.size() - 1; i >= 0; i--)
 	{
-		XMVECTOR targetToLight = XMLoadFloat3(&targetPos) - XMLoadFloat4(&light->position);
-		light->distance = XMVectorGetX(XMVector3LengthSq(targetToLight));
+		if (auto light = m_allLights[i].lock())
+		{
+			XMVECTOR tpv = XMLoadFloat3(&targetPos) - XMLoadFloat4(&(light->position));
+			light->distance = XMVectorGetX(XMVector3LengthSq(tpv));
+		}
 	}
-
-	if (m_allLights.size() < 8) return;
-
-	// 60프레임마다 전체 라이트를 정렬
-	if (m_frameTimer > 60)
+	for (int i = m_allLights.size() - 1; i >= 0; --i)
 	{
-		m_frameTimer = 0;
-
-		// 전체 라이트를 distance 값 기준으로 내림차순 정렬
-		sort(m_allLights.begin(), m_allLights.end(), [](LightClass* a, LightClass* b) {
-			return a->distance > b->distance;
-			});
+		if (m_allLights[i].expired())
+		{
+			m_allLights.erase(m_allLights.begin() + i);
+		}
 	}
-	else
+
+	if (m_allLights.size() > 8)
 	{
-		size_t numLights = m_allLights.size();
-		size_t sortStart = (numLights < 16) ? 0 : numLights - 16;
+		// 60프레임마다 전체 라이트를 정렬
+		if (m_frameTimer > 60)
+		{
+			m_frameTimer = 0;
 
-		// 마지막 16개만 삽입 정렬
-		InsertionSortInPlace(m_allLights, sortStart, numLights);
-		m_frameTimer++;
-	}
+			// 전체 라이트를 distance 값 기준으로 내림차순 정렬
+			sort(m_allLights.begin(), m_allLights.end(), 
+				[](weak_ptr<LightClass> a, weak_ptr<LightClass> b) {
+				return a.lock()->distance > b.lock()->distance; }
+			);
+		}
+		else
+		{
+			size_t numLights = m_allLights.size();
+			size_t sortStart = (numLights < 16) ? 0 : numLights - 16;
 
-	// 상위 8개의 라이트를 m_lights 배열에 저장
-	int i = 0;
-	for (auto it = m_allLights.end() - 8; it != m_allLights.end(); ++it) {
-		m_lights[i++] = *it;
+			// 마지막 16개만 삽입 정렬
+			InsertionSortInPlace(m_allLights, sortStart, numLights);
+			m_frameTimer++;
+		}
 	}
-}
+}*/
 
 void LightManager::SetDirectionalLight(LightClass* light)
 {
 	m_directionalLight = light;
-}
-
-void LightManager::AddLight(LightClass* light)
-{
-	m_allLights.push_back(light);
 }
 
 LightClass** LightManager::GetLights()
@@ -113,36 +176,20 @@ LightClass** LightManager::GetLights()
 	return m_lights;
 }
 
-
-void LightManager::InsertionSort(vector<LightClass*> lights) 
-{
-	for (size_t i = 1; i < lights.size(); ++i) {
-		LightClass* key = lights[i];
-		int j = i - 1;
-
-		while (j >= 0 && (*lights[j]).distance < (*key).distance) {
-			(*lights[j + 1]) = (*lights[j]);
-			j--;
-		}
-		(*lights[j + 1]) = *key;
-		key = 0;
-	}
-}
-
-void LightManager::InsertionSortInPlace(vector<LightClass*>& lights, size_t start, size_t end)
+void LightManager::InsertionSortInPlace(vector<weak_ptr<LightClass>> lights, size_t start, size_t end)
 {
 	auto beginIt = lights.begin() + start;
 	auto endIt = lights.begin() + end;
 	
 	for (auto it = beginIt + 1; it != endIt; ++it) {
-		LightClass* key = *it;
+		LightClass* key = it->lock().get();
 		auto j = it;
 
-		while (j != beginIt && (*(j - 1))->distance < key->distance) {
+		while (j != beginIt && (j - 1)->lock().get()->distance < key->distance) {
 			*j = *(j - 1);
 			j--;
 		}
-		*j = key;
+		j = it;
 	}
 }
 
@@ -150,8 +197,16 @@ bool LightManager::Shutdown()
 {
 	if (m_directionalLight)
 	{
+		m_directionalLight->Shutdown();
 		delete m_directionalLight;
 		m_directionalLight = 0;
+	}
+
+	if (m_defaultDirectionalLight)
+	{
+		m_defaultDirectionalLight->Shutdown();
+		delete m_defaultDirectionalLight;
+		m_defaultDirectionalLight = 0;
 	}
 
 	m_allLights.clear();
@@ -161,15 +216,25 @@ bool LightManager::Shutdown()
 		m_lights[i]->Shutdown();
 		delete m_lights[i];
 		m_lights[i] = nullptr;
+
+		m_defaultLight[i]->Shutdown();
+		delete m_defaultLight[i];
+		m_lights[i] = nullptr;
 	}
 	
-	m_cameraManager.reset();
+	m_cameraResolver = 0;
 
 	return true;
 }
 
+void LightManager::PrevRender()
+{
+	SelectLight();
+}
+
 LightClass* LightManager::GetDirectionalLight()
 {
+	if (!m_directionalLight) return m_defaultDirectionalLight;
 	return m_directionalLight;
 }
 
@@ -198,4 +263,22 @@ XMFLOAT4& LightManager::GetPositions()
 		Position[i] = light->position;
 	}
 	return *Position;
+}
+
+void LightManager::SelectLight()
+{
+	int i = 0;
+	for (int j = m_allLights.size() - 1; j >=0; j--)
+	{
+		if (m_allLights[j].lock().get()->active)
+		{
+			m_lights[i] = m_allLights[j].lock().get();
+			i++;
+		}
+		if (i >= 8) break;
+	}
+	for (i; i < 8; i++)
+	{
+		m_lights[i] = m_defaultLight[i];
+	}
 }

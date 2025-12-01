@@ -151,6 +151,7 @@
     <ClCompile Include="BulletManager.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="CameraObject.cpp" />
+    <ClCompile Include="CameraResolver.cpp" />
     <ClCompile Include="Canvas.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
@@ -164,8 +165,14 @@
     <ClCompile Include="DummyScene.cpp" />
     <ClCompile Include="FirstPersonCamera.cpp" />
     <ClCompile Include="BaseScene.cpp" />
+    <ClCompile Include="SceneChangerController.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneSystem.cpp" />
+    <ClCompile Include="TestLoop.cpp" />
+    <ClCompile Include="TestPlayer.cpp" />
+    <ClCompile Include="TestScene2.cpp" />
+    <ClCompile Include="TestScene3.cpp" />
+    <ClCompile Include="TestScene1.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="WorldSpaceUIRenderer.cpp" />
     <ClCompile Include="WorldSpaceUIRenderManager.cpp" />
@@ -214,6 +221,7 @@
     <ClInclude Include="BulletManager.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="CameraObject.h" />
+    <ClInclude Include="CameraResolver.h" />
     <ClInclude Include="CanvasRenderer.h" />
     <ClInclude Include="CanvasRenderManager.h" />
     <ClInclude Include="GameScene.h" />
@@ -224,8 +232,14 @@
     <ClInclude Include="DummyScene.h" />
     <ClInclude Include="FirstPersonCamera.h" />
     <ClInclude Include="BaseScene.h" />
+    <ClInclude Include="SceneChangerController.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneSystem.h" />
+    <ClInclude Include="TestLoop.h" />
+    <ClInclude Include="TestPlayer.h" />
+    <ClInclude Include="TestScene2.h" />
+    <ClInclude Include="TestScene3.h" />
+    <ClInclude Include="TestScene1.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="WorldSpaceUIRenderer.h" />
     <ClInclude Include="WorldSpaceUIRenderManager.h" />
@@ -289,6 +303,8 @@
     <Image Include="data\CampfireT1.dds" />
     <Image Include="data\Cannon.dds" />
     <Image Include="data\Default.dds" />
+    <Image Include="data\DefaultBump.dds" />
+    <Image Include="data\DefaultBumpMap.dds" />
     <Image Include="data\foliageT1.dds" />
     <Image Include="data\font.dds" />
     <Image Include="data\GolemT1.dds" />
@@ -298,6 +314,9 @@
     <Image Include="data\rock-blueT1.dds" />
     <Image Include="data\rock-redT1.dds" />
     <Image Include="data\spacesphereT1.dds" />
+    <Image Include="data\stoneB.dds" />
+    <Image Include="data\stoneT1.dds" />
+    <Image Include="data\stoneT2.dds" />
     <Image Include="data\TempArtilleryLineOfSight.dds">
       <DeploymentContent>true</DeploymentContent>
     </Image>

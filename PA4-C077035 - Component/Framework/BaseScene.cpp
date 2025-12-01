@@ -1,5 +1,7 @@
 #include "BaseScene.h"
 #include "graphicsclass.h"
+#include "GameScene.h"
+#include "atlstr.h"
 
 BaseScene::BaseScene(string sceneName) : m_sceneState(SceneState::Unloaded), m_sceneName(sceneName)
 {
@@ -7,7 +9,7 @@ BaseScene::BaseScene(string sceneName) : m_sceneState(SceneState::Unloaded), m_s
 	m_worldSpaceUIRenderManager = 0;
 	m_canvasRenderManager = 0;
 
-	m_cameraManager = 0;
+	m_cameraResolver = 0;
 	m_lightManager = 0;
 
 	m_collisionDetecter = 0;
@@ -24,7 +26,7 @@ BaseScene::~BaseScene()
 	m_worldSpaceUIRenderManager = 0;
 	m_canvasRenderManager = 0;
 
-	m_cameraManager = 0;
+	m_cameraResolver = 0;
 	m_lightManager = 0;
 
 	m_collisionDetecter = 0;
@@ -34,11 +36,10 @@ BaseScene::~BaseScene()
 	m_lightShader = 0;
 
 	m_sceneLock.reset();
-	
 }
 
 
-bool BaseScene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
+bool BaseScene::SceneInitialize()
 {
 	bool result = true;
 
@@ -68,35 +69,38 @@ bool BaseScene::SceneInitialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	result = m_renderManager->InitializeRender(m_d3d->GetDevice());
-	if(!result)
-	{
-		MessageBox(hwnd, L"Could not Scene initialize Render.", L"Error", MB_OK);
-		return false;
-	}
-
-	result = m_worldSpaceUIRenderManager->InitializeRender(m_d3d->GetDevice());
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not Scene initialize worldSpaceUIRender.", L"Error", MB_OK);
-		return false;
-	}
-
-	result = m_canvasRenderManager->InitializeRender(m_d3d->GetDevice());
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not Scene initialize canvasRender.", L"Error", MB_OK);
-		return false;
-	}
-
 	return true;
 }
 
-void BaseScene::AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass)
+void BaseScene::CreateBaseObject()
+{
+	GameScene* gameScene = dynamic_cast<GameScene*>(this);
+
+	GameObject* AllCameraResolver = new GameObject(true, Tag::Default, "CameraResolver");
+	AllCameraResolver->AddComponent<CameraResolver>();
+	m_cameraResolver = AllCameraResolver->GetComponent<CameraResolver>().get();
+	m_gameObjects.push_back(AllCameraResolver);
+
+	AllCameraResolver->SetRoot(gameScene);
+	AllCameraResolver->SetParent(nullptr);
+	AllCameraResolver->SetObjectID(m_gameObjects.size());
+
+	GameObject* LightSet = new GameObject(true, Tag::Default, "LightManager");
+	LightSet->AddComponent<LightManager>();
+	m_lightManager = LightSet->GetComponent<LightManager>().get();
+	m_gameObjects.push_back(LightSet);
+	
+	LightSet->SetRoot(gameScene);
+	LightSet->SetParent(nullptr);
+	LightSet->SetObjectID(m_gameObjects.size());
+}
+
+void BaseScene::AddSceneRef(D3DClass* d3dclass, LightShaderClass* lightshaderclass, TextureShaderClass* textureshaderclass, HWND hwnd)
 {
 	m_d3d = d3dclass;
 	m_lightShader = lightshaderclass;
 	m_textureShader = textureshaderclass;
+	m_hwnd = hwnd;
 }
 
 bool BaseScene::SceneStart()
@@ -111,21 +115,26 @@ bool BaseScene::SceneStart()
 
 bool BaseScene::SceneEnd()
 {
-	m_sceneState = SceneState::Unloading;
 	LockScene();
 	Shutdown();
-	UnlockScne();
+	UnlockScene(); 
 	return true;
 }
 
 bool BaseScene::Render()
 {
-	return m_renderManager->RenderAll(m_textureShader, m_d3d, m_cameraManager->GetViewMatrix());
+	return m_renderManager->RenderAll(m_textureShader, m_d3d, m_cameraResolver->GetViewMatrix());
+}
+
+void BaseScene::PrevRender()
+{
+	m_cameraResolver->PrevRender();
+	m_lightManager->PrevRender();
 }
 
 bool BaseScene::WorldSpaceUIRender()
 {
-	return m_worldSpaceUIRenderManager->RenderAll(m_textureShader, m_d3d, m_cameraManager->GetViewMatrix());
+	return m_worldSpaceUIRenderManager->RenderAll(m_textureShader, m_d3d, m_cameraResolver->GetViewMatrix());
 }
 
 bool BaseScene::LightRender()
@@ -138,12 +147,12 @@ bool BaseScene::LightRender()
 		lightPosition[i] = GetLights(i).position;
 	}
 
-	return m_renderManager->RenderAll(m_lightShader, m_d3d, m_cameraManager->GetCamera(), m_lightManager, diffuseColor, lightPosition);
+	return m_renderManager->RenderAll(m_lightShader, m_d3d, m_cameraResolver->GetCamera(), m_lightManager, diffuseColor, lightPosition);
 }
 
 bool BaseScene::UIRender()
 {
-	return m_canvasRenderManager->RenderAll(m_textureShader, m_d3d, m_cameraManager->GetViewMatrix() );
+	return m_canvasRenderManager->RenderAll(m_textureShader, m_d3d, m_cameraResolver->GetViewMatrix() );
 }
 
 LightClass& BaseScene::GetLights(int i)
@@ -151,9 +160,9 @@ LightClass& BaseScene::GetLights(int i)
 	return m_lightManager->GetLights(i);
 }
 
-bool BaseScene::InitializeSet(HWND hwnd)
+bool BaseScene::InitializeSet()
 {
-	for (auto& v : m_vGameObjects)
+	for (auto& v : m_gameObjects)
 	{
 		v->InitializeSet();
 	}
@@ -161,9 +170,9 @@ bool BaseScene::InitializeSet(HWND hwnd)
 	return true;
 }
 
-bool BaseScene::Initialize(HWND hwnd)
+bool BaseScene::Initialize()
 {
-	for (auto& v : m_vGameObjects)
+	for (auto& v : m_gameObjects)
 	{
 		v->Initialize();
 	}
@@ -172,39 +181,57 @@ bool BaseScene::Initialize(HWND hwnd)
 	return true;
 }
 
-bool BaseScene::InitializeRef(HWND hwnd)
+bool BaseScene::InitializeRef()
 {
-	for (auto& v : m_vGameObjects)
+	for (auto& v : m_gameObjects)
 	{
-		v->InitializeRef();
+		if (!v->InitializeRef())
+		{
+			wstring ws = StringToWString(v->name);
+			MessageBox(m_hwnd, ws.c_str(), L"Error", MB_OK);
+		}
 	}
 
 	return true;
 }
 
-bool BaseScene::InitializeRender(HWND hwnd)
+wstring BaseScene::StringToWString(const std::string& str)
 {
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0,
+		str.c_str(), (int)str.size(), NULL, 0);
+
+	std::wstring wstr(size_needed, 0);
+
+	MultiByteToWideChar(CP_UTF8, 0,
+		str.c_str(), (int)str.size(), &wstr[0], size_needed);
+
+	return wstr;
+}
+
+bool BaseScene::InitializeRender()
+{
+	
 	if (!(m_worldSpaceUIRenderManager->InitializeRender(m_d3d->GetDevice())))
 	{
-		MessageBox(hwnd, L"Could not GUI InitializeRender GameObjects.", L"Error", MB_OK);
+		MessageBox(m_hwnd, L"Could not GUI InitializeRender GameObjects.", L"Error", MB_OK);
 		return false;
 	}
 	if (!(m_canvasRenderManager->InitializeRender(m_d3d->GetDevice())))
 	{
-		MessageBox(hwnd, L"Could not Canvas InitializeRender GameObjects.", L"Error", MB_OK);
+		MessageBox(m_hwnd, L"Could not Canvas InitializeRender GameObjects.", L"Error", MB_OK);
 		return false;
 	}
 	if (!(m_renderManager->InitializeRender(m_d3d->GetDevice())))
 	{
-		MessageBox(hwnd, L"Could not Render InitializeRender GameObjects.", L"Error", MB_OK);
+		MessageBox(m_hwnd, L"Could not Render InitializeRender GameObjects.", L"Error", MB_OK);
 		return false;
 	}
 	return true;
 }
 
-bool BaseScene::InitializeSynchronization(HWND hwnd)
+bool BaseScene::InitializeSynchronization()
 {
-	for (auto& v : m_vGameObjects)
+	for (auto& v : m_gameObjects)
 	{
 		v->InitializeSynchronization();
 	}
@@ -212,9 +239,9 @@ bool BaseScene::InitializeSynchronization(HWND hwnd)
 	return true;
 }
 
-bool BaseScene::PostInitialize(HWND hwnd)
+bool BaseScene::PostInitialize()
 {
-	for (auto& v : m_vGameObjects)
+	for (auto& v : m_gameObjects)
 	{
 		v->PostInitialize();
 	}
@@ -230,7 +257,7 @@ void BaseScene::CollisionDetection()
 
 void BaseScene::FixedExecute()
 {
-	for (auto& v : m_vGameObjects)
+	for (auto& v : m_gameObjects)
 	{
 		if(v->active) v->FixedExecute();
 	}
@@ -238,7 +265,7 @@ void BaseScene::FixedExecute()
 
 void BaseScene::Execute()
 {
-	for (auto& v : m_vGameObjects)
+	for (auto& v : m_gameObjects)
 	{
 		if (v->active) v->Execute();
 	}
@@ -246,21 +273,21 @@ void BaseScene::Execute()
 
 void BaseScene::LateExecute()
 {
-	for (auto& v : m_vGameObjects)
+	for (auto& go : m_gameObjects)
 	{
-		if (v->active) v->LateExecute();
+		if (go->active) go->LateExecute();
 	}
 }
 
 void BaseScene::PostExecute()
 {
-	for (auto& v : m_vGameObjects)
+	for (auto& v : m_gameObjects)
 	{
 		if (v->active) v->PostExecute();
 	}
-	for (int i = (int)m_vGameObjects.size() - 1; i >= 0; i--)
+	for (int i = (int)m_gameObjects.size() - 1; i >= 0; i--)
 	{
-		GameObject* obj = m_vGameObjects[i];
+		GameObject* obj = m_gameObjects[i];
 
 		if (obj->isDestroy)
 		{
@@ -268,29 +295,27 @@ void BaseScene::PostExecute()
 			delete obj;
 
 			// 벡터에서 제거
-			m_vGameObjects.erase(m_vGameObjects.begin() + i);
+			m_gameObjects.erase(m_gameObjects.begin() + i);
 		}
 	}
 }
 
 void BaseScene::Shutdown()
 {
-	for (auto& v : m_vGameObjects)
+	m_sceneState = SceneState::Unloading;
+	for (auto& v : m_gameObjects)
 	{
 		v->Shutdown();
 	}
-	m_vGameObjects.clear();
+	m_gameObjects.clear();
 
-	if (m_cameraManager != 0)
+	
+	if (m_cameraResolver != 0)
 	{
-		m_cameraManager->Shutdown();
-		delete m_cameraManager;
-		m_cameraManager = 0;
+		m_cameraResolver = 0;
 	}
 	if (m_lightManager != 0)
 	{
-		m_lightManager->Shutdown();
-		delete m_lightManager;
 		m_lightManager = 0;
 	}
 	if (m_collisionDetecter != 0)

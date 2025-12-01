@@ -59,6 +59,6 @@ private:
 	TextureShaderClass* m_textureShader;
 	LightShaderClass* m_lightShader;
 private:
-	SceneSystem* m_sceneManager;
+	SceneSystem* m_sceneConverter;
 };
 #endif

@@ -49,9 +49,10 @@ public:
 	template<typename F>
 	void Enqueue(F&& f)
 	{
+		std::function<void()> job = std::forward<F>(f);
 		{
 			unique_lock<mutex> lock(m_queueMutex);
-			m_jobs.emplace(forward<F>(f));
+			m_jobs.push(std::move(job));
 		}
 		m_condition.notify_one();
 	}

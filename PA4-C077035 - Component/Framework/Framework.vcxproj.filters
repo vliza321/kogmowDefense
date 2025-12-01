@@ -188,6 +188,27 @@
     <ClCompile Include="GameScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="CameraResolver.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene3.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene1.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneChangerController.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLoop.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPlayer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene2.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="textureshaderclass.h">
@@ -370,6 +391,27 @@
     <ClInclude Include="GameScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CameraResolver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene3.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene1.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TestLoop.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneChangerController.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPlayer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene2.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\Cannon.dds">
@@ -475,6 +517,21 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="data\rock-redT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\DefaultBumpMap.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\stoneB.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\stoneT1.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\stoneT2.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\DefaultBump.dds">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

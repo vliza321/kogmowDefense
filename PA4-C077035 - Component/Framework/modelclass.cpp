@@ -55,7 +55,7 @@ bool ModelClass::InitializeRenderer(ID3D11Device* device, const WCHAR* modelFile
 		return false;
 	}
 
-	//CalculateModelVectors();
+	CalculateModelVectors();
 
 	// Initialize the vertex and index buffers.
 	result = InitializeBuffers(device);
@@ -149,6 +149,8 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		vertices[i].position = XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
 		vertices[i].texture = XMFLOAT2(m_model[i].tu, m_model[i].tv);
 		vertices[i].normal = XMFLOAT3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
+		vertices[i].tangent = XMFLOAT3(m_model[i].tx, m_model[i].ty, m_model[i].tz);
+		vertices[i].binormal = XMFLOAT3(m_model[i].bx, m_model[i].by, m_model[i].bz);
 
 		indices[i] = i;
 	}
@@ -201,82 +203,39 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	indices = 0;
 
 	InstanceType* instances;
-	if (m_instanceCount == 5)
+	m_instanceCount = 1;
+	instances = new InstanceType;
+	if (!instances)
 	{
-		instances = new InstanceType[m_instanceCount];
-		if (!instances)
-		{
-			return false;
-		}
-
-		instances[0].position = XMFLOAT3(-99.0f * 0.2f, 0.0f, 114.50f * 0.2f);
-		instances[1].position = XMFLOAT3(-48.30f * 0.2f, 0.0f, 52.325f * 0.2f);
-		instances[2].position = XMFLOAT3(12.50f * 0.2f, 0.0f, 5.0f * 0.2f);
-		instances[3].position = XMFLOAT3(75.00f * 0.2f, 0.0f, -41.5f * 0.2f);
-		instances[4].position = XMFLOAT3(123.10f * 0.2f, 0.0f, -106.750f * 0.2f);
-
-		// 인스턴스 버퍼의 설명을 설정합니다.
-		D3D11_BUFFER_DESC instanceBufferDesc;
-		instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		instanceBufferDesc.ByteWidth = sizeof(InstanceType) * m_instanceCount;
-		instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		instanceBufferDesc.CPUAccessFlags = 0;
-		instanceBufferDesc.MiscFlags = 0;
-		instanceBufferDesc.StructureByteStride = 0;
-
-		// 하위 리소스 구조에 인스턴스 데이터에 대한 포인터를 제공합니다.
-		D3D11_SUBRESOURCE_DATA instanceData;
-		instanceData.pSysMem = instances;
-		instanceData.SysMemPitch = 0;
-		instanceData.SysMemSlicePitch = 0;
-
-		// 인스턴스 버퍼를 만듭니다.
-		if (FAILED(device->CreateBuffer(&instanceBufferDesc, &instanceData, &m_instanceBuffer)))
-		{
-			return false;
-		}
-
-		// 인스턴스 버퍼가 생성되고로드되었으므로 인스턴스 배열을 해제합니다.
-		delete[] instances;
-		instances = 0;
+		return false;
 	}
-	else
+
+	instances->position = XMFLOAT3(0, 0, 0);
+
+	// 인스턴스 버퍼의 설명을 설정합니다.
+	D3D11_BUFFER_DESC instanceBufferDesc;
+	instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	instanceBufferDesc.ByteWidth = sizeof(InstanceType) * m_instanceCount;
+	instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	instanceBufferDesc.CPUAccessFlags = 0;
+	instanceBufferDesc.MiscFlags = 0;
+	instanceBufferDesc.StructureByteStride = 0;
+
+	// 하위 리소스 구조에 인스턴스 데이터에 대한 포인터를 제공합니다.
+	D3D11_SUBRESOURCE_DATA instanceData;
+	instanceData.pSysMem = instances;
+	instanceData.SysMemPitch = 0;
+	instanceData.SysMemSlicePitch = 0;
+
+	// 인스턴스 버퍼를 만듭니다.
+	if (FAILED(device->CreateBuffer(&instanceBufferDesc, &instanceData, &m_instanceBuffer)))
 	{
-		m_instanceCount = 1;
-		instances = new InstanceType;
-		if (!instances)
-		{
-			return false;
-		}
-
-		instances->position = XMFLOAT3(0, 0, 0);
-
-		// 인스턴스 버퍼의 설명을 설정합니다.
-		D3D11_BUFFER_DESC instanceBufferDesc;
-		instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		instanceBufferDesc.ByteWidth = sizeof(InstanceType) * m_instanceCount;
-		instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		instanceBufferDesc.CPUAccessFlags = 0;
-		instanceBufferDesc.MiscFlags = 0;
-		instanceBufferDesc.StructureByteStride = 0;
-
-		// 하위 리소스 구조에 인스턴스 데이터에 대한 포인터를 제공합니다.
-		D3D11_SUBRESOURCE_DATA instanceData;
-		instanceData.pSysMem = instances;
-		instanceData.SysMemPitch = 0;
-		instanceData.SysMemSlicePitch = 0;
-
-		// 인스턴스 버퍼를 만듭니다.
-		if (FAILED(device->CreateBuffer(&instanceBufferDesc, &instanceData, &m_instanceBuffer)))
-		{
-			return false;
-		}
-
-		// 인스턴스 버퍼가 생성되고 로드되었으므로 인스턴스 배열을 해제합니다.
-		delete[] instances;
-		instances = 0;
-
+		return false;
 	}
+
+	// 인스턴스 버퍼가 생성되고 로드되었으므로 인스턴스 배열을 해제합니다.
+	delete[] instances;
+	instances = 0;
 	return true;
 }
 
@@ -739,6 +698,11 @@ void ModelClass::CalculateModelVectors()
 	// 모델 데이터에 대한 인덱스를 초기화합니다.
 	int index = 0;
 
+	for (int i = 0; i < m_vertexCount; i++) {
+		m_model[i].tx = m_model[i].ty = m_model[i].tz = 0;
+		m_model[i].bx = m_model[i].by = m_model[i].bz = 0;
+	}
+
 	// 모든면을 살펴보고 접선, 비공식 및 법선 벡터를 계산합니다.
 	for (int i = 0; i < faceCount; i++)
 	{
@@ -776,39 +740,74 @@ void ModelClass::CalculateModelVectors()
 		// 표면의 탄젠트와 바이 노멀을 계산합니다.
 		CalculateTangentBinormal(vertex1, vertex2, vertex3, tangent, binormal);
 
-		// 접선과 binormal을 사용하여 새 법선을 계산합니다.
-		CalculateNormal(tangent, binormal, normal);
+		m_model[index - 1].tx += tangent.x;
+		m_model[index - 1].ty += tangent.y;
+		m_model[index - 1].tz += tangent.z;
+		m_model[index - 1].bx += binormal.x;
+		m_model[index - 1].by += binormal.y;
+		m_model[index - 1].bz += binormal.z;
 
-		// 모델 구조에서 면의 법선, 접선 및 바이 노멀을 저장합니다.
-		m_model[index - 1].nx = normal.x;
-		m_model[index - 1].ny = normal.y;
-		m_model[index - 1].nz = normal.z;
-		m_model[index - 1].tx = tangent.x;
-		m_model[index - 1].ty = tangent.y;
-		m_model[index - 1].tz = tangent.z;
-		m_model[index - 1].bx = binormal.x;
-		m_model[index - 1].by = binormal.y;
-		m_model[index - 1].bz = binormal.z;
+		m_model[index - 2].tx += tangent.x;
+		m_model[index - 2].ty += tangent.y;
+		m_model[index - 2].tz += tangent.z;
+		m_model[index - 2].bx += binormal.x;
+		m_model[index - 2].by += binormal.y;
+		m_model[index - 2].bz += binormal.z;
 
-		m_model[index - 2].nx = normal.x;
-		m_model[index - 2].ny = normal.y;
-		m_model[index - 2].nz = normal.z;
-		m_model[index - 2].tx = tangent.x;
-		m_model[index - 2].ty = tangent.y;
-		m_model[index - 2].tz = tangent.z;
-		m_model[index - 2].bx = binormal.x;
-		m_model[index - 2].by = binormal.y;
-		m_model[index - 2].bz = binormal.z;
+		m_model[index - 3].tx += tangent.x;
+		m_model[index - 3].ty += tangent.y;
+		m_model[index - 3].tz += tangent.z;
+		m_model[index - 3].bx += binormal.x;
+		m_model[index - 3].by += binormal.y;
+		m_model[index - 3].bz += binormal.z;
+	}
+	for (int i = 0; i < m_vertexCount; i++)
+	{
+		ModelType& v = m_model[i];
 
-		m_model[index - 3].nx = normal.x;
-		m_model[index - 3].ny = normal.y;
-		m_model[index - 3].nz = normal.z;
-		m_model[index - 3].tx = tangent.x;
-		m_model[index - 3].ty = tangent.y;
-		m_model[index - 3].tz = tangent.z;
-		m_model[index - 3].bx = binormal.x;
-		m_model[index - 3].by = binormal.y;
-		m_model[index - 3].bz = binormal.z;
+		// Ensure normal exists (should be model's vertex normal). if zero, fallback:
+		XMFLOAT3 N(v.nx, v.ny, v.nz);
+		float nlen = sqrtf(N.x * N.x + N.y * N.y + N.z * N.z);
+		if (nlen < 1e-6f) { N.x = 0; N.y = 0; N.z = 1; nlen = 1.0f; }
+		N.x /= nlen; N.y /= nlen; N.z /= nlen;
+
+		XMFLOAT3 T(v.tx, v.ty, v.tz);
+		// Gram-Schmidt: T = normalize(T - N * dot(N,T))
+		float dotNT = T.x * N.x + T.y * N.y + T.z * N.z;
+		T.x -= N.x * dotNT; T.y -= N.y * dotNT; T.z -= N.z * dotNT;
+
+		float lenT = sqrtf(T.x * T.x + T.y * T.y + T.z * T.z);
+		if (lenT > 1e-6f) { T.x /= lenT; T.y /= lenT; T.z /= lenT; }
+		else {
+			// fallback tangent if degenerate
+			// pick any vector orthogonal to N:
+			if (fabsf(N.x) > fabsf(N.z)) { T = XMFLOAT3(-N.y, N.x, 0.0f); }
+			else { T = XMFLOAT3(0.0f, -N.z, N.y); }
+			float l = sqrtf(T.x * T.x + T.y * T.y + T.z * T.z);
+			T.x /= l; T.y /= l; T.z /= l;
+		}
+
+		XMFLOAT3 Bacc(v.bx, v.by, v.bz);
+		// Compute handedness using accumulated B
+		XMFLOAT3 Bcross;
+		Bcross.x = N.y * T.z - N.z * T.y;
+		Bcross.y = N.z * T.x - N.x * T.z;
+		Bcross.z = N.x * T.y - N.y * T.x;
+
+		float dotBC = Bcross.x * Bacc.x + Bcross.y * Bacc.y + Bcross.z * Bacc.z;
+		float handedness = (dotBC < 0.0f) ? -1.0f : 1.0f;
+
+		// Recompute bitangent
+		XMFLOAT3 B;
+		B.x = Bcross.x * handedness;
+		B.y = Bcross.y * handedness;
+		B.z = Bcross.z * handedness;
+
+		// store
+		v.tx = T.x; v.ty = T.y; v.tz = T.z;
+		v.bx = B.x; v.by = B.y; v.bz = B.z;
+
+		// optional: store handedness somewhere (e.g. v.tw = handedness) if VertexType extended to float tw;
 	}
 }
 
@@ -819,8 +818,6 @@ void ModelClass::CalculateTangentBinormal(ModelType vertex1, ModelType vertex2, 
 	float vector1[3], vector2[3];
 	float tuVector[2], tvVector[2];
 
-
-	// 현재 표면의 두 벡터를 계산합니다.
 	vector1[0] = vertex2.x - vertex1.x;
 	vector1[1] = vertex2.y - vertex1.y;
 	vector1[2] = vertex2.z - vertex1.z;
@@ -829,17 +826,23 @@ void ModelClass::CalculateTangentBinormal(ModelType vertex1, ModelType vertex2, 
 	vector2[1] = vertex3.y - vertex1.y;
 	vector2[2] = vertex3.z - vertex1.z;
 
-	// tu 및 tv 텍스처 공간 벡터를 계산합니다.
 	tuVector[0] = vertex2.tu - vertex1.tu;
 	tvVector[0] = vertex2.tv - vertex1.tv;
 
 	tuVector[1] = vertex3.tu - vertex1.tu;
 	tvVector[1] = vertex3.tv - vertex1.tv;
 
-	// 탄젠트 / 바이 노멀 방정식의 분모를 계산합니다.
-	float den = 1.0f / (tuVector[0] * tvVector[1] - tuVector[1] * tvVector[0]);
+	float denom = (tuVector[0] * tvVector[1] - tuVector[1] * tvVector[0]);
+	const float EPS = 1e-6f;
+	if (fabs(denom) < EPS) {
+		// UV가 degenerate하면 안전한 기본값을 넣는다.
+		tangent.x = 1.0f; tangent.y = 0.0f; tangent.z = 0.0f;
+		binormal.x = 0.0f; binormal.y = 1.0f; binormal.z = 0.0f;
+		return;
+	}
 
-	// 교차 곱을 계산하고 계수로 곱하여 접선과 비 구식을 얻습니다.
+	float den = 1.0f / denom;
+
 	tangent.x = (tvVector[1] * vector1[0] - tvVector[0] * vector2[0]) * den;
 	tangent.y = (tvVector[1] * vector1[1] - tvVector[0] * vector2[1]) * den;
 	tangent.z = (tvVector[1] * vector1[2] - tvVector[0] * vector2[2]) * den;
@@ -848,23 +851,15 @@ void ModelClass::CalculateTangentBinormal(ModelType vertex1, ModelType vertex2, 
 	binormal.y = (tuVector[0] * vector2[1] - tuVector[1] * vector1[1]) * den;
 	binormal.z = (tuVector[0] * vector2[2] - tuVector[1] * vector1[2]) * den;
 
-	// 이 법선의 길이를 계산합니다.
-	float length = sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+	// 정규화 (안전화)
+	float lenT = sqrtf(tangent.x * tangent.x + tangent.y * tangent.y + tangent.z * tangent.z);
+	if (lenT > EPS) { tangent.x /= lenT; tangent.y /= lenT; tangent.z /= lenT; }
+	else { tangent.x = 1; tangent.y = 0; tangent.z = 0; }
 
-	// 법선을 표준화 한 다음 저장합니다.
-	tangent.x = tangent.x / length;
-	tangent.y = tangent.y / length;
-	tangent.z = tangent.z / length;
-
-	// 이 법선의 길이를 계산합니다.
-	length = sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
-
-	// 법선을 표준화 한 다음 저장합니다.
-	binormal.x = binormal.x / length;
-	binormal.y = binormal.y / length;
-	binormal.z = binormal.z / length;
+	float lenB = sqrtf(binormal.x * binormal.x + binormal.y * binormal.y + binormal.z * binormal.z);
+	if (lenB > EPS) { binormal.x /= lenB; binormal.y /= lenB; binormal.z /= lenB; }
+	else { binormal.x = 0; binormal.y = 1; binormal.z = 0; }
 }
-
 
 void ModelClass::CalculateNormal(VectorType tangent, VectorType binormal, VectorType& normal)
 {

@@ -11,7 +11,7 @@ public:
 	BaseCamera();
 	virtual ~BaseCamera();
 
-	virtual bool InitializeRef() override;
+	virtual bool Initialize() override;
 	virtual bool PostInitialize() override;
 	virtual void Execute() override;
 

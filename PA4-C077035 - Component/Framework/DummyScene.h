@@ -13,10 +13,6 @@ public:
 
 	}
 public:
-	virtual void CreateBaseObject() override
-	{
-
-	}
 	virtual void CreateGameObject() override
 	{
 

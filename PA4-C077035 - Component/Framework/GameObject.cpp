@@ -219,9 +219,9 @@ void GameObject::Execute()
 {
 	for (auto& c : components) 
 	{
-		for (auto& v : c.second) 
+		for (auto& d : c.second) 
 		{
-			if (v->active) v->Execute();
+			if (d->active) d->Execute();
 		}
 	}
 	for (auto& c : child)
@@ -357,6 +357,15 @@ void GameObject::SetRoot(GameScene* scene)
 
 void GameObject::SetParent(GameObject* parent)
 {
+	if (this->parent != nullptr)
+	{
+		auto& parentsChildVector = this->parent->child;
+
+		parentsChildVector.erase(
+			std::remove(parentsChildVector.begin(), parentsChildVector.end(), this),
+			parentsChildVector.end()
+		);
+	}
 	this->parent = parent;
 	if(parent != nullptr) parent->child.push_back(this);
 }

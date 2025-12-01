@@ -14,6 +14,7 @@
 #include "Player.h"
 
 #include "BulletManager.h"
+#include "SceneChangerController.h"
 
 class ObjectClass : public GameScene
 {
@@ -21,7 +22,6 @@ public:
 	ObjectClass();
 	~ObjectClass();
 public:
-	virtual void CreateBaseObject() override;
 	virtual void CreateGameObject() override;
 };
 

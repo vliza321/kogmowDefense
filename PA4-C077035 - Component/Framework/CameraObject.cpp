@@ -66,5 +66,7 @@ XMVECTOR CameraObject::GetLookAt()
 
 XMFLOAT3 CameraObject::GetPosition()
 {
-	return transform.lock()->position;
+	XMFLOAT3 pos;
+	XMStoreFloat3(&pos, position);
+	return pos;
 }

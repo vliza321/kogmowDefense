@@ -40,6 +40,6 @@ public:
 	CameraObject* GetCamera();
 
 private:
-	ShootType m_CurrentCameraType;
-	unordered_map<ShootType, CameraObject*>m_CameraMapSet;
+	ShootType m_currentCameraType;
+	unordered_map<ShootType, CameraObject*>m_cameraMapSet;
 };
