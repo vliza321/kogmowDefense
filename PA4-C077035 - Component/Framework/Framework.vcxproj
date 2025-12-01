@@ -157,6 +157,8 @@
     </ClCompile>
     <ClCompile Include="CanvasRenderer.cpp" />
     <ClCompile Include="CanvasRenderManager.cpp" />
+    <ClCompile Include="DestroyBox.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColliderType.cpp" />
@@ -170,6 +172,7 @@
     <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="TestLoop.cpp" />
     <ClCompile Include="TestPlayer.cpp" />
+    <ClCompile Include="TestScene0.cpp" />
     <ClCompile Include="TestScene2.cpp" />
     <ClCompile Include="TestScene3.cpp" />
     <ClCompile Include="TestScene1.cpp" />
@@ -224,6 +227,8 @@
     <ClInclude Include="CameraResolver.h" />
     <ClInclude Include="CanvasRenderer.h" />
     <ClInclude Include="CanvasRenderManager.h" />
+    <ClInclude Include="DestroyBox.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ColliderType.h" />
@@ -237,6 +242,7 @@
     <ClInclude Include="SceneSystem.h" />
     <ClInclude Include="TestLoop.h" />
     <ClInclude Include="TestPlayer.h" />
+    <ClInclude Include="TestScene0.h" />
     <ClInclude Include="TestScene2.h" />
     <ClInclude Include="TestScene3.h" />
     <ClInclude Include="TestScene1.h" />
@@ -311,6 +317,7 @@
     <Image Include="data\KogMawT1.dds" />
     <Image Include="data\plantT1.dds" />
     <Image Include="data\propsT1.dds" />
+    <Image Include="data\Result.dds" />
     <Image Include="data\rock-blueT1.dds" />
     <Image Include="data\rock-redT1.dds" />
     <Image Include="data\spacesphereT1.dds" />
@@ -326,7 +333,7 @@
     <Image Include="data\TempScopeLineOfSight.dds">
       <DeploymentContent>true</DeploymentContent>
     </Image>
-    <Image Include="data\title.dds" />
+    <Image Include="data\Title.dds" />
     <Image Include="data\WolfT1.dds" />
   </ItemGroup>
   <ItemGroup>

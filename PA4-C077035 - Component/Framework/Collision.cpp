@@ -29,7 +29,7 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 	float dist2;
 	for (auto& other : m_sphereCollider)
 	{
-		if (other == moveEventCollider || !other->active) continue;
+		if (other == moveEventCollider || !other->active || !other->gameObject->active) continue;
 
 		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
 		if (!targetTransform) continue;
@@ -69,7 +69,7 @@ Collider* Collision::CheckCollision(SphereCollider* moveEventCollider, MoveEvent
 	for (auto& other : m_boxCollider)
 	{
 		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
-		if (!targetTransform || !other->active) continue;
+		if (!targetTransform || !other->active || !other->gameObject->active) continue;
 
 		//박스 콜라이더의 transform 중 position 정보 받아오기 => 이거 자체는 박스 콜라이더에 바인딩된 좌표, 실제 transform정보가 아님
 		XMVECTOR boxCenter = XMLoadFloat3(&other->Box.pos);
@@ -132,7 +132,7 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 	for (auto& other : m_sphereCollider)
 	{
 		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
-		if (!targetTransform || !other->active) continue;
+		if (!targetTransform || !other->active || !other->gameObject->active) continue;
 
 		XMVECTOR sphereCenter = XMVector4Transform(XMVectorSet(0, 0, 0, 1), targetTransform->WorldMatrix);// Sphere 중심
 
@@ -165,7 +165,7 @@ Collider* Collision::CheckCollision(RayCollider* moveEventCollider, MoveEvent* m
 	{
 		bool hit = true;
 		auto targetTransform = other->gameObject->GetComponent<Transform>().get();
-		if (!targetTransform || !other->active) continue;
+		if (!targetTransform || !other->active || !other->gameObject->active) continue;
 
 		constexpr float EPSILON = 1e-6f;
 
@@ -318,7 +318,7 @@ void Collision::ProcessCollision()
 		if (!event->transform->gameObject->active) continue;
 
 		//이벤트가 발생한 대상의 콜라이더를 검사: RayCollider가 있는지 검사
-		if (const auto& Ray = event->transform->gameObject->GetComponentIncludingBase<RayCollider>())
+		if (const auto& Ray = event->transform->gameObject->GetComponent<RayCollider>())
 		{
 			//RayCollider가 있다면
 			if (Ray && Ray->active)
@@ -339,7 +339,7 @@ void Collision::ProcessCollision()
 			}
 		}
 		//이벤트가 발생한 대상의 콜라이더를 검사: SphereCollider가 있는지 검사
-		else if (const auto& Sphere = event->transform->gameObject->GetComponentIncludingBase<SphereCollider>())
+		else if (const auto& Sphere = event->transform->gameObject->GetComponent<SphereCollider>())
 		{
 			//SphereCollider가 있다면
 			if (Sphere && Sphere->active)

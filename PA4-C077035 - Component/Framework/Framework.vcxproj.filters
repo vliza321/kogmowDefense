@@ -209,6 +209,15 @@
     <ClCompile Include="TestScene2.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="TestScene0.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DestroyBox.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="textureshaderclass.h">
@@ -412,15 +421,19 @@
     <ClInclude Include="TestScene2.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="TestScene0.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DestroyBox.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\Cannon.dds">
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="data\font.dds">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="data\title.dds">
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="data\TempArtilleryLineOfSight.dds">
@@ -532,6 +545,12 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="data\DefaultBump.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\Title.dds">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="data\Result.dds">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

@@ -1462,18 +1462,6 @@ void ObjectClass::CreateGameObject()
 	CameraManagerObject->AddComponent<ArtilleryCamera>();
 	RegistGameObject(CameraManagerObject);
 
-	//GameObject* test = new GameObject(true, Tag::Default, "test");
-	//test->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
-	//test->AddComponent<Transform>(XMFLOAT3(1, 2, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-	//test->AddComponent<BoxCollider>(true, XMFLOAT3(1, 2, 1), XMFLOAT3(0, 0 * XM_PI / 180.0f, 0), XMFLOAT3(0.60f, 0.6f, 0.6f));
-	//RegistGameObject(test);
-
-	GameObject* monster = new GameObject(true, Tag::Default, "monster");
-	monster->AddComponent<Renderer>(L"./data/golem.obj", L"./data/golem.dds", 0);
-	monster->AddComponent<Transform>(XMFLOAT3(0.1f, 0.25f, 0.1f), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
-	//monster->AddComponent<BoxCollider>(true, XMFLOAT3(5, 0.5, 5), XMFLOAT3(0, 0 * XM_PI / 180.0f, 0), XMFLOAT3(0.60f, 0.6f, 0.6f));
-	RegistGameObject(monster);
-
 	GameObject* nBullet1 = new GameObject(false, Tag::NormalBullet, "normalBullet1");
 	nBullet1->AddComponent<Bullet>();
 	nBullet1->AddComponent<Transform>(XMFLOAT3(0, 3, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(07.0f, 07.0f, 7.0f), XMFLOAT3(0, 0, 0));
@@ -1576,104 +1564,40 @@ void ObjectClass::CreateGameObject()
 	Canvas1->AddComponent<Canvas>();
 	RegistGameObject(Canvas1);
 
-	GameObject* Light1 = new GameObject(true, Tag::Light, "Light1");
-	Light1->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.50f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(001.0f, 0.0f, 0.0f, 01.0f),
-		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		XMFLOAT4(1.0f, 00.250f, 1.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light1);
+	int lightcount = 12;
 
-	GameObject* Light2 = new GameObject(true, Tag::Light, "Light2");
-	Light2->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.50f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(001.0f, 0.0f, 0.0f, 01.0f),
-		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		XMFLOAT4(3.0f, 0.50f, 3.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light2);
+	for (int i = 0; i < lightcount; i++)
+	{
+		int x = rand() % 60 - 30;
+		int y = rand() % 5 + 2;
+		int z = rand() % 60 - 30;
 
-	GameObject* Light3 = new GameObject(true, Tag::Light, "Light3");
-	Light3->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.50f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(001.0f, 0.0f, 0.0f, 01.0f),
-		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		XMFLOAT4(5.0f, 01.0f, 5.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light3);
-	
-	GameObject* Light4 = new GameObject(true, Tag::Light, "Light4");
-	Light4->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.50f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(001.0f, 0.0f, 0.0f, 01.0f),
-		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		XMFLOAT4(7.00f, 1.50f, 7.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light4);
+		float r = (rand() % 255) / 255.0f;
+		float g = (rand() % 255) / 255.0f;
+		float b = (rand() % 255) / 255.0f;
 
-	GameObject* Light5 = new GameObject(true, Tag::Light, "Light5");
-	Light5->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.50f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(001.0f, 0.0f, 0.0f, 01.0f),
-		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		XMFLOAT4(9.0f, 2.0f, 9.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light5);
+		GameObject* test = new GameObject(true, Tag::Default, "test");
+		test->AddComponent<Renderer>(L"./data/cube.obj", L"./data/KogMaw.dds", 0);
+		test->AddComponent<Transform>(XMFLOAT3(x, y, z), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		test->AddComponent<BoxCollider>(true, XMFLOAT3(x, y, z), XMFLOAT3(0, 0, 0), XMFLOAT3(0.50f, 0.5f, 0.5f));
+		test->AddComponent<DestroyBox>();
+		RegistGameObject(test);
 
-	GameObject* Light6 = new GameObject(true, Tag::Light, "Light6");
-	Light6->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.0f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(01.0f, 01.0f, 0.0f, 1.0f),
-		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		XMFLOAT4(-2.0f, 01.0f, -2.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light6);
+		GameObject* Light12 = new GameObject(true, Tag::Light, "Light" + std::to_string(i));
+		Light12->AddComponent<LightClass>(
+			XMFLOAT3(1.0f, 0.0f, 1.0f),
+			XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f),
+			XMFLOAT4(r, g, b, 1.0f),
+			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			XMFLOAT4(x, 0.35, z, 1.0f),
+			32.0f);
 
-	GameObject* Light7 = new GameObject(true, Tag::Light, "Light7");
-	Light7->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.0f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(0.0f, 01.0f, 0.0f, 1.0f),
-		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		XMFLOAT4(-4.0f, 01.0f, -4.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light7);
+		RegistGameObject(Light12);
+	}
 
-	GameObject* Light8 = new GameObject(true, Tag::Light, "Light8");
-	Light8->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.0f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(0.0f, 0.0f, 01.0f, 1.0f),
-		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		XMFLOAT4(-6.0f, 01.0f, -6.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light8);
-
-	GameObject* Light9 = new GameObject(true, Tag::Light, "Light9");
-	Light9->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.0f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(0.0f, 01.0f, 01.0f, 1.0f),
-		XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
-		XMFLOAT4(-8.0f, 01.50f, -8.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light9);
-
-	GameObject* Light10 = new GameObject(true, Tag::Light, "Light10");
-	Light10->AddComponent<LightClass>(
-		XMFLOAT3(1.0f, 0.0f, 1.0f),
-		XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f),
-		XMFLOAT4(01.0f, 01.0f, 01.0f, 1.0f),
-		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		XMFLOAT4(-10.0f, 01.50f, -10.0f, 1.0f),
-		128.0f);
-	RegistGameObject(Light10);
+	GameObject* resultUI = new GameObject(true, Tag::Canvas, "ResultUI");
+	resultUI->AddComponent<CanvasRenderer>(L"./data/Result.dds", XMFLOAT4(800, 450, -800, -450));
+	resultUI->AddComponent<GameManager>(lightcount);
+	RegistGameObject(resultUI);
 }
 

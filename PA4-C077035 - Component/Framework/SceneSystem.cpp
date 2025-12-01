@@ -1,6 +1,7 @@
 #include "SceneSystem.h"
 #include "ObjectClass.h"
 #include "DummyScene.h"
+#include "TestScene0.h"
 #include "TestScene1.h"
 #include "TestScene2.h"
 #include "TestScene3.h"
@@ -263,6 +264,13 @@ bool SceneSystem::Initialize(int screenWidth, int screenHeight, HWND hwnd, D3DCl
 	m_dummyScene->SceneStart();
 	m_currentScene = m_dummyScene;
 
+	shared_ptr<TestScene0> testScene0 = std::make_shared<TestScene0>();
+	result = AddScene(0, testScene0);
+	if (!result)
+	{
+		return result;
+	}
+
 	shared_ptr<TestScene1> testScene1 = std::make_shared<TestScene1>();
 	result = AddScene(1, testScene1);
 	if (!result)
@@ -291,7 +299,7 @@ bool SceneSystem::Initialize(int screenWidth, int screenHeight, HWND hwnd, D3DCl
 		return result;
 	}
 
-	int startSceneid = 2;
+	int startSceneid = 0;
 	if (m_sceneMap.find(startSceneid) == m_sceneMap.end())
 	{
 		return false;

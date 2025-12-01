@@ -13,8 +13,12 @@
 #include "CameraManager.h"
 #include "Player.h"
 
+#include "DestroyBox.h"
+
 #include "BulletManager.h"
 #include "SceneChangerController.h"
+#include "CanvasRenderer.h"
+#include "GameManager.h"
 
 class ObjectClass : public GameScene
 {
