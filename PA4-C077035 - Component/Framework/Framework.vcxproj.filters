@@ -427,7 +427,9 @@
     <ClInclude Include="DestroyBox.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="GameManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\Cannon.dds">

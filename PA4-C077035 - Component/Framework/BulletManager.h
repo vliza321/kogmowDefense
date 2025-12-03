@@ -33,15 +33,16 @@ public:
 public:
 	bool ShootBullet(XMVECTOR, XMFLOAT3, XMFLOAT3, XMFLOAT3 );
 
+	void ReloadBullet(ShootType shoottype);
+
 private:
 	ShootType* m_CurrentShootType;
 private:
 	unordered_map<ShootType, shared_ptr<vector<BaseBullet*>>>m_BulletMapSet;
 	unordered_map<ShootType, shared_ptr<vector<BaseBullet*>>>m_ReleaseBullet;
 
-	vector<BaseBullet*> m_AllActivatedBullets;
+	vector<BaseBullet*> m_allActivatedBullets;
 
-	void ReloadBullet();
 	void ReleaseBullet(BaseBullet*);
 	
 	vector<BaseBullet*>& GetAllActivatedBullets();
@@ -49,8 +50,12 @@ private:
 	void StartReload();
 
 private:
-	bool m_DoReload;
-	float m_ReloadTimer;
+	bool m_doReload1;
+	float m_reloadTimer1;
+	bool m_doReload2;
+	float m_reloadTimer2;
+	bool m_doReload3;
+	float m_reloadTimer3;
 };
 
 

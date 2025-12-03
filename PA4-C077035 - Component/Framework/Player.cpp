@@ -146,7 +146,7 @@ void Player::Execute()
 		tf->eulerRotation.y += input.GetCurrMouseState().lX * 0.001f;
 		tf->eulerRotation.x = max(-XM_PI * 0.2499f, min(XM_PI * 0.2999f, tf->eulerRotation.x));
 	}
-	if (input.GetCurrMouseState().rgbButtons[0] && canFire)
+	if (input.IsKeyUp(DIK_Z) || (input.GetCurrMouseState().rgbButtons[0]) && canFire)
 	{
 		Shoot(cm->GetLookAt(), cm->GetCamera()->GetPosition(), tf->position, tf->eulerRotation);
 	}
